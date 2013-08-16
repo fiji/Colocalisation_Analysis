@@ -127,14 +127,36 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		// reset the previously created cursor
 		cursor.reset();
 
+		/* Get min and max value of image data type. Since type of image
+		 * one and two are the same, we dont't need to distinguish them.
+		 */
+		T dummyT = Util.getTypeFromRandomAccess(img1).createVariable();
+		final double minVal = dummyT.getMinValue();
+		final double maxVal = dummyT.getMaxValue();
+
 		// do regression
 		while (!thresholdFound && iteration<maxIterations) {
 			// round ch1 threshold and compute ch2 threshold
 			ch1ThreshMax = Math.round( threshold1 );
 			ch2ThreshMax = Math.round( (ch1ThreshMax * m) + b );
-			// set the image type specific variables
-			thresholdCh1.setReal( ch1ThreshMax );
-			thresholdCh2.setReal( ch2ThreshMax );
+			/* Make sure we don't get overflow the image type specific threshold variables
+			 * if the image data type doesn't support this value.
+			 */
+			if ( minVal > ch1ThreshMax ) {
+				thresholdCh1.setReal( minVal );
+			} else if ( maxVal < ch1ThreshMax ) {
+				thresholdCh1.setReal( maxVal );
+			} else {
+				thresholdCh1.setReal( ch1ThreshMax );
+			}
+			if ( minVal > ch2ThreshMax ) {
+				thresholdCh2.setReal( minVal );
+			} else if ( maxVal < ch2ThreshMax ) {
+				thresholdCh2.setReal( maxVal );
+			} else {
+				thresholdCh2.setReal( ch2ThreshMax );
+			}
+
 			// Person's R value
 			double currentPersonsR = Double.MAX_VALUE;
 			// indicates if we have actually found a real number
@@ -173,13 +195,6 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 			// increment iteration counter
 			iteration++;
 		}
-
-		/* Get min and max value of image data type. Since type of image
-		 * one and two are the same, we dont't need to distinguish them.
-		 */
-		T dummyT = Util.getTypeFromRandomAccess(img1).createVariable();
-		double minVal = dummyT.getMinValue();
-		double maxVal = dummyT.getMaxValue();
 
 		/* Store the new results. The lower thresholds are the types
 		 * min value for now. For the max threshold we do a clipping
