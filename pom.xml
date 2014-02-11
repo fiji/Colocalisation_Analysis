@@ -55,6 +55,13 @@
 		</dependency>
 	</dependencies>
 
+	<scm>
+		<connection>scm:git:git://github.com/fiji/Colocalisation_Analysis</connection>
+		<developerConnection>scm:git:git@github.com:fiji/Colocalisation_Analysis</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/fiji/Colocalisation_Analysis</url>
+	</scm>
+
 	<repositories>
 		<!-- NB: for project parent, in case of partial checkout -->
 		<repository>
