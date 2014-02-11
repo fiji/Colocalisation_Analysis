@@ -55,6 +55,38 @@
 		</dependency>
 	</dependencies>
 
+	<developers>
+		<developer>
+			<id>chalkie</id>
+			<name>Daniel James White</name>
+			<email>dan@chalkie.org.u</email>
+			<roles>
+			<role>architect</role>
+			<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>dscho</id>
+			<name>Johannes Schindelin</name>
+			<email>schindelin@wisc.edu</email>
+			<url>http://loci.wisc.edu/people/johannes-schindelin</url>
+			<organization>UW-Madison LOCI</organization>
+			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<roles>
+			<role>architect</role>
+			<role>developer</role>
+			</roles>
+			<timezone>-6</timezone>
+		</developer>
+	</developers>
+
+	<contributors>
+		<contributor>
+			<name>Tom Kazimiers</name>
+		</contributor>
+	</contributors>
+
 	<scm>
 		<connection>scm:git:git://github.com/fiji/Colocalisation_Analysis</connection>
 		<developerConnection>scm:git:git@github.com:fiji/Colocalisation_Analysis</developerConnection>
