@@ -87,6 +87,11 @@
 		</contributor>
 	</contributors>
 
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://jenkins.imagej.net/job/Colocalisation_Analysis/</url>
+	</ciManagement>
+
 	<scm>
 		<connection>scm:git:git://github.com/fiji/Colocalisation_Analysis</connection>
 		<developerConnection>scm:git:git@github.com:fiji/Colocalisation_Analysis</developerConnection>
