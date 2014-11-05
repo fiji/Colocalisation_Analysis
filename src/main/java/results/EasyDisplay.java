@@ -1,5 +1,6 @@
 package results;
 
+import algorithms.Histogram2D;
 import gadgets.DataContainer;
 import ij.IJ;
 import ij.ImagePlus;
@@ -8,7 +9,6 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.math.ImageStatistics;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
-import algorithms.Histogram2D;
 
 public class EasyDisplay<T extends RealType<T>> implements ResultHandler<T> {
 	// the text window to present value and text results

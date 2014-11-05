@@ -1,12 +1,23 @@
 //22/4/5
 
-import java.awt.*;
-import ij.*;
-import ij.gui.*;
-import ij.process.*;
-import ij.text.*;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.Prefs;
+import ij.WindowManager;
+import ij.gui.GenericDialog;
+import ij.gui.Roi;
+import ij.measure.Calibration;
 import ij.plugin.PlugIn;
-import ij.measure.*;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.process.ShortProcessor;
+import ij.text.TextWindow;
+
+import java.awt.Rectangle;
 import java.text.DecimalFormat;
 
 public class Colocalisation_Threshold implements PlugIn {

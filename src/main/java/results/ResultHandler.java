@@ -1,8 +1,8 @@
 package results;
 
+import algorithms.Histogram2D;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
-import algorithms.Histogram2D;
 
 /**
  * A result handler offers different methods to process results

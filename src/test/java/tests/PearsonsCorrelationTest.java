@@ -1,6 +1,9 @@
 package tests;
 
 import static org.junit.Assert.assertEquals;
+import algorithms.MissingPreconditionException;
+import algorithms.PearsonsCorrelation;
+import algorithms.PearsonsCorrelation.Implementation;
 import gadgets.MaskFactory;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
@@ -10,10 +13,6 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 
 import org.junit.Test;
-
-import algorithms.MissingPreconditionException;
-import algorithms.PearsonsCorrelation;
-import algorithms.PearsonsCorrelation.Implementation;
 
 /**
  * This class contains JUnit 4 test cases for the Pearson's correlation

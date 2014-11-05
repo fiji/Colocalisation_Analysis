@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.Assume.assumeNotNull;
+import algorithms.MissingPreconditionException;
 import gadgets.MaskFactory;
 import ij.ImagePlus;
 import ij.gui.NewImage;
@@ -32,7 +33,6 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Util;
 import net.imglib2.view.Views;
-import algorithms.MissingPreconditionException;
 
 /**
  * A class containing some testing helper methods. It allows

@@ -1,11 +1,10 @@
 package algorithms;
 
+import gadgets.DataContainer;
+import ij.IJ;
+
 import java.util.Arrays;
 
-
-import ij.IJ;
-import results.ResultHandler;
-import gadgets.DataContainer;
 import net.imglib2.PairIterator;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
@@ -13,6 +12,7 @@ import net.imglib2.TwinCursor;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
+import results.ResultHandler;
 
 /**
  * This algorithm calculates Kendall's Tau-b rank correlation coefficient

@@ -1,5 +1,10 @@
 package gadgets;
 
+import algorithms.Algorithm;
+import algorithms.AutoThresholdRegression;
+import algorithms.InputCheck;
+import algorithms.MissingPreconditionException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,10 +13,6 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.math.ImageStatistics;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
-import algorithms.Algorithm;
-import algorithms.AutoThresholdRegression;
-import algorithms.InputCheck;
-import algorithms.MissingPreconditionException;
 
 /**
  * The DataContainer keeps all the source data, pre-processing results and

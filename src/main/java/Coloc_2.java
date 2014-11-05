@@ -1,3 +1,15 @@
+import algorithms.Algorithm;
+import algorithms.AutoThresholdRegression;
+import algorithms.CostesSignificanceTest;
+import algorithms.Histogram2D;
+import algorithms.InputCheck;
+import algorithms.KendallTauRankCorrelation;
+import algorithms.LiHistogram2D;
+import algorithms.LiICQ;
+import algorithms.MandersColocalization;
+import algorithms.MissingPreconditionException;
+import algorithms.PearsonsCorrelation;
+import algorithms.SpearmanRankCorrelation;
 import gadgets.DataContainer;
 import ij.IJ;
 import ij.ImagePlus;
@@ -39,18 +51,6 @@ import results.PDFWriter;
 import results.ResultHandler;
 import results.SingleWindowDisplay;
 import results.Warning;
-import algorithms.Algorithm;
-import algorithms.AutoThresholdRegression;
-import algorithms.CostesSignificanceTest;
-import algorithms.Histogram2D;
-import algorithms.InputCheck;
-import algorithms.KendallTauRankCorrelation;
-import algorithms.LiHistogram2D;
-import algorithms.LiICQ;
-import algorithms.MandersColocalization;
-import algorithms.MissingPreconditionException;
-import algorithms.PearsonsCorrelation;
-import algorithms.SpearmanRankCorrelation;
 
 /**
    Copyright 2010, 2011 Daniel J. White, Tom Kazimiers, Johannes Schindelin

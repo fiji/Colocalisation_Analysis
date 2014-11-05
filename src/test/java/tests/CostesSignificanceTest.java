@@ -1,15 +1,14 @@
 package tests;
 
 import static org.junit.Assert.assertTrue;
+import algorithms.AutoThresholdRegression;
+import algorithms.MissingPreconditionException;
+import algorithms.PearsonsCorrelation;
 import gadgets.DataContainer;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.real.FloatType;
 
 import org.junit.Test;
-
-import algorithms.AutoThresholdRegression;
-import algorithms.MissingPreconditionException;
-import algorithms.PearsonsCorrelation;
 
 /**
  * This class contains JUnit 4 test cases for the Costes

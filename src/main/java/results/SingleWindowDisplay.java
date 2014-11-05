@@ -1,5 +1,7 @@
 package results;
 
+import algorithms.AutoThresholdRegression;
+import algorithms.Histogram2D;
 import fiji.util.gui.JImagePanel;
 import gadgets.DataContainer;
 import ij.IJ;
@@ -45,8 +47,6 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.LongType;
-import algorithms.AutoThresholdRegression;
-import algorithms.Histogram2D;
 
 /**
  * This class displays the container contents in one single window

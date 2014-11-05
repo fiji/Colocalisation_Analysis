@@ -1,16 +1,15 @@
 package tests;
 
 import static org.junit.Assert.assertEquals;
+import algorithms.MandersColocalization;
+import algorithms.MandersColocalization.MandersResults;
+import algorithms.MissingPreconditionException;
 import net.imglib2.TwinCursor;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.util.Util;
 import net.imglib2.view.Views;
 
 import org.junit.Test;
-
-import algorithms.MandersColocalization;
-import algorithms.MandersColocalization.MandersResults;
-import algorithms.MissingPreconditionException;
 
 public class MandersColocalizationTest extends ColocalisationTest {
 

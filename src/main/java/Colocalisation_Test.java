@@ -4,23 +4,25 @@
 //version 29/4/05
 //Costes randomisation uses pixels in ch2 only once per random image
 
-import java.math.*;
-import java.awt.*;
-import java.io.*;
-import ij.*;
-import ij.gui.*;
-import ij.process.*;
-import ij.text.*;
-import ij.plugin.PlugIn;
-import java.text.DecimalFormat; 
-import ij.measure.*;
-import ij.util.*;
-import java.util.*;
-import ij.plugin.filter.*;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.Prefs;
+import ij.WindowManager;
+import ij.gui.GenericDialog;
+import ij.gui.PlotWindow;
+import ij.gui.Roi;
 import ij.measure.Calibration;
-import ij.measure.*;
-
+import ij.plugin.PlugIn;
+import ij.plugin.filter.GaussianBlur;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.process.ShortProcessor;
 import ij.text.TextWindow;
+
+import java.awt.Rectangle;
+import java.text.DecimalFormat;
 
 public class Colocalisation_Test implements PlugIn
     {static boolean headingsSet2;
