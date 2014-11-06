@@ -18,6 +18,56 @@
 	<name>plugins/Colocalisation_Analysis.jar</name>
 	<description></description>
 
+	<developers>
+		<developer>
+			<id>chalkie666</id>
+			<name>Daniel James White</name>
+			<email>dan@chalkie.org.uk</email>
+			<roles>
+			<role>architect</role>
+			<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>dscho</id>
+			<name>Johannes Schindelin</name>
+			<email>schindelin@wisc.edu</email>
+			<url>http://loci.wisc.edu/people/johannes-schindelin</url>
+			<organization>UW-Madison LOCI</organization>
+			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<roles>
+			<role>architect</role>
+			<role>developer</role>
+			</roles>
+			<timezone>-6</timezone>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Tom Kazimiers</name>
+		</contributor>
+	</contributors>
+
+	<scm>
+		<connection>scm:git:git://github.com/fiji/Colocalisation_Analysis</connection>
+		<developerConnection>scm:git:git@github.com:fiji/Colocalisation_Analysis</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/fiji/Colocalisation_Analysis</url>
+	</scm>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://jenkins.imagej.net/job/Colocalisation_Analysis/</url>
+	</ciManagement>
+
+	<repositories>
+		<!-- NB: for project parent -->
+		<repository>
+			<id>imagej.public</id>
+			<url>http://maven.imagej.net/content/groups/public</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<!-- Fiji dependencies -->
 		<dependency>
@@ -57,57 +107,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<developers>
-		<developer>
-			<id>chalkie666</id>
-			<name>Daniel James White</name>
-			<email>dan@chalkie.org.uk</email>
-			<roles>
-			<role>architect</role>
-			<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>dscho</id>
-			<name>Johannes Schindelin</name>
-			<email>schindelin@wisc.edu</email>
-			<url>http://loci.wisc.edu/people/johannes-schindelin</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
-			<roles>
-			<role>architect</role>
-			<role>developer</role>
-			</roles>
-			<timezone>-6</timezone>
-		</developer>
-	</developers>
-
-	<contributors>
-		<contributor>
-			<name>Tom Kazimiers</name>
-		</contributor>
-	</contributors>
-
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://jenkins.imagej.net/job/Colocalisation_Analysis/</url>
-	</ciManagement>
-
-	<scm>
-		<connection>scm:git:git://github.com/fiji/Colocalisation_Analysis</connection>
-		<developerConnection>scm:git:git@github.com:fiji/Colocalisation_Analysis</developerConnection>
-		<tag>HEAD</tag>
-		<url>https://github.com/fiji/Colocalisation_Analysis</url>
-	</scm>
-
-	<repositories>
-		<!-- NB: for project parent -->
-		<repository>
-			<id>imagej.public</id>
-			<url>http://maven.imagej.net/content/groups/public</url>
-		</repository>
-	</repositories>
 
 </project>
