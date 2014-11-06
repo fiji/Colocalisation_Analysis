@@ -133,7 +133,7 @@ public class CostesSignificanceTest<T extends RealType< T > & NativeType<T>> ext
 		}
 		
 		// we will need a zero variable
-		final T zero = Util.getTypeFromRandomAccess(img1).createVariable();
+		final T zero = img1.randomAccess().get();
 		zero.setZero();
 
 		/* Create a new image to contain the shuffled data and with
@@ -143,7 +143,7 @@ public class CostesSignificanceTest<T extends RealType< T > & NativeType<T>> ext
 		img1.dimensions(dims);
 		ImgFactory<T> factory = new ArrayImgFactory<T>();
 		Img<T> shuffledImage = factory.create(
-				dims, Util.getTypeFromRandomAccess(img1).createVariable() );
+				dims, img1.randomAccess().get() );
 		RandomAccessible< T> infiniteShuffledImage =
 				Views.extendValue(shuffledImage, zero );
 

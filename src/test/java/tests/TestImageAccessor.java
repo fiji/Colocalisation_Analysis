@@ -252,7 +252,7 @@ public class TestImageAccessor {
 		final long[] dim = new long[ img.numDimensions() ];
 		img.dimensions(dim);
 		RandomAccessibleInterval<T> output = outputFactory.create( dim,
-				Util.getTypeFromRandomAccess(img).createVariable() );
+				img.randomAccess().get() );
 
 		final long[] pos = new long[ img.numDimensions() ];
 		Arrays.fill(pos, 0);
@@ -280,7 +280,7 @@ public class TestImageAccessor {
 		image.dimensions(dim);
 		ArrayImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 		RandomAccessibleInterval<T> invImg = imgFactory.create(
-				dim, Util.getTypeFromRandomAccess(image).createVariable() ); // "Inverted " + image.getName());
+				dim, image.randomAccess().get() ); // "Inverted " + image.getName());
 		RandomAccess<T> invCursor = invImg.randomAccess();
 
 		while (imgCursor.hasNext()) {
@@ -299,7 +299,7 @@ public class TestImageAccessor {
 	 */
 	public static <T extends RealType<T> & NativeType<T>> RandomAccessibleInterval<T> makeBinaryImage(
 			RandomAccessibleInterval<T> image) {
-		T binSplitValue = Util.getTypeFromRandomAccess(image).createVariable();
+		T binSplitValue = image.randomAccess().get();
 		binSplitValue.setReal( binSplitValue.getMaxValue() * 0.5 );
 		return TestImageAccessor.makeBinaryImage(image, binSplitValue);
 	}
@@ -317,7 +317,7 @@ public class TestImageAccessor {
 		image.dimensions(dim);
 		ArrayImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 		RandomAccessibleInterval<T> binImg = imgFactory.create( dim,
-				Util.getTypeFromRandomAccess(image).createVariable() ); // "Binary image of " + image.getName());
+				image.randomAccess().get() ); // "Binary image of " + image.getName());
 		RandomAccess<T> invCursor = binImg.randomAccess();
 
 		while (imgCursor.hasNext()) {
