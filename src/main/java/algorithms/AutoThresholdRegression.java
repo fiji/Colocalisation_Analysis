@@ -142,20 +142,9 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 			/* Make sure we don't get overflow the image type specific threshold variables
 			 * if the image data type doesn't support this value.
 			 */
-			if ( minVal > ch1ThreshMax ) {
-				thresholdCh1.setReal( minVal );
-			} else if ( maxVal < ch1ThreshMax ) {
-				thresholdCh1.setReal( maxVal );
-			} else {
-				thresholdCh1.setReal( ch1ThreshMax );
-			}
-			if ( minVal > ch2ThreshMax ) {
-				thresholdCh2.setReal( minVal );
-			} else if ( maxVal < ch2ThreshMax ) {
-				thresholdCh2.setReal( maxVal );
-			} else {
-				thresholdCh2.setReal( ch2ThreshMax );
-			}
+			thresholdCh1.setReal(clamp(ch1ThreshMax, minVal, maxVal));
+			thresholdCh2.setReal(clamp(ch2ThreshMax, minVal, maxVal));
+
 
 			// Person's R value
 			double currentPersonsR = Double.MAX_VALUE;
@@ -204,23 +193,13 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		ch1MinThreshold.setReal(minVal);
 
 		ch1MaxThreshold = img1.randomAccess().get();
-		if ( minVal > ch1ThreshMax )
-			ch1MaxThreshold.setReal( minVal );
-		else if ( maxVal < ch1ThreshMax )
-			ch1MaxThreshold.setReal( maxVal );
-		else
-			ch1MaxThreshold.setReal( ch1ThreshMax );
+		ch1MaxThreshold.setReal(clamp(ch1ThreshMax, minVal, maxVal));
 
 		ch2MinThreshold = img2.randomAccess().get();
 		ch2MinThreshold.setReal(minVal);
 
 		ch2MaxThreshold = img2.randomAccess().get();
-		if ( minVal > ch2ThreshMax )
-			ch2MaxThreshold.setReal( minVal );
-		else if ( maxVal < ch2ThreshMax )
-			ch2MaxThreshold.setReal( maxVal );
-		else
-			ch2MaxThreshold.setReal( ch2ThreshMax );
+		ch2MaxThreshold.setReal(clamp(ch2ThreshMax, minVal, maxVal));
 
 		autoThresholdSlope = m;
 		autoThresholdIntercept = b;
@@ -247,6 +226,15 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 			addWarning("thresholds too low",
 				"The auto threshold method could not find a positive threshold.");
 		}
+	}
+
+	/**
+	 * Clamp a value to a min or max value. If the value is below min, min is
+	 * returned. Accordingly, max is returned if the value is larger. If it is
+	 * neither, the value itself is returned.
+	 */
+	public static double clamp(double val, double min, double max) {
+		return min > val ? min : max < val ? max : val;
 	}
 
 	public void processResults(ResultHandler<T> handler) {
