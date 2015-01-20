@@ -45,45 +45,45 @@ public abstract class ColocalisationTest {
 	 */
 	@Before
 	public void setup() {
-		zeroCorrelationImageCh1 = TestImageAccessor.loadTiffFromJar("Data/greenZstack.tif");
+		zeroCorrelationImageCh1 = TestImageAccessor.loadTiffFromJar("/greenZstack.tif");
 		zeroCorrelationImageCh1Mean = ImageStatistics.getImageMean(zeroCorrelationImageCh1);
 
-		zeroCorrelationImageCh2 = TestImageAccessor.loadTiffFromJar("Data/redZstack.tif");
+		zeroCorrelationImageCh2 = TestImageAccessor.loadTiffFromJar("/redZstack.tif");
 		zeroCorrelationImageCh2Mean = ImageStatistics.getImageMean(zeroCorrelationImageCh2);
 
 		final long[] dimZeroCorrCh1 = new long[ zeroCorrelationImageCh1.numDimensions() ];
 		zeroCorrelationImageCh1.dimensions(dimZeroCorrCh1);
 		zeroCorrelationAlwaysTrueMask = MaskFactory.createMask(dimZeroCorrCh1, true);
 
-		positiveCorrelationImageCh1 = TestImageAccessor.loadTiffFromJar("Data/colocsample1b-green.tif");
+		positiveCorrelationImageCh1 = TestImageAccessor.loadTiffFromJar("/colocsample1b-green.tif");
 		positiveCorrelationImageCh1Mean = ImageStatistics.getImageMean(positiveCorrelationImageCh1);
 
-		positiveCorrelationImageCh2 = TestImageAccessor.loadTiffFromJar("Data/colocsample1b-red.tif");
+		positiveCorrelationImageCh2 = TestImageAccessor.loadTiffFromJar("/colocsample1b-red.tif");
 		positiveCorrelationImageCh2Mean = ImageStatistics.getImageMean(positiveCorrelationImageCh2);
 
 		final long[] dimPosCorrCh1 = new long[ positiveCorrelationImageCh1.numDimensions() ];
 		positiveCorrelationImageCh1.dimensions(dimPosCorrCh1);
 		positiveCorrelationAlwaysTrueMask = MaskFactory.createMask(dimPosCorrCh1, true);
 
-		syntheticNegativeCorrelationImageCh1 = TestImageAccessor.loadTiffFromJar("Data/syntheticNegCh1.tif");
+		syntheticNegativeCorrelationImageCh1 = TestImageAccessor.loadTiffFromJar("/syntheticNegCh1.tif");
 		syntheticNegativeCorrelationImageCh1Mean = ImageStatistics.getImageMean(syntheticNegativeCorrelationImageCh1);
 
-		syntheticNegativeCorrelationImageCh2 = TestImageAccessor.loadTiffFromJar("Data/syntheticNegCh2.tif");
+		syntheticNegativeCorrelationImageCh2 = TestImageAccessor.loadTiffFromJar("/syntheticNegCh2.tif");
 		syntheticNegativeCorrelationImageCh2Mean = ImageStatistics.getImageMean(syntheticNegativeCorrelationImageCh2);
 
 		final long[] dimSynthNegCorrCh1 = new long[ syntheticNegativeCorrelationImageCh1.numDimensions() ];
 		syntheticNegativeCorrelationImageCh1.dimensions(dimSynthNegCorrCh1);
 		syntheticNegativeCorrelationAlwaysTrueMask = MaskFactory.createMask(dimSynthNegCorrCh1, true);
 		
-		mandersA = TestImageAccessor.loadTiffFromJar("Data/mandersA.tiff");
-		mandersB = TestImageAccessor.loadTiffFromJar("Data/mandersB.tiff");
-		mandersC = TestImageAccessor.loadTiffFromJar("Data/mandersC.tiff");
-		mandersD = TestImageAccessor.loadTiffFromJar("Data/mandersD.tiff");
-		mandersE = TestImageAccessor.loadTiffFromJar("Data/mandersE.tiff");
-		mandersF = TestImageAccessor.loadTiffFromJar("Data/mandersF.tiff");
-		mandersG = TestImageAccessor.loadTiffFromJar("Data/mandersG.tiff");
-		mandersH = TestImageAccessor.loadTiffFromJar("Data/mandersH.tiff");
-		mandersI = TestImageAccessor.loadTiffFromJar("Data/mandersI.tiff");
+		mandersA = TestImageAccessor.loadTiffFromJar("/mandersA.tiff");
+		mandersB = TestImageAccessor.loadTiffFromJar("/mandersB.tiff");
+		mandersC = TestImageAccessor.loadTiffFromJar("/mandersC.tiff");
+		mandersD = TestImageAccessor.loadTiffFromJar("/mandersD.tiff");
+		mandersE = TestImageAccessor.loadTiffFromJar("/mandersE.tiff");
+		mandersF = TestImageAccessor.loadTiffFromJar("/mandersF.tiff");
+		mandersG = TestImageAccessor.loadTiffFromJar("/mandersG.tiff");
+		mandersH = TestImageAccessor.loadTiffFromJar("/mandersH.tiff");
+		mandersI = TestImageAccessor.loadTiffFromJar("/mandersI.tiff");
 
 		final long[] dimMandersA = new long[ mandersA.numDimensions() ];
 		mandersA.dimensions(dimMandersA);

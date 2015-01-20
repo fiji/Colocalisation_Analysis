@@ -10,7 +10,7 @@ public class TestInteractively {
 		Debug.run("Close All", "");
 		final String image1 = "colocsample1b-green.tif";
 		final String image2 = "colocsample1b-red.tif";
-		String testsDataDir = System.getProperty("plugins.dir") + "/../tests/Data/";
+		String testsDataDir = System.getProperty("plugins.dir") + "/../src/test/resources/";
 		Debug.run("Open...", "open=" + testsDataDir + image1);
 		Debug.run("Open...", "open=" + testsDataDir + image2);
 		Debug.run("Coloc 2",
