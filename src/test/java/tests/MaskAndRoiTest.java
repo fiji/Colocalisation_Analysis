@@ -218,6 +218,7 @@ public class MaskAndRoiTest extends ColocalisationTest {
 		final RandomAccessibleInterval<UnsignedByteType> img = positiveCorrelationImageCh1;
 		// first, create an always true mask
 		final long[] dim = new long[ img.numDimensions() ];
+		img.dimensions(dim);
 		RandomAccessibleInterval<BitType> mask = MaskFactory.createMask(dim, true);
 		final Predicate<BitType> predicate = new MaskPredicate();
 		Cursor<BitType> cursor
