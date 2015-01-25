@@ -60,12 +60,13 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		double combinedSum = 0.0;
 		int N = 0, NZero = 0;
 
+		// reference image data type
+		final T type = cursor.getFirst();
+
 		while (cursor.hasNext()) {
 			cursor.fwd();
-			T type1 = cursor.getFirst();
-			double ch1 = type1.getRealDouble();
-			T type2 = cursor.getSecond();
-			double ch2 = type2.getRealDouble();
+			double ch1 = cursor.getFirst().getRealDouble();
+			double ch2 = cursor.getSecond().getRealDouble();
 
 			combinedSum = ch1 + ch2;
 
@@ -122,15 +123,15 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		double ch2ThreshMax = container.getMaxCh2();
 
 		// define some image type specific threshold variables
-		T thresholdCh1 = img1.randomAccess().get();
-		T thresholdCh2 = img2.randomAccess().get();
+		T thresholdCh1 = type.createVariable();
+		T thresholdCh2 = type.createVariable();
 		// reset the previously created cursor
 		cursor.reset();
 
 		/* Get min and max value of image data type. Since type of image
 		 * one and two are the same, we dont't need to distinguish them.
 		 */
-		T dummyT = img1.randomAccess().get();
+		T dummyT = type.createVariable();
 		final double minVal = dummyT.getMinValue();
 		final double maxVal = dummyT.getMaxValue();
 
@@ -189,16 +190,16 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		 * min value for now. For the max threshold we do a clipping
 		 * to make it fit into the image type.
 		 */
-		ch1MinThreshold = img1.randomAccess().get();
+		ch1MinThreshold = type.createVariable();
 		ch1MinThreshold.setReal(minVal);
 
-		ch1MaxThreshold = img1.randomAccess().get();
+		ch1MaxThreshold = type.createVariable();
 		ch1MaxThreshold.setReal(clamp(ch1ThreshMax, minVal, maxVal));
 
-		ch2MinThreshold = img2.randomAccess().get();
+		ch2MinThreshold = type.createVariable();
 		ch2MinThreshold.setReal(minVal);
 
-		ch2MaxThreshold = img2.randomAccess().get();
+		ch2MaxThreshold = type.createVariable();
 		ch2MaxThreshold.setReal(clamp(ch2ThreshMax, minVal, maxVal));
 
 		autoThresholdSlope = m;
