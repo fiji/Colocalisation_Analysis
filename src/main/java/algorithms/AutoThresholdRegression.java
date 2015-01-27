@@ -169,7 +169,7 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 			if (thrDiff < 1.0)
 				thresholdFound = true;
 
-			// update working thresholds
+			// update working thresholds for next iteration
 			threshold2 = threshold1;
 			if (badResult || currentPersonsR < 0) {
 				// we went too far, increase by the absolute half
