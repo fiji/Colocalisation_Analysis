@@ -143,7 +143,7 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 				}
 			};
 		} else {
-			// Start at the midpoint of channel one
+			// Start at the midpoint of channel two
 			threshold1 = Math.abs(container.getMaxCh2() +
 					container.getMinCh2()) * 0.5;
 			threshold2 = container.getMaxCh2();
