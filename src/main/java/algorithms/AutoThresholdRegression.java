@@ -104,8 +104,8 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 			+ Math.sqrt( (ch2Variance - ch1Variance) * (ch2Variance - ch1Variance)
 					+ (4 * ch1ch2Covariance *ch1ch2Covariance) );
 
-		double m = num/denom;
-		double b = ch2Mean - m*ch1Mean ;
+		final double m = num/denom;
+		final double b = ch2Mean - m*ch1Mean ;
 
 		// initialize some variables relevant for regression
 		// indicates whether the threshold has been found or not
@@ -114,9 +114,54 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		final int maxIterations = 100;
 		// the current iteration
 		int iteration = 0;
-		// the initial thresholds
-		double threshold1 = (container.getMaxCh1() + container.getMinCh1()) * 0.5;
-		double threshold2 = container.getMaxCh1();
+		// current and last working threshold
+		double threshold1, threshold2;
+		// to map working thresholds to channels
+		ChannelMapper mapper;
+
+		// let working threshold walk on channel one if the regression line
+		// leans more towards the abscissa (which represents channel one).
+		if (m < 1.0) {
+			// Start at the midpoint of channel one
+			threshold1 = Math.abs(container.getMaxCh1() +
+					container.getMinCh1()) * 0.5;
+			threshold2 = container.getMaxCh1();
+
+			// Map working threshold to channel one (because channel one has a
+			// larger maximum value.
+			mapper = new ChannelMapper() {
+
+				@Override
+				public double getCh1Threshold(double t) {
+					return t;
+				}
+
+				@Override
+				public double getCh2Threshold(double t) {
+					return (t * m) + b;
+				}
+			};
+		} else {
+			// Start at the midpoint of channel one
+			threshold1 = Math.abs(container.getMaxCh2() +
+					container.getMinCh2()) * 0.5;
+			threshold2 = container.getMaxCh2();
+
+			// Map working threshold to channel two (because channel two has a
+			// larger maximum value.
+			mapper = new ChannelMapper() {
+
+				@Override
+				public double getCh1Threshold(double t) {
+					return (t - b) / m;
+				}
+
+				@Override
+				public double getCh2Threshold(double t) {
+					return t;
+				}
+			};
+		}
 
 		// Min threshold not yet implemented
 		double ch1ThreshMax = container.getMaxCh1();
@@ -138,14 +183,13 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		// do regression
 		while (!thresholdFound && iteration<maxIterations) {
 			// round ch1 threshold and compute ch2 threshold
-			ch1ThreshMax = Math.round( threshold1 );
-			ch2ThreshMax = Math.round( (ch1ThreshMax * m) + b );
+			ch1ThreshMax = Math.round(mapper.getCh1Threshold(threshold1));
+			ch2ThreshMax = Math.round(mapper.getCh2Threshold(threshold1));
 			/* Make sure we don't get overflow the image type specific threshold variables
 			 * if the image data type doesn't support this value.
 			 */
 			thresholdCh1.setReal(clamp(ch1ThreshMax, minVal, maxVal));
 			thresholdCh2.setReal(clamp(ch2ThreshMax, minVal, maxVal));
-
 
 			// Person's R value
 			double currentPersonsR = Double.MAX_VALUE;
