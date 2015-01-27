@@ -120,8 +120,9 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		ChannelMapper mapper;
 
 		// let working threshold walk on channel one if the regression line
-		// leans more towards the abscissa (which represents channel one).
-		if (m < 1.0) {
+		// leans more towards the abscissa (which represents channel one) for
+		// positive and negative correlation.
+		if (m > -1 && m < 1.0) {
 			// Start at the midpoint of channel one
 			threshold1 = Math.abs(container.getMaxCh1() +
 					container.getMinCh1()) * 0.5;
