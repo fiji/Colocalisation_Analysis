@@ -252,7 +252,7 @@ public class TestImageAccessor {
 		final long[] dim = new long[ img.numDimensions() ];
 		img.dimensions(dim);
 		RandomAccessibleInterval<T> output = outputFactory.create( dim,
-				img.randomAccess().get() );
+				img.randomAccess().get().createVariable() );
 
 		final long[] pos = new long[ img.numDimensions() ];
 		Arrays.fill(pos, 0);
@@ -280,7 +280,7 @@ public class TestImageAccessor {
 		image.dimensions(dim);
 		ArrayImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 		RandomAccessibleInterval<T> invImg = imgFactory.create(
-				dim, image.randomAccess().get() ); // "Inverted " + image.getName());
+				dim, image.randomAccess().get().createVariable() ); // "Inverted " + image.getName());
 		RandomAccess<T> invCursor = invImg.randomAccess();
 
 		while (imgCursor.hasNext()) {
@@ -317,7 +317,7 @@ public class TestImageAccessor {
 		image.dimensions(dim);
 		ArrayImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 		RandomAccessibleInterval<T> binImg = imgFactory.create( dim,
-				image.randomAccess().get() ); // "Binary image of " + image.getName());
+				image.randomAccess().get().createVariable() ); // "Binary image of " + image.getName());
 		RandomAccess<T> invCursor = binImg.randomAccess();
 
 		while (imgCursor.hasNext()) {
