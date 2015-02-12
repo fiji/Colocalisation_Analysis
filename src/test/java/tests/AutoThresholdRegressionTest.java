@@ -7,8 +7,6 @@ import net.imglib2.type.numeric.integer.UnsignedByteType;
 
 import org.junit.Test;
 
-import com.sun.jdi.FloatType;
-
 import algorithms.AutoThresholdRegression;
 import algorithms.AutoThresholdRegression.Implementation;
 import algorithms.MissingPreconditionException;
