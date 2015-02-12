@@ -1,5 +1,6 @@
 import algorithms.Algorithm;
 import algorithms.AutoThresholdRegression;
+import algorithms.AutoThresholdRegression.Implementation;
 import algorithms.CostesSignificanceTest;
 import algorithms.Histogram2D;
 import algorithms.InputCheck;
@@ -119,11 +120,16 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 	// A list of all ROIs/masks found
 	protected ArrayList<MaskInfo> masks = new ArrayList<MaskInfo>();
 
-	// default indices of image, mask and ROI choices
+	// A list of auto threshold implementations
+	protected String[] regressions = new String[
+			AutoThresholdRegression.Implementation.values().length];
+
+	// default indices of image, mask, ROI and regression choices
 	protected static int index1 = 0;
 	protected static int index2 = 1;
 	protected static int indexMask = 0;
 	protected static int indexRoi = 0;
+	protected static int indexRegr = 0;
 
 	// the images to work on
 	protected Img<T> img1, img2;
@@ -203,6 +209,13 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 			}
 		}
 
+		// find all available regression strategies
+		Implementation[] regressionImplementations =
+				AutoThresholdRegression.Implementation.values();
+		for (int i=0; i<regressionImplementations.length; ++i) {
+			regressions[i] = regressionImplementations[i].toString();
+		}
+
 		// set up the users preferences
 		displayImages = Prefs.get(PREF_KEY+"displayImages", false);
 		autoSavePdf = Prefs.get(PREF_KEY+"autoSavePdf", true);
@@ -217,6 +230,7 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 		boolean useCostes = Prefs.get(PREF_KEY+"useCostes", true);
 		int psf = (int) Prefs.get(PREF_KEY+"psf", 3);
 		int nrCostesRandomisations = (int) Prefs.get(PREF_KEY+"nrCostesRandomisations", 10);
+		indexRegr = (int) Prefs.get(PREF_KEY+"regressionImplementation", 0);
 
 		/* make sure the default indices are no bigger
 		 * than the amount of images we have
@@ -229,6 +243,9 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 		gd.addChoice("Channel_2", titles, titles[index2]);
 		gd.addChoice("ROI_or_mask", roisAndMasks, roisAndMasks[indexMask]);
 		//gd.addChoice("Use ROI", roiLabels, roiLabels[indexRoi]);
+
+		gd.addChoice("Threshold regression", regressions,
+				regressions[indexRegr]);
 
 		gd.addCheckbox("Show_\"Save_PDF\"_Dialog", autoSavePdf);
 		gd.addCheckbox("Display_Images_in_Result", displayImages);
@@ -324,6 +341,9 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 			masks.add(new MaskInfo(null, null));
 		}
 
+		// get information about the mask/ROI to use
+		indexRegr = gd.getNextChoiceIndex();
+
 		// read out GUI data
 		autoSavePdf = gd.getNextBoolean();
 		displayImages = gd.getNextBoolean();
@@ -340,6 +360,7 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 		nrCostesRandomisations = (int) gd.getNextNumber();
 
 		// save user preferences
+		Prefs.set(PREF_KEY+"regressionImplementation", indexRegr);
 		Prefs.set(PREF_KEY+"autoSavePdf", autoSavePdf);
 		Prefs.set(PREF_KEY+"displayImages", displayImages);
 		Prefs.set(PREF_KEY+"displayShuffledCostes", displayShuffledCostes);
@@ -424,7 +445,8 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 		userSelectedJobs.add( container.setInputCheck(
 			new InputCheck<T>()) );
 		userSelectedJobs.add( container.setAutoThreshold(
-			new AutoThresholdRegression<T>(pearsonsCorrelation)) );
+			new AutoThresholdRegression<T>(pearsonsCorrelation,
+					AutoThresholdRegression.Implementation.values()[indexRegr])));
 
 		// add user selected algorithms
 		addIfValid(pearsonsCorrelation, userSelectedJobs);
