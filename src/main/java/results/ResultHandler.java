@@ -19,6 +19,8 @@ public interface ResultHandler<T extends RealType<T>> {
 
 	void handleWarning(Warning warning);
 
+	void handleValue(String name, String value);
+
 	void handleValue(String name, double value);
 
 	void handleValue(String name, double value, int decimals);

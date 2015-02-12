@@ -57,13 +57,18 @@ public class EasyDisplay<T extends RealType<T>> implements ResultHandler<T> {
 		// no warnings are shown in easy display
 	}
 
+	@Override
+	public void handleValue(String name, String value) {
+		textWindow.getTextPanel().appendLine(name + "\t"
+				+ value + "\n");
+	}
+
 	public void handleValue(String name, double value) {
 		handleValue(name, value, 3);
 	}
 
 	public void handleValue(String name, double value, int decimals) {
-		textWindow.getTextPanel().appendLine(name + "\t"
-				+ IJ.d2s(value, decimals) + "\n");
+		handleValue(name, IJ.d2s(value, decimals));
 	}
 
 	protected void printTextStatistics(DataContainer<T> container){
