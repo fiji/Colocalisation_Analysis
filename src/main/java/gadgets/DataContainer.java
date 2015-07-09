@@ -26,7 +26,8 @@ public class DataContainer<T extends RealType< T >> {
 	// enumeration of different mask types
 	public enum MaskType { Regular, Irregular, None };
 	// some general image statistics
-	double meanCh1, meanCh2, minCh1, maxCh1, minCh2, maxCh2, integralCh1, integralCh2;
+	double meanCh1, meanCh2, minCh1, maxCh1, minCh2, maxCh2, integralCh1, integralCh2; 
+	long numberOfPixelsInMask;
 	// The source images that the results are based on
 	RandomAccessibleInterval<T> sourceImage1, sourceImage2;
 	// The names of the two source images
@@ -181,6 +182,7 @@ public class DataContainer<T extends RealType< T >> {
 		maxCh2 = ImageStatistics.getImageMax(sourceImage2, mask).getRealDouble();
 		integralCh1 = ImageStatistics.getImageIntegral(sourceImage1, mask);
 		integralCh2 = ImageStatistics.getImageIntegral(sourceImage2, mask);
+		numberOfPixelsInMask = ImageStatistics.getNumPixels(mask);
 	}
 
 	/**
@@ -231,6 +233,10 @@ public class DataContainer<T extends RealType< T >> {
 
 	public MaskType getMaskType() {
 		return maskType;
+	}
+	
+	public Long getNumberOfPixelsInMask() {
+		return numberOfPixelsInMask;
 	}
 
 	public RandomAccessibleInterval<T> getSourceImage1() {
