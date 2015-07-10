@@ -316,14 +316,13 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	    printTableRow(out, "Max channel 1",  dataContainer.getMaxCh1());
 	    printTableRow(out, "Mean channel 1", dataContainer.getMeanCh1());
 
-	    printTableRow(out, "Min channel 2", dataContainer.getMinCh2());
-	    printTableRow(out, "Max channel 2", dataContainer.getMaxCh2());
+	    printTableRow(out, "Min channel 2",  dataContainer.getMinCh2());
+	    printTableRow(out, "Max channel 2",  dataContainer.getMaxCh2());
 	    printTableRow(out, "Mean channel 2", dataContainer.getMeanCh2());
 	    
-	    printTableRow(out, "No. of pixels in Mask", dataContainer.getNumberOfPixelsInMask());
+	    printTableRow(out, "No. of pixels in ROI (Mask)", dataContainer.getNumberOfPixelsInMask());
 
 	    out.println("</TABLE>");
-
 	    out.print("</html>");
 	    out.close();
 
