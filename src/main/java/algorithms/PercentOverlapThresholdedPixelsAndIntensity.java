@@ -64,17 +64,17 @@ public class PercentOverlapThresholdedPixelsAndIntensity extends Algorithm<T> {
 /**
  * TODO: - implement it all	;-)
  * 
- * Must have a check to see if the is a Mask, if not refuse to run, and thow an error. 
+ * Must have a check to see if the is a Mask, if not refuse to run, and throw an error. 
  * Not just a warning, rather a refusal to run 
- * Running these measures without a ROI will nearly always generate nonsesne as the amount of foreground
- * always varies... and even when all the images should be analysed, its easy enough to be explicit 
- * amout thats bing the case by setting the mask to by all pixels. 
+ * Running these measures without a ROI will nearly always generate nonsense as the amount of foreground
+ * always varies... and even when the whole image should be analysed, its easy enough to be explicit 
+ * about thats being the case by setting the mask to be all pixels. 
  * 
  * 4 methods, all talking a mask, as these measures only make sense with a region of interest,
  * % intensity  and %pixels above thresholds from perspective of either channel or the other. 
  * 
  * 1 method to get number of colcoalized pixels in total.
- * total no of pixels in the ROI (or rather the mask) is alrealdy calculated in ImageStatistics
+ * total no of pixels in the ROI (or rather the mask) is already calculated in ImageStatistics
  * and the DataContainer now grabs that number as a long, so we can use it here. 
  */
 	
