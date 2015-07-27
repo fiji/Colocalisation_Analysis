@@ -71,7 +71,7 @@ import results.Warning;
  */
 
 /**
- * A plugin which does analysis colocalisation on a pair of images.
+ * A plugin which does pixel intensity correlation based colocalisation analysis on a pair of images.
  *
  * @param <T>
  */
