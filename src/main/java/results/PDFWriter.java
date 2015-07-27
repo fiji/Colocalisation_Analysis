@@ -197,12 +197,16 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 			// get a writer object to do the actual output
 			writer = PdfWriter.getInstance(document, new FileOutputStream(path));
 			document.open();
+			
+			// write the colocalization job name at the top of the PDF file as a title
+			Paragraph titlePara = new Paragraph(jobName);
+			document.add(titlePara);
+			
 			// iterate over all produced images
 			for (com.itextpdf.text.Image img : listOfPDFImages) {
 				addImage(img);
 			}
-
-
+			
 			//iterate over all produced text objects
 			for (Paragraph p : listOfPDFTexts) {
 				document.add(p);
