@@ -16,7 +16,7 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * The DataContainer keeps all the source data,
- * pre-processing results and
+ * jobName, pre-processing results and
  * algorithm results that have been computed. 
  * It allows a client to get most of its content
  * and makes the source image and channel information
@@ -34,6 +34,8 @@ public class DataContainer<T extends RealType< T >> {
 	RandomAccessibleInterval<T> sourceImage1, sourceImage2;
 	// The names of the two source images
 	String sourceImage1Name, sourceImage2Name;
+	// The name of the colocalisation run job
+	public String jobName;
 	// The mask for the images
 	RandomAccessibleInterval<BitType> mask;
 	// Type of the used mask
@@ -69,6 +71,8 @@ public class DataContainer<T extends RealType< T >> {
 		sourceImage2 = src2;
 		sourceImage1Name = name1;
 		sourceImage2Name = name2;
+		// create a jobName so ResultHandler instances can all use the same object for the job name. 
+		jobName = "Colocalization_of_" + name1 + "_versus_" + name2;
 		// create a mask that is true at all pixels.
 		final long[] dims = new long[src1.numDimensions()];
 		src1.dimensions(dims);
@@ -114,6 +118,8 @@ public class DataContainer<T extends RealType< T >> {
 		this.ch2 = ch2;
 		sourceImage1Name = name1;
 		sourceImage2Name = name2;
+		// create a jobName so ResultHandler instances can all use the same object for the job name. 
+		jobName = "Colocalization_of_" + name1 + "_versus_" + name2;
 
 		final int numDims = src1.numDimensions();
 		maskBBOffset = new long[numDims];
@@ -152,6 +158,8 @@ public class DataContainer<T extends RealType< T >> {
 		sourceImage2 = src2;
 		sourceImage1Name = name1;
 		sourceImage1Name = name2;
+		// create a jobName so ResultHandler instances can all use the same object for the job name. 
+		jobName = "Colocalization_of_" + name1 + "_versus_" + name2;
 		
 		final int numDims = src1.numDimensions();
 		final long[] dim = new long[numDims];
@@ -255,6 +263,10 @@ public class DataContainer<T extends RealType< T >> {
 
 	public String getSourceImage2Name() {
 		return sourceImage2Name;
+	}
+	
+	public String getJobName() {
+		return jobName;
 	}
 
 	public RandomAccessibleInterval<BitType> getMask() {

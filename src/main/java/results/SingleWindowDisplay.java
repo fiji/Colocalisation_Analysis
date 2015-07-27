@@ -102,9 +102,10 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	protected DataContainer<T> dataContainer = null;
 
 	public SingleWindowDisplay(DataContainer<T> container, PDFWriter<T> pdfWriter){
-		super("Colocalisation " + container.getSourceImage1Name() + " vs " +
-				container.getSourceImage2Name());
-
+		
+		// Use the getJobName() in DataContainer for the SingleWindowDisplay title bar.
+		super(container.getJobName());
+		
 		setPreferredSize(new Dimension(WIN_WIDTH, WIN_HEIGHT));
 
 		// save a reference to the container

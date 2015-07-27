@@ -171,29 +171,34 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 			String nameCh1 = container.getSourceImage1Name();
 			String nameCh2 = container.getSourceImage2Name();
 
-			////send names of the 2 images to IJ.log for scraping batch results
-			IJ.log("ImageNames" + ", " + nameCh1 + ", " + nameCh2);
+			//send names of the 2 images to IJ.log for scraping batch results
+			// This is done below, no need to do it here!
+			// THis has nothing to do with the pdf writer!!!
+			//IJ.log("ImageNames" + ", " + nameCh1 + ", " + nameCh2);
 
-			String name =  "coloc_" + nameCh1 + "_" + nameCh2;
+			// Use the getJobName() in DataContainer for the job name.
+			String jobName =  container.getJobName();
+			
 			/* If a mask is in use, add a counter
-			 * information to the name.
+			 * information to the jobName.
 			 */
 			if (container.getMaskType() != MaskType.None) {
-				name += "_mask_"+ (succeededPrints + 1);
+				jobName += "_mask_"+ (succeededPrints + 1);
 			}
 			// get the path to the file we are about to create
-			SaveDialog sd = new SaveDialog("Save as PDF", name, ".pdf");
-			name = sd.getFileName();
+			SaveDialog sd = new SaveDialog("Save as PDF", jobName, ".pdf");
+			// update jobName id the user changes it in the save file dialog.
+			jobName = sd.getFileName();
 			String directory = sd.getDirectory();
-			// make sure we got what we need
-			if ((name == null) || (directory == null)) {
+			// make sure we have what we need next
+			if ((jobName == null) || (directory == null)) {
 				return;
 			}
-			String path = directory+name;
+			String path = directory+jobName;
 			// create a new iText Document and add date and title
 			document = new Document(isLetter ? PageSize.LETTER : PageSize.A4);
 			document.addCreationDate();
-			document.addTitle(name);
+			document.addTitle(jobName);
 			// get a writer object to do the actual output
 			writer = PdfWriter.getInstance(document, new FileOutputStream(path));
 			document.open();
@@ -203,7 +208,7 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 			}
 
 			//send name of analysis job to IJ.log for scraping batch results
-			IJ.log("ColocAnalysisJobName" + ", " + name);
+			IJ.log("ColocAnalysisJobName" + ", " + jobName);
 
 			//iterate over all produced text objects
 			for (Paragraph p : listOfPDFTexts) {
