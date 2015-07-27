@@ -30,6 +30,9 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	// the saturated pixel ratio of channel 2
 	double saturatedRatioCh2;
 
+	// the coloc job name
+	String colocJobName;
+
 	// general image stats/parameters/values
 	double ch1Max;
 	double ch2Max;
@@ -108,6 +111,9 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 		saturatedRatioCh1 = ch1SaturatedRatio * 100.0;
 		saturatedRatioCh2 = ch2SaturatedRatio * 100.0;
 
+		// get job name so the ResultsHandler implementation can have it.
+		colocJobName = container.getJobName();
+
 		// add warnings if values are not in tolerance range
 		if ( Math.abs(zeroZeroRatio) > maxZeroZeroRatio ) {
 
@@ -130,6 +136,16 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	@Override
 	public void processResults(ResultHandler<T> handler) {
 		super.processResults(handler);
+
+		// Here is a good place to have the coloc job name handled by the
+		// ResultsHandler implementation in use, since this class is always run.
+		// I'm going to abuse a ValueResult for this,
+		// even though the jobName has no numerical value...only it's String name...
+		// because i want ot keep the jobName close to all the value results
+		// so they get shown together by whatever implementation of ResultsHandler.
+		handler.handleValue(colocJobName, -1.0, 0);
+
+		// Make the ResultsHander implementation deal with the results.
 		handler.handleValue("% zero-zero pixels", zeroZeroPixelRatio, 2);
 		handler.handleValue("% saturated ch1 pixels", saturatedRatioCh1, 2);
 		handler.handleValue("% saturated ch2 pixels", saturatedRatioCh2, 2);
