@@ -187,7 +187,7 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 			}
 			// get the path to the file we are about to create
 			SaveDialog sd = new SaveDialog("Save as PDF", jobName, ".pdf");
-			// update jobName id the user changes it in the save file dialog.
+			// update jobName if the user changes it in the save file dialog.
 			jobName = sd.getFileName();
 			String directory = sd.getDirectory();
 			// make sure we have what we need next
@@ -207,8 +207,6 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 				addImage(img);
 			}
 
-			//send name of analysis job to IJ.log for scraping batch results
-			IJ.log("ColocAnalysisJobName" + ", " + jobName);
 
 			//iterate over all produced text objects
 			for (Paragraph p : listOfPDFTexts) {
