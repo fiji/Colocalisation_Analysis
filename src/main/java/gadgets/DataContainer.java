@@ -16,10 +16,10 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * The DataContainer keeps all the source data, pre-processing results and
- * algorithms that have been executed. It allows a client to get most its
- * content and makes the source image and channel information available
- * to a client.
-
+ * algorithm results that have been computed. It allows a client to get most of
+ * its content and makes the source image and channel information available to a
+ * client.
+ *
  * @param <T>
  */
 public class DataContainer<T extends RealType< T >> {
@@ -49,10 +49,9 @@ public class DataContainer<T extends RealType< T >> {
 	List< Algorithm<T> > algorithms = new ArrayList< Algorithm<T> >();
 
 	/**
-	 * Creates a new {@link DataContainer} for a specific set of image and
-	 * channel combination.
-	 * We create default thresholds here that are the max and min of the
-	 * type of the source image channels.
+	 * Creates a new {@link DataContainer} for a specific image channel
+	 * combination. We create default thresholds here that are the max and min of
+	 * the data type of the source image channels.
 	 *
 	 * @param src1 The channel one image source
 	 * @param src2 The channel two image source
@@ -66,7 +65,7 @@ public class DataContainer<T extends RealType< T >> {
 		sourceImage2 = src2;
 		sourceImage1Name = name1;
 		sourceImage2Name = name2;
-		// create a mask that is everywhere valid
+		// create a mask that is true at all pixels.
 		final long[] dims = new long[src1.numDimensions()];
 		src1.dimensions(dims);
 		mask = MaskFactory.createMask(dims, true);
