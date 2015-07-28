@@ -203,9 +203,12 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 					dataContainer.getSourceImage2(),
 					dataContainer.getSourceImage2Name() ) );
 		}
-		// create HTML table
-		makeHtmlText();
-		// set up the GUI
+		
+		// create HTML table.... dont need to do it here, as makeHtmlText()
+		// is run in the setup() method! This caused duplication of results in IJ.log
+		// makeHtmlText();
+		
+		// set up the GUI, which runs makeHtmlText() for the value results formatting. 
 		setup();
 		// display the first image available, if any
 		if (listOfImages.size() > 0) {
@@ -306,6 +309,8 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 
 	    for ( ValueResult vr : valueResults) {
 		    printTableRow(out, vr.name, vr.number, vr.decimals);
+		    // Spit results to the IJ log. 
+		    IJ.log(vr.name + ", " + IJ.d2s(vr.number, vr.decimals));
 	    }
 
 	    out.println("</TABLE>");
