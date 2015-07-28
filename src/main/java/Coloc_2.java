@@ -53,7 +53,7 @@ import results.SingleWindowDisplay;
 import results.Warning;
 
 /**
-   Copyright 2010, 2011 Daniel J. White, Tom Kazimiers, Johannes Schindelin
+   Copyright 2010-2015, Daniel J. White, Tom Kazimiers, Johannes Schindelin
    and the Fiji project. Fiji is just imageJ - batteries included.
 
    This program is free software: you can redistribute it and/or modify
