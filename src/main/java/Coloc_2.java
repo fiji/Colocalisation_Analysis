@@ -247,7 +247,7 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 		gd.addChoice("Threshold regression", regressions,
 				regressions[indexRegr]);
 
-		gd.addCheckbox("Show_\"Save_PDF\"_Dialog", autoSavePdf);
+		gd.addCheckbox("Show_Save_PDF_Dialog", autoSavePdf);
 		gd.addCheckbox("Display_Images_in_Result", displayImages);
 		gd.addCheckbox("Display_Shuffled_Images", displayShuffledCostes);
 		final Checkbox shuffleCb = (Checkbox) gd.getCheckboxes().lastElement();
