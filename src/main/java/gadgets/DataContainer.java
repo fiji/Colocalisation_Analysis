@@ -37,7 +37,8 @@ public class DataContainer<T extends RealType< T >> {
 	RandomAccessibleInterval<BitType> mask;
 	// Type of the used mask
 	protected MaskType maskType;
-
+	// the hash code integer of the mask object
+	int maskHash;
 	// The channels of the source images that the result relate to
 	int ch1, ch2;
 	// The masks bounding box
@@ -67,9 +68,7 @@ public class DataContainer<T extends RealType< T >> {
 		sourceImage2 = src2;
 		sourceImage1Name = name1;
 		sourceImage2Name = name2;
-		// create a jobName so ResultHandler instances can all use the same
-		// object for the job name.
-		jobName = "Colocalization_of_" + name1 + "_versus_" + name2;
+
 		// create a mask that is true at all pixels.
 		final long[] dims = new long[src1.numDimensions()];
 		src1.dimensions(dims);
@@ -83,6 +82,11 @@ public class DataContainer<T extends RealType< T >> {
 		mask.dimensions(maskBBSize);
 		// indicated that there is actually no mask
 		maskType = MaskType.None;
+
+		maskHash = mask.hashCode();
+		// create a jobName so ResultHandler instances can all use the same object
+		// for the job name.
+		jobName = "Colocalization_of_" + name1 + "_versus_" + name2 + "_" + maskHash;
 
 		calculateStatistics();
 	}
@@ -115,9 +119,6 @@ public class DataContainer<T extends RealType< T >> {
 		this.ch2 = ch2;
 		sourceImage1Name = name1;
 		sourceImage2Name = name2;
-		// create a jobName so ResultHandler instances can all use the same
-		// object for the job name.
-		jobName = "Colocalization_of_" + name1 + "_versus_" + name2;
 
 		final int numDims = src1.numDimensions();
 		maskBBOffset = new long[numDims];
@@ -130,6 +131,11 @@ public class DataContainer<T extends RealType< T >> {
 		maskType = MaskType.Irregular;
 		adjustRoiOffset(offset, maskBBOffset, dim);
 		adjustRoiSize(size, maskBBSize, dim, maskBBOffset);
+
+		maskHash = mask.hashCode();
+		// create a jobName so ResultHandler instances can all use the same
+		// object for the job name.
+		jobName = "Colocalization_of_" + name1 + "_versus_" + name2 + "_" + maskHash;
 
 		calculateStatistics();
 	}
@@ -156,9 +162,6 @@ public class DataContainer<T extends RealType< T >> {
 		sourceImage2 = src2;
 		sourceImage1Name = name1;
 		sourceImage1Name = name2;
-		// create a jobName so ResultHandler instances can all use the same
-		// object for the job name.
-		jobName = "Colocalization_of_" + name1 + "_versus_" + name2;
 		
 		final int numDims = src1.numDimensions();
 		final long[] dim = new long[numDims];
@@ -169,7 +172,7 @@ public class DataContainer<T extends RealType< T >> {
 		adjustRoiOffset(offset, roiOffset, dim);
 		adjustRoiSize(size, roiSize, dim, roiOffset);
 
-		// create a mask that is everywhere valid
+		// create a mask that is valid everywhere
 		mask = MaskFactory.createMask(dim, roiOffset, roiSize);
 		maskBBOffset = roiOffset.clone();
 		maskBBSize = roiSize.clone();
@@ -178,6 +181,11 @@ public class DataContainer<T extends RealType< T >> {
 
 		this.ch1 = ch1;
 		this.ch2 = ch2;
+
+		maskHash = mask.hashCode();
+		// create a jobName so ResultHandler instances can all use the same
+		// object for the job name.
+		jobName = "Colocalization_of_" + name1 + "_versus_" + name2 + "_" + maskHash;
 
 		calculateStatistics();
 	}
