@@ -320,20 +320,6 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		}
 
 	    out.println("</TABLE>");
-
-	    // print some image statistics
-	    out.print("<H1>Image statistics</H1>");
-	    out.print("<TABLE>");
-	    printTableRow(out, "Min channel 1",  dataContainer.getMinCh1());
-	    printTableRow(out, "Max channel 1",  dataContainer.getMaxCh1());
-	    printTableRow(out, "Mean channel 1", dataContainer.getMeanCh1());
-
-	    printTableRow(out, "Min channel 2", dataContainer.getMinCh2());
-	    printTableRow(out, "Max channel 2", dataContainer.getMaxCh2());
-	    printTableRow(out, "Mean channel 2", dataContainer.getMeanCh2());
-
-	    out.println("</TABLE>");
-
 	    out.print("</html>");
 	    out.close();
 
