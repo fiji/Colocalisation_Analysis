@@ -170,8 +170,10 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 	public void process() {
 		try {
 			// produce default name
-			String nameCh1 = container.getSourceImage1Name();
-			String nameCh2 = container.getSourceImage2Name();
+			// don't need to do it here anymore, as DataContainer has the jobName
+			// made from the image names already. 
+			//String nameCh1 = container.getSourceImage1Name();
+			//String nameCh2 = container.getSourceImage2Name();
 
 			// Use the getJobName() in DataContainer for the job name.
 			String jobName =  container.getJobName();
@@ -180,7 +182,11 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 			 * information to the jobName.
 			 */
 			if (container.getMaskType() != MaskType.None) {
-				jobName += "_mask_"+ (succeededPrints + 1);
+				// maskHash is now used as the mask or ROI unique ID in the jobName
+				// but we can still increment and use succeededPrints
+				// at the end of the filename for PDFs when there is a mask. 
+				//jobName += "_mask_"+ (succeededPrints + 1);
+				jobName += (succeededPrints + 1);
 			}
 			// get the path to the file we are about to create
 			SaveDialog sd = new SaveDialog("Save as PDF", jobName, ".pdf");
