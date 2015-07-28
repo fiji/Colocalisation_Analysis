@@ -11,8 +11,9 @@ import results.ResultHandler;
 
 /**
  * This class implements some basic checks for the input image
- * data. For instance is the percentage of zero-zero pixels
- * checked or how many pixels are saturated.
+ * data. For instance: Is the percentage of zero-zero or 
+ * saturated pixels too high?
+ * Also, we get basic image properties / stats from imglib2, 
  */
 public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	/* the maximum allowed ratio between zero-zero and
@@ -33,6 +34,17 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	// the coloc job name
 	String colocJobName;
 
+	// general image stats/parameters/values
+	double ch1Max;
+	double ch2Max;
+	double ch1Min;
+	double ch2Min;
+	double ch1Mean;
+	double ch2Mean;
+	double ch1Integral;
+	double ch2Integral;
+	long pixelCountInMask;
+
 	public InputCheck() {
 		super("input data check");
 	}
@@ -49,24 +61,35 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 		TwinCursor<T> cursor = new TwinCursor<T>(img1.randomAccess(),
 				img2.randomAccess(), Views.iterable(mask).cursor());
 
-		double ch1Max = container.getMaxCh1();
-		double ch2Max = container.getMaxCh2();
-
+		// get the coloc job name so the ResultsHandler implementation can have it. 
+		colocJobName = container.getJobName();
+		
+		// get various general image properties/stats/values from the DataContainer
+		ch1Max = container.getMaxCh1();
+		ch2Max = container.getMaxCh2();
+		ch1Min = container.getMinCh1();
+		ch2Min = container.getMinCh2();
+		ch1Mean = container.getMeanCh1();
+		ch2Mean = container.getMeanCh2();
+		ch1Integral = container.getIntegralCh1();
+		ch2Integral = container.getIntegralCh2();
+		pixelCountInMask = container.getNumberOfPixelsInMask();
+		
 		// the total amount of pixels that have been taken into consideration
-		int N = 0;
-		// the amount of pixels that are zero in both channels
-		int Nzero = 0;
-		// the amount of ch1 pixels with the maximum ch1 value;
-		int NsaturatedCh1 = 0;
-		// the amount of ch2 pixels with the maximum ch2 value;
-		int NsaturatedCh2 = 0;
+		long N = 0;
+		// the number of pixels that are zero in both channels
+		long Nzero = 0;
+		// the number of ch1 pixels with the maximum ch1 value;
+		long NsaturatedCh1 = 0;
+		// the number of ch2 pixels with the maximum ch2 value;
+		long NsaturatedCh2 = 0;
 
 		while (cursor.hasNext()) {
 			cursor.fwd();
 			double ch1 = cursor.getFirst().getRealDouble();
 			double ch2 = cursor.getSecond().getRealDouble();
 
-			// is the current pixels combination a zero pixel?
+			// is the current pixels combination a zero-zero pixel?
 			if (Math.abs(ch1 + ch2) < 0.00001)
 				Nzero++;
 
@@ -132,5 +155,16 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 		handler.handleValue("% zero-zero pixels", zeroZeroPixelRatio, 2);
 		handler.handleValue("% saturated ch1 pixels", saturatedRatioCh1, 2);
 		handler.handleValue("% saturated ch2 pixels", saturatedRatioCh2, 2);
+		
+		// Make the ResultsHander implementation deal with the images' stats/parameters/values
+		handler.handleValue("Channel 1 Max", ch1Max, 3);
+		handler.handleValue("Channel 2 Max", ch2Max, 3);
+		handler.handleValue("Channel 1 Min", ch1Min, 3);
+		handler.handleValue("Channel 2 Min", ch2Min, 3);
+		handler.handleValue("Channel 1 Mean", ch1Mean, 3);
+		handler.handleValue("Channel 2 Mean", ch2Mean, 3);
+		handler.handleValue("Channel 1 Integrated (Sum) Intensity", ch1Integral, 3);
+		handler.handleValue("Channel 2 Integrated (Sum) Intensity", ch2Integral, 3);
+		handler.handleValue("Number of pixels in Mask or ROI", pixelCountInMask, 0);
 	}
 }

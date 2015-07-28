@@ -114,8 +114,10 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 	}
 
 	public void handleValue(String name, double value, int decimals) {
-		//send (output parameter name, value)  to IJ.log for scraping batch results
-		IJ.log(name + ", "+ IJ.d2s(value, decimals));
+		//Dont send (output parameter name, value)  to IJ.log for scraping batch results,
+		// because the default ResultHandler should always do it, 
+		// in this case SingleWindowDisplay now does it. 
+		//IJ.log(name + ", "+ IJ.d2s(value, decimals));
 		listOfPDFTexts.add(new Paragraph(name + ": " + IJ.d2s(value, decimals)));
 	}
 
