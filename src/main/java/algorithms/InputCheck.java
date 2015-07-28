@@ -12,7 +12,9 @@ import results.ResultHandler;
 /**
  * This class implements some basic checks for the input image data. For
  * instance: Is the percentage of zero-zero or saturated pixels too high? Also,
- * we get basic image properties / stats from imglib2,
+ * we get basic image properties / stats from imglib2, and also the
+ * colocalization job name from the DataContainer and allow implementations of
+ * ResultHandler to report them.
  */
 public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	/* the maximum allowed ratio between zero-zero and
@@ -137,8 +139,6 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	public void processResults(ResultHandler<T> handler) {
 		super.processResults(handler);
 
-		// Here is a good place to have the coloc job name handled by the
-		// ResultsHandler implementation in use, since this class is always run.
 		// I'm going to abuse a ValueResult for this,
 		// even though the jobName has no numerical value...only it's String name...
 		// because i want ot keep the jobName close to all the value results
