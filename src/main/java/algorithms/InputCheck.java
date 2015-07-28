@@ -14,6 +14,8 @@ import results.ResultHandler;
  * data. For instance: Is the percentage of zero-zero or 
  * saturated pixels too high?
  * Also, we get basic image properties / stats from imglib2, 
+ * and also the colocalization job name from the DataContainer
+ * and allow implementations of ResultHandler to report them.
  */
 public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	/* the maximum allowed ratio between zero-zero and
@@ -116,10 +118,7 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 		zeroZeroPixelRatio = zeroZeroRatio * 100.0;
 		saturatedRatioCh1 = ch1SaturatedRatio * 100.0;
 		saturatedRatioCh2 = ch2SaturatedRatio * 100.0;
-		
-		// get the coloc job name so the ResultsHandler implementation can have it. 
-		colocJobName = container.getJobName();
-		
+
 		// add warnings if values are not in tolerance range
 		if ( Math.abs(zeroZeroRatio) > maxZeroZeroRatio ) {
 
