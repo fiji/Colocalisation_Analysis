@@ -45,7 +45,7 @@ import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Util;
+//import net.imglib2.util.Util;
 import net.imglib2.view.Views;
 import results.PDFWriter;
 import results.ResultHandler;
