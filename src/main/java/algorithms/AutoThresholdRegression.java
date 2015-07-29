@@ -140,7 +140,7 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 			// Select a stepper
 			if (implementation == Implementation.Bisection) {
 				// Start at the midpoint of channel one
-				stepper = new Bisectiontepper(
+				stepper = new BisectionStepper(
 					Math.abs(container.getMaxCh1() + container.getMinCh1()) * 0.5,
 					container.getMaxCh1());
 			} else {
@@ -165,7 +165,7 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 			// Select a stepper
 			if (implementation == Implementation.Bisection) {
 				// Start at the midpoint of channel two
-				stepper = new Bisectiontepper(
+				stepper = new BisectionStepper(
 					Math.abs(container.getMaxCh2() + container.getMinCh2()) * 0.5,
 					container.getMaxCh2());
 			} else {

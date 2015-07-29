@@ -9,7 +9,7 @@ package algorithms;
  * @author Tom Kazimiers
  *
  */
-public class Bisectiontepper extends Stepper {
+public class BisectionStepper extends Stepper {
 	protected double threshold1;
 	protected double threshold2;
 	protected double thrDiff = Double.NaN;
@@ -23,7 +23,7 @@ public class Bisectiontepper extends Stepper {
 	 * @param threshold The current threshold
 	 * @param lastThreshold The last threshold
 	 */
-	public Bisectiontepper(double threshold, double lastThreshold) {
+	public BisectionStepper(double threshold, double lastThreshold) {
 		threshold1 = threshold;
 		threshold2 = lastThreshold;
 		thrDiff = Math.abs(threshold1 - threshold2);
