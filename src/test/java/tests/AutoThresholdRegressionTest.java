@@ -7,9 +7,8 @@ import net.imglib2.type.numeric.integer.UnsignedByteType;
 
 import org.junit.Test;
 
-import com.sun.jdi.FloatType;
-
 import algorithms.AutoThresholdRegression;
+import algorithms.AutoThresholdRegression.Implementation;
 import algorithms.MissingPreconditionException;
 import algorithms.PearsonsCorrelation;
 
@@ -33,6 +32,12 @@ public class AutoThresholdRegressionTest extends ColocalisationTest {
 	 */
 	@Test
 	public void cummutativityTest() throws MissingPreconditionException {
+		_cummutativityTest(Implementation.Costes);
+		_cummutativityTest(Implementation.Bisection);
+	}
+
+	protected void _cummutativityTest(Implementation atrImplementation)
+			throws MissingPreconditionException {
 		PearsonsCorrelation<UnsignedByteType> pc1 =
 				new PearsonsCorrelation<UnsignedByteType>(
 						PearsonsCorrelation.Implementation.Fast);
@@ -41,9 +46,9 @@ public class AutoThresholdRegressionTest extends ColocalisationTest {
 						PearsonsCorrelation.Implementation.Fast);
 
 		AutoThresholdRegression<UnsignedByteType> atr1 =
-				new AutoThresholdRegression<UnsignedByteType>(pc1);
+				new AutoThresholdRegression<UnsignedByteType>(pc1, atrImplementation);
 		AutoThresholdRegression<UnsignedByteType> atr2 =
-				new AutoThresholdRegression<UnsignedByteType>(pc2);
+				new AutoThresholdRegression<UnsignedByteType>(pc2, atrImplementation);
 
 		RandomAccessibleInterval<UnsignedByteType> img1 = syntheticNegativeCorrelationImageCh1;
 		RandomAccessibleInterval<UnsignedByteType> img2 = syntheticNegativeCorrelationImageCh2;

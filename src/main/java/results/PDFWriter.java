@@ -109,14 +109,20 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 		listOfPDFTexts.add(new Paragraph("Warning! " + warning.getShortMessage() + " - " + warning.getLongMessage()));
 	}
 
+	@Override
+	public void handleValue(String name, String value) {
+		// send (output parameter name, value)  to IJ.log for scraping batch results
+		IJ.log(name + ", " + value);
+		listOfPDFTexts.add(new Paragraph(name + ": " + value));
+	}
+
 	public void handleValue(String name, double value) {
 		handleValue(name, value, 3);
 	}
 
 	public void handleValue(String name, double value, int decimals) {
 		//send (output parameter name, value)  to IJ.log for scraping batch results
-		IJ.log(name + ", "+ IJ.d2s(value, decimals));
-		listOfPDFTexts.add(new Paragraph(name + ": " + IJ.d2s(value, decimals)));
+		handleValue(name, IJ.d2s(value, decimals));
 	}
 
 	/**

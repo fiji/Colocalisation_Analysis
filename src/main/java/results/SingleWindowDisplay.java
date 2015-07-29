@@ -231,6 +231,11 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		warnings.add( warning );
 	}
 
+	@Override
+	public void handleValue(String name, String value) {
+		valueResults.add( new ValueResult(name, value));
+	}
+
 	public void handleValue(String name, double value) {
 		handleValue(name, value, 3);
 	}
@@ -304,7 +309,11 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	    out.print("<TH>Name</TH><TH>Result</TH></TR>");
 
 	    for ( ValueResult vr : valueResults) {
-		    printTableRow(out, vr.name, vr.number, vr.decimals);
+			if (vr.isNumber) {
+				printTableRow(out, vr.name, vr.number, vr.decimals);
+			} else {
+				printTableRow(out, vr.name, vr.value);
+			}
 	    }
 
 	    out.println("</TABLE>");

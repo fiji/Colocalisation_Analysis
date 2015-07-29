@@ -6,7 +6,6 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Util;
 import net.imglib2.view.Views;
 import results.ResultHandler;
 
@@ -15,6 +14,9 @@ import results.ResultHandler;
  * used for Person colocalisation calculation.
  */
 public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<T> {
+	// Identifiers for choosing which implementation to use
+	public enum Implementation {Costes, Bisection};
+	Implementation implementation = Implementation.Bisection;
 	/* the threshold for y-intercept to y-max to
 	 *  raise a warning about it being to high.
 	 */
@@ -33,8 +35,13 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 	PearsonsCorrelation<T> pearsonsCorrellation;
 
 	public AutoThresholdRegression(PearsonsCorrelation<T> pc) {
+		this(pc, Implementation.Costes);
+	}
+
+	public AutoThresholdRegression(PearsonsCorrelation<T> pc, Implementation impl) {
 		super("auto threshold regression");
 		pearsonsCorrellation = pc;
+		implementation = impl;
 	}
 
 	@Override
@@ -107,15 +114,8 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		final double m = num/denom;
 		final double b = ch2Mean - m*ch1Mean ;
 
-		// initialize some variables relevant for regression
-		// indicates whether the threshold has been found or not
-		boolean thresholdFound = false;
-		// the maximum number of iterations to look for the threshold
-		final int maxIterations = 100;
-		// the current iteration
-		int iteration = 0;
-		// current and last working threshold
-		double threshold1, threshold2;
+		// A stepper that walks thresholds
+		Stepper stepper;
 		// to map working thresholds to channels
 		ChannelMapper mapper;
 
@@ -123,11 +123,6 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		// leans more towards the abscissa (which represents channel one) for
 		// positive and negative correlation.
 		if (m > -1 && m < 1.0) {
-			// Start at the midpoint of channel one
-			threshold1 = Math.abs(container.getMaxCh1() +
-					container.getMinCh1()) * 0.5;
-			threshold2 = container.getMaxCh1();
-
 			// Map working threshold to channel one (because channel one has a
 			// larger maximum value.
 			mapper = new ChannelMapper() {
@@ -142,12 +137,17 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 					return (t * m) + b;
 				}
 			};
-		} else {
-			// Start at the midpoint of channel two
-			threshold1 = Math.abs(container.getMaxCh2() +
-					container.getMinCh2()) * 0.5;
-			threshold2 = container.getMaxCh2();
+			// Select a stepper
+			if (implementation == Implementation.Bisection) {
+				// Start at the midpoint of channel one
+				stepper = new BisectionStepper(
+					Math.abs(container.getMaxCh1() + container.getMinCh1()) * 0.5,
+					container.getMaxCh1());
+			} else {
+				stepper = new SimpleStepper(container.getMaxCh1());
+			}
 
+		} else {
 			// Map working threshold to channel two (because channel two has a
 			// larger maximum value.
 			mapper = new ChannelMapper() {
@@ -162,6 +162,15 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 					return t;
 				}
 			};
+			// Select a stepper
+			if (implementation == Implementation.Bisection) {
+				// Start at the midpoint of channel two
+				stepper = new BisectionStepper(
+					Math.abs(container.getMaxCh2() + container.getMinCh2()) * 0.5,
+					container.getMaxCh2());
+			} else {
+				stepper = new SimpleStepper(container.getMaxCh2());
+			}
 		}
 
 		// Min threshold not yet implemented
@@ -182,53 +191,31 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		final double maxVal = dummyT.getMaxValue();
 
 		// do regression
-		while (!thresholdFound && iteration<maxIterations) {
+		while (!stepper.isFinished()) {
 			// round ch1 threshold and compute ch2 threshold
-			ch1ThreshMax = Math.round(mapper.getCh1Threshold(threshold1));
-			ch2ThreshMax = Math.round(mapper.getCh2Threshold(threshold1));
+			ch1ThreshMax = Math.round(mapper.getCh1Threshold(stepper.getValue()));
+			ch2ThreshMax = Math.round(mapper.getCh2Threshold(stepper.getValue()));
 			/* Make sure we don't get overflow the image type specific threshold variables
 			 * if the image data type doesn't support this value.
 			 */
 			thresholdCh1.setReal(clamp(ch1ThreshMax, minVal, maxVal));
 			thresholdCh2.setReal(clamp(ch2ThreshMax, minVal, maxVal));
 
-			// Person's R value
-			double currentPersonsR = Double.MAX_VALUE;
-			// indicates if we have actually found a real number
-			boolean badResult = false;
 			try {
 				// do persons calculation within the limits
-				currentPersonsR = pearsonsCorrellation.calculatePearsons(cursor,
-						ch1Mean, ch2Mean, thresholdCh1, thresholdCh2, ThresholdMode.Below);
+				final double currentPersonsR =
+						pearsonsCorrellation.calculatePearsons(cursor,
+						ch1Mean, ch2Mean, thresholdCh1, thresholdCh2,
+						ThresholdMode.Below);
+				stepper.update(currentPersonsR);
 			} catch (MissingPreconditionException e) {
 				/* the exception that could occur is due to numerical
-				 * problems within the pearsons calculation.
-				 */
-				badResult = true;
-			}
-
-			/* If the difference between both thresholds is < 1, we consider
-			 * that as reasonable close to abort the regression.
-			 */
-			final double thrDiff = Math.abs(threshold1 - threshold2);
-			if (thrDiff < 1.0)
-				thresholdFound = true;
-
-			// update working thresholds for next iteration
-			threshold2 = threshold1;
-			if (badResult || currentPersonsR < 0) {
-				// we went too far, increase by the absolute half
-				threshold1 = threshold1 + thrDiff * 0.5;
-			} else if (currentPersonsR > 0) {
-				// as long as r > 0 we go half the way down
-				threshold1 = threshold1 - thrDiff * 0.5;
+				 * problems within the Pearsons calculation. */
+				stepper.update(Double.NaN);
 			}
 
 			// reset the cursor to reuse it
 			cursor.reset();
-
-			// increment iteration counter
-			iteration++;
 		}
 
 		/* Store the new results. The lower thresholds are the types
@@ -269,8 +256,9 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 
 		// add warnings if values are below lowest pixel value of images
 		if ( ch1ThreshMax < container.getMinCh1() || ch2ThreshMax < container.getMinCh2() ) {
-			addWarning("thresholds too low",
-				"The auto threshold method could not find a positive threshold.");
+			String msg ="The auto threshold method could not find a positive threshold.";
+			msg += implementation == Implementation.Costes ? "" : " Maybe you should try classic thresholding.";
+			addWarning("thresholds too low", msg);
 		}
 	}
 
@@ -291,6 +279,7 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		handler.handleValue( "b to y-max ratio", bToYMaxRatio, 2 );
 		handler.handleValue( "Ch1 Max Threshold", ch1MaxThreshold.getRealDouble(), 2);
 		handler.handleValue( "Ch2 Max Threshold", ch2MaxThreshold.getRealDouble(), 2);
+		handler.handleValue( "Threshold regression", implementation.toString());
 	}
 
 	public double getBToYMaxRatio() {
