@@ -202,9 +202,9 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 					dataContainer.getSourceImage2(),
 					dataContainer.getSourceImage2Name() ) );
 		}
-		// create HTML table
-		makeHtmlText();
-		// set up the GUI
+
+		// set up the GUI, which runs makeHtmlText() for the value results
+		// formatting.
 		setup();
 		// display the first image available, if any
 		if (listOfImages.size() > 0) {
@@ -308,29 +308,18 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	    out.print("<TABLE><TR>");
 	    out.print("<TH>Name</TH><TH>Result</TH></TR>");
 
-	    for ( ValueResult vr : valueResults) {
+		// Print table rows and spit results to the IJ log.
+		for ( ValueResult vr : valueResults) {
 			if (vr.isNumber) {
 				printTableRow(out, vr.name, vr.number, vr.decimals);
+				IJ.log(vr.name + ", " + IJ.d2s(vr.number, vr.decimals));
 			} else {
 				printTableRow(out, vr.name, vr.value);
+				IJ.log(vr.name + ", " + vr.value);
 			}
-	    }
+		}
 
 	    out.println("</TABLE>");
-
-	    // print some image statistics
-	    out.print("<H1>Image statistics</H1>");
-	    out.print("<TABLE>");
-	    printTableRow(out, "Min channel 1",  dataContainer.getMinCh1());
-	    printTableRow(out, "Max channel 1",  dataContainer.getMaxCh1());
-	    printTableRow(out, "Mean channel 1", dataContainer.getMeanCh1());
-
-	    printTableRow(out, "Min channel 2", dataContainer.getMinCh2());
-	    printTableRow(out, "Max channel 2", dataContainer.getMaxCh2());
-	    printTableRow(out, "Mean channel 2", dataContainer.getMeanCh2());
-
-	    out.println("</TABLE>");
-
 	    out.print("</html>");
 	    out.close();
 

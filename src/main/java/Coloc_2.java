@@ -53,7 +53,7 @@ import results.SingleWindowDisplay;
 import results.Warning;
 
 /**
-   Copyright 2010, 2011 Daniel J. White, Tom Kazimiers, Johannes Schindelin
+   Copyright 2010-2015, Daniel J. White, Tom Kazimiers, Johannes Schindelin
    and the Fiji project. Fiji is just imageJ - batteries included.
 
    This program is free software: you can redistribute it and/or modify
@@ -71,7 +71,8 @@ import results.Warning;
  */
 
 /**
- * A plugin which does analysis colocalisation on a pair of images.
+ * A plugin which does pixel intensity correlation based colocalisation analysis
+ * on a pair of images.
  *
  * @param <T>
  */
@@ -246,7 +247,7 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 		gd.addChoice("Threshold_regression", regressions,
 				regressions[indexRegr]);
 
-		gd.addCheckbox("Show_\"Save_PDF\"_Dialog", autoSavePdf);
+		gd.addCheckbox("Show_Save_PDF_Dialog", autoSavePdf);
 		gd.addCheckbox("Display_Images_in_Result", displayImages);
 		gd.addCheckbox("Display_Shuffled_Images", displayShuffledCostes);
 		final Checkbox shuffleCb = (Checkbox) gd.getCheckboxes().lastElement();

@@ -121,8 +121,7 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 	}
 
 	public void handleValue(String name, double value, int decimals) {
-		//send (output parameter name, value)  to IJ.log for scraping batch results
-		handleValue(name, IJ.d2s(value, decimals));
+		listOfPDFTexts.add(new Paragraph(name + ": " + IJ.d2s(value, decimals)));
 	}
 
 	/**

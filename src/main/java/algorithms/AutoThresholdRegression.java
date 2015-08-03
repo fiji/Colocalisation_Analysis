@@ -17,10 +17,12 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 	// Identifiers for choosing which implementation to use
 	public enum Implementation {Costes, Bisection};
 	Implementation implementation = Implementation.Bisection;
-	/* the threshold for y-intercept to y-max to
-	 *  raise a warning about it being to high.
+	/* The threshold for ration of y-intercept : y-mean to raise a warning about
+	 * it being to high or low, meaning far from zero. Don't use y-max as before,
+	 * since this could be a very high value outlier. Mean is probably more
+	 * reliable.
 	 */
-	final double warnYInterceptToYMaxRatioThreshold = 0.01;
+	final double warnYInterceptToYMeanRatioThreshold = 0.01;
 	// the slope and and intercept of the regression line
 	double autoThresholdSlope = 0.0, autoThresholdIntercept = 0.0;
 	/* The thresholds for both image channels. Pixels below a lower
@@ -30,7 +32,7 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 	 */
 	T ch1MinThreshold, ch1MaxThreshold, ch2MinThreshold, ch2MaxThreshold;
 	// additional information
-	double bToYMaxRatio = 0.0;
+	double bToYMeanRatio = 0.0;
 	//This is the Pearson's correlation we will use for further calculations
 	PearsonsCorrelation<T> pearsonsCorrellation;
 
@@ -236,12 +238,19 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 
 		autoThresholdSlope = m;
 		autoThresholdIntercept = b;
-		bToYMaxRatio = b / container.getMaxCh2();
+		bToYMeanRatio = b / container.getMeanCh2();
 
 		// add warnings if values are not in tolerance range
-		if ( Math.abs(bToYMaxRatio) > warnYInterceptToYMaxRatioThreshold ) {
-			addWarning("y-intercept high",
-				"The absolute y-intercept of the auto threshold regression line is high. Maybe you should use a ROI, maybe do a background subtraction in both channels.");
+		if ( Math.abs(bToYMeanRatio) > warnYInterceptToYMeanRatioThreshold ) {
+			addWarning("y-intercept far from zero",
+				"The ratio of the y-intercept of the auto threshold regression " +
+				"line to the mean value of Channel 2 is high. This means the " +
+				"y-intercept is far from zero, implying a significant positive " +
+				"or negative zero offset in the image data intensities. Maybe " +
+				"you should use a ROI. Maybe do a background subtraction in " +
+				"both channels. Make sure you didn't clip off the low " +
+				"intensities to zero. This might not affect Pearson's " +
+				"correlation values very much, but might harm other results.");
 		}
 
 		// add warning if threshold is above the image mean
@@ -256,7 +265,8 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 
 		// add warnings if values are below lowest pixel value of images
 		if ( ch1ThreshMax < container.getMinCh1() || ch2ThreshMax < container.getMinCh2() ) {
-			String msg ="The auto threshold method could not find a positive threshold.";
+			String msg = "The auto threshold method could not find a positive " +
+				"threshold, so thresholded results are meaningless.";
 			msg += implementation == Implementation.Costes ? "" : " Maybe you should try classic thresholding.";
 			addWarning("thresholds too low", msg);
 		}
@@ -276,18 +286,18 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 
 		handler.handleValue( "m (slope)", autoThresholdSlope , 2 );
 		handler.handleValue( "b (y-intercept)", autoThresholdIntercept, 2 );
-		handler.handleValue( "b to y-max ratio", bToYMaxRatio, 2 );
+		handler.handleValue( "b to y-mean ratio", bToYMeanRatio, 2 );
 		handler.handleValue( "Ch1 Max Threshold", ch1MaxThreshold.getRealDouble(), 2);
 		handler.handleValue( "Ch2 Max Threshold", ch2MaxThreshold.getRealDouble(), 2);
 		handler.handleValue( "Threshold regression", implementation.toString());
 	}
 
-	public double getBToYMaxRatio() {
-		return bToYMaxRatio;
+	public double getBToYMeanRatio() {
+		return bToYMeanRatio;
 	}
 
 	public double getWarnYInterceptToYMaxRatioThreshold() {
-		return warnYInterceptToYMaxRatioThreshold;
+		return warnYInterceptToYMeanRatioThreshold;
 	}
 
 	public double getAutoThresholdSlope() {
