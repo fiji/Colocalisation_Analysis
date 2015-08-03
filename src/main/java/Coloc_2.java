@@ -243,7 +243,7 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 		gd.addChoice("ROI_or_mask", roisAndMasks, roisAndMasks[indexMask]);
 		//gd.addChoice("Use ROI", roiLabels, roiLabels[indexRoi]);
 
-		gd.addChoice("Threshold regression", regressions,
+		gd.addChoice("Threshold_regression", regressions,
 				regressions[indexRegr]);
 
 		gd.addCheckbox("Show_\"Save_PDF\"_Dialog", autoSavePdf);
