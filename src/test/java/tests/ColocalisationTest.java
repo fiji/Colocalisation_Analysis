@@ -34,7 +34,7 @@ public abstract class ColocalisationTest {
 	double syntheticNegativeCorrelationImageCh1Mean;
 	double syntheticNegativeCorrelationImageCh2Mean;
 	
-	// images like in the manders paper
+	// images like in the Manders paper
 	RandomAccessibleInterval<UnsignedByteType> mandersA, mandersB, mandersC, mandersD,
 		mandersE, mandersF, mandersG, mandersH, mandersI;
 	RandomAccessibleInterval<BitType> mandersAlwaysTrueMask;
