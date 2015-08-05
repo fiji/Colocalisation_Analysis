@@ -3,6 +3,7 @@ package tests;
 import gadgets.MaskFactory;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.math.ImageStatistics;
+import net.imglib2.img.Img;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
@@ -20,9 +21,12 @@ public abstract class ColocalisationTest {
 	double zeroCorrelationImageCh1Mean;
 	double zeroCorrelationImageCh2Mean;
 
-	// images and meta data for positive correlation
+	// images and meta data for positive correlation test
+	// and real noisy image Manders' coeff with mask test
 	RandomAccessibleInterval<UnsignedByteType> positiveCorrelationImageCh1;
 	RandomAccessibleInterval<UnsignedByteType> positiveCorrelationImageCh2;
+	//  open mask image as a bit type cursor
+	Img<UnsignedByteType> positiveCorrelationMaskImage;
 	RandomAccessibleInterval<BitType> positiveCorrelationAlwaysTrueMask;
 	double positiveCorrelationImageCh1Mean;
 	double positiveCorrelationImageCh2Mean;
@@ -60,6 +64,8 @@ public abstract class ColocalisationTest {
 
 		positiveCorrelationImageCh2 = TestImageAccessor.loadTiffFromJar("/colocsample1b-red.tif");
 		positiveCorrelationImageCh2Mean = ImageStatistics.getImageMean(positiveCorrelationImageCh2);
+		
+		positiveCorrelationMaskImage = TestImageAccessor.loadTiffFromJarAsImg("/colocsample1b-mask.tif");
 
 		final long[] dimPosCorrCh1 = new long[ positiveCorrelationImageCh1.numDimensions() ];
 		positiveCorrelationImageCh1.dimensions(dimPosCorrCh1);

@@ -4,14 +4,35 @@ import static org.junit.Assert.assertEquals;
 import algorithms.MandersColocalization;
 import algorithms.MandersColocalization.MandersResults;
 import algorithms.MissingPreconditionException;
+import net.imglib2.Cursor;
+import net.imglib2.IterableInterval;
 import net.imglib2.TwinCursor;
+import net.imglib2.converter.Converter;
+import net.imglib2.converter.Converters;
+import net.imglib2.img.Img;
+import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
 
+import gadgets.ThresholdMode;
+
 import org.junit.Test;
 
+/**
+ * This class contains JUnit 4 test cases for the calculation
+ * of Manders' split colocalization coefficients
+ *
+ * @author Dan White & Tom Kazimiers
+ */
 public class MandersColocalizationTest extends ColocalisationTest {
 
+	/**
+	 * This method tests artificial test images as detailed in 
+	 * the Manders et al. paper, using above zero threshold (none).
+	 * Note: It is not sensitive to choosing the wrong channel to test for
+	 * above threshold, because threshold is same for both channels: above zero,
+	 * and also that the blobs overlap perfectly or not at all.
+	 */
 	@Test
 	public void mandersPaperImagesTest() throws MissingPreconditionException {
 		MandersColocalization<UnsignedByteType> mc =
@@ -126,5 +147,57 @@ public class MandersColocalizationTest extends ColocalisationTest {
 
 		assertEquals(0.083d, r.m1, 0.001);
 		assertEquals(0.75d, r.m2, 0.0001);
+	}
+	
+	/**
+	 * This method tests real experimental noisy but 
+	 * biologically perfectly colocalized test images, 
+	 * using previously calculated autothresholds (.above mode)
+	 * Amongst other things, hopefully it is sensitive to
+	 * choosing the wrong channel to test for above threshold
+	 */
+	@Test
+	public void mandersRealNoisyImagesTest() throws MissingPreconditionException {
+		
+		MandersColocalization<UnsignedByteType> mrnc = 
+				new MandersColocalization<UnsignedByteType>();
+
+		// test biologically perfect but noisy image coloc combination
+		// this cast is bad, so use Views.iterable instead. 
+		//Cursor<BitType> mask = Converters.convert((IterableInterval<UnsignedByteType>) positiveCorrelationMaskImage,
+		Cursor<BitType> mask = Converters.convert(Views.iterable(positiveCorrelationMaskImage),
+                new Converter<UnsignedByteType, BitType>() {
+
+                    @Override
+                    public void convert(UnsignedByteType arg0, BitType arg1) {
+                        arg1.set(arg0.get() > 0);
+                    }
+                }, new BitType()).cursor();
+		
+		TwinCursor<UnsignedByteType> twinCursor;
+		MandersResults r;
+		// Manually set the thresholds for ch1 and ch2 with the results from a
+		// Costes Autothreshold using bisection implementation of regression, of the images used
+		UnsignedByteType thresholdCh1 = new UnsignedByteType();
+		thresholdCh1.setInteger(70);
+		UnsignedByteType thresholdCh2 = new UnsignedByteType();
+		thresholdCh2.setInteger(53);
+		//Set the threshold mode
+		ThresholdMode tMode;
+		tMode = ThresholdMode.Above;
+
+		twinCursor = new TwinCursor<UnsignedByteType>(
+				positiveCorrelationImageCh1.randomAccess(),
+				positiveCorrelationImageCh2.randomAccess(),
+				mask);
+
+
+		// should use the constructor that takes autothresholds and mask channel, not this one?
+		// thresholds of ch1=14 and ch2=12 can be used,
+		// that's what autothresholds (bisection) calculates.
+		r = mrnc.calculateMandersCorrelation(twinCursor, thresholdCh1, thresholdCh2, tMode);
+
+		assertEquals(0.705665d, r.m1, 0.000001);
+		assertEquals(0.724752d, r.m2, 0.000001);
 	}
 }
