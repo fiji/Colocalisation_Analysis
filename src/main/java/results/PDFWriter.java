@@ -172,43 +172,44 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 
 	public void process() {
 		try {
-			// produce default name
-			String nameCh1 = container.getSourceImage1Name();
-			String nameCh2 = container.getSourceImage2Name();
+			// Use the getJobName() in DataContainer for the job name.
+			String jobName = container.getJobName();
 
-			////send names of the 2 images to IJ.log for scraping batch results
-			IJ.log("ImageNames" + ", " + nameCh1 + ", " + nameCh2);
-
-			String name =  "coloc_" + nameCh1 + "_" + nameCh2;
 			/* If a mask is in use, add a counter
-			 * information to the name.
+			 * information to the jobName.
 			 */
 			if (container.getMaskType() != MaskType.None) {
-				name += "_mask_"+ (succeededPrints + 1);
+				// maskHash is now used as the mask or ROI unique ID in the
+				// jobName but we can still increment and use succeededPrints at
+				// the end of the filename for PDFs when there is a mask.
+				jobName += (succeededPrints + 1);
 			}
 			// get the path to the file we are about to create
-			SaveDialog sd = new SaveDialog("Save as PDF", name, ".pdf");
-			name = sd.getFileName();
+			SaveDialog sd = new SaveDialog("Save as PDF", jobName, ".pdf");
+			// update jobName if the user changes it in the save file dialog.
+			jobName = sd.getFileName();
 			String directory = sd.getDirectory();
-			// make sure we got what we need
-			if ((name == null) || (directory == null)) {
+			// make sure we have what we need next
+			if ((jobName == null) || (directory == null)) {
 				return;
 			}
-			String path = directory+name;
+			String path = directory+jobName;
 			// create a new iText Document and add date and title
 			document = new Document(isLetter ? PageSize.LETTER : PageSize.A4);
 			document.addCreationDate();
-			document.addTitle(name);
+			document.addTitle(jobName);
 			// get a writer object to do the actual output
 			writer = PdfWriter.getInstance(document, new FileOutputStream(path));
 			document.open();
+
+			// write job name at the top of the PDF file as a title
+			Paragraph titlePara = new Paragraph(jobName);
+			document.add(titlePara);
+
 			// iterate over all produced images
 			for (com.itextpdf.text.Image img : listOfPDFImages) {
 				addImage(img);
 			}
-
-			//send name of analysis job to IJ.log for scraping batch results
-			IJ.log("ColocAnalysisJobName" + ", " + name);
 
 			//iterate over all produced text objects
 			for (Paragraph p : listOfPDFTexts) {

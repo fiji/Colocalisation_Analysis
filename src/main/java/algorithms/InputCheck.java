@@ -12,7 +12,9 @@ import results.ResultHandler;
 /**
  * This class implements some basic checks for the input image data. For
  * instance: Is the percentage of zero-zero or saturated pixels too high? Also,
- * we get basic image properties / stats from imglib2,
+ * we get basic image properties / stats from imglib2, and also the
+ * colocalization job name from the DataContainer and allow implementations of
+ * ResultHandler to report them.
  */
 public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	/* the maximum allowed ratio between zero-zero and
@@ -29,6 +31,9 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	double saturatedRatioCh1;
 	// the saturated pixel ratio of channel 2
 	double saturatedRatioCh2;
+
+	// the coloc job name
+	String colocJobName;
 
 	// general image stats/parameters/values
 	double ch1Max;
@@ -108,6 +113,9 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 		saturatedRatioCh1 = ch1SaturatedRatio * 100.0;
 		saturatedRatioCh2 = ch2SaturatedRatio * 100.0;
 
+		// get job name so the ResultsHandler implementation can have it.
+		colocJobName = container.getJobName();
+
 		// add warnings if values are not in tolerance range
 		if ( Math.abs(zeroZeroRatio) > maxZeroZeroRatio ) {
 
@@ -130,6 +138,14 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	@Override
 	public void processResults(ResultHandler<T> handler) {
 		super.processResults(handler);
+
+		// I'm going to abuse a ValueResult for this,
+		// even though the jobName has no numerical value...only it's String name...
+		// because i want ot keep the jobName close to all the value results
+		// so they get shown together by whatever implementation of ResultsHandler.
+		handler.handleValue(colocJobName, -1.0, 0);
+
+		// Make the ResultsHander implementation deal with the results.
 		handler.handleValue("% zero-zero pixels", zeroZeroPixelRatio, 2);
 		handler.handleValue("% saturated ch1 pixels", saturatedRatioCh1, 2);
 		handler.handleValue("% saturated ch2 pixels", saturatedRatioCh2, 2);
