@@ -63,6 +63,24 @@ public class TestImageAccessor {
 		assumeNotNull(imp);
 		return ImagePlusAdapter.wrap(imp);
 	}
+	
+	/**
+	 * Loads a Tiff file from within the jar as a mask. The given path is treated
+	 * as relative to this tests-package (i.e. "Data/test.tiff" refers
+	 * to the test.tiff in sub-folder Data).
+	 *
+	 * @param <T> The wanted output type.
+	 * @param relPath The relative path to the Tiff file.
+	 * @return The file as ImgLib Cursor.
+	 */
+	public static <T extends RealType<T> & NativeType<T>> Cursor<T> loadTiffAsCursorFromJar(String relPath) {
+		InputStream is = TestImageAccessor.class.getResourceAsStream(relPath);
+		BufferedInputStream bis = new BufferedInputStream(is);
+
+		ImagePlus imp = opener.openTiff(bis, "The Test Image");
+		assumeNotNull(imp);
+		return (Cursor<T>) ImagePlusAdapter.wrapByte(imp);
+	}
 
 	/**
 	 * Creates a noisy image that is created by repeatedly adding points

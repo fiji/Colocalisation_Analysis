@@ -27,8 +27,8 @@ public abstract class ColocalisationTest {
 	// and real noisy image Manders' coeff with mask test
 	RandomAccessibleInterval<UnsignedByteType> positiveCorrelationImageCh1;
 	RandomAccessibleInterval<UnsignedByteType> positiveCorrelationImageCh2;
-	// how to open an image and use as a mask? Here we open the image as an image
-	RandomAccessibleInterval<UnsignedByteType> positiveCorrelationMaskImage;
+	//  open mask image as a bit type cursor
+	Cursor<BitType> positiveCorrelationMaskImage;
 	RandomAccessibleInterval<BitType> positiveCorrelationAlwaysTrueMask;
 	double positiveCorrelationImageCh1Mean;
 	double positiveCorrelationImageCh2Mean;
@@ -67,7 +67,7 @@ public abstract class ColocalisationTest {
 		positiveCorrelationImageCh2 = TestImageAccessor.loadTiffFromJar("/colocsample1b-red.tif");
 		positiveCorrelationImageCh2Mean = ImageStatistics.getImageMean(positiveCorrelationImageCh2);
 		
-		positiveCorrelationMaskImage = (Cursor<BitType>) TestImageAccessor.loadTiffFromJar("/colocsample1b-mask.tif");
+		positiveCorrelationMaskImage = TestImageAccessor.loadTiffAsCursorFromJar("/colocsample1b-mask.tif");
 
 		final long[] dimPosCorrCh1 = new long[ positiveCorrelationImageCh1.numDimensions() ];
 		positiveCorrelationImageCh1.dimensions(dimPosCorrCh1);

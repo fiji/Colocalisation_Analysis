@@ -170,7 +170,7 @@ public class MandersColocalizationTest extends ColocalisationTest {
 				positiveCorrelationImageCh2.randomAccess(),
 				// need to use the mask image here, instead of always on. 
 				// Views.iterable(mandersAlwaysTrueMask).localizingCursor());
-				positiveCorrelationAlwaysTrueMask.localizingCursor());
+				positiveCorrelationMaskImage.localizingCursor());
 				//Cursor<T> cursor = mask.localizingCursor();
 
 		// should use the constructor that takes autothresholds and mask channel, not this one?
