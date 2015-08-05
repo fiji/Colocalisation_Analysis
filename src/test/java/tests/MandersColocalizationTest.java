@@ -4,14 +4,30 @@ import static org.junit.Assert.assertEquals;
 import algorithms.MandersColocalization;
 import algorithms.MandersColocalization.MandersResults;
 import algorithms.MissingPreconditionException;
+import net.imglib2.Cursor;
 import net.imglib2.TwinCursor;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
 
+import gadgets.ThresholdMode;
+
 import org.junit.Test;
 
+/**
+ * This class contains JUnit 4 test cases for the calculation
+ * of Manders' split colocalization coefficients
+ *
+ * @author Dan White & Tom Kazimiers
+ */
 public class MandersColocalizationTest extends ColocalisationTest {
 
+	/**
+	 * This method tests artificial test images as detailed in 
+	 * the Manders et al. paper, using above zero threshold (none).
+	 * Note: It is not sensitive to choosing the wrong channel to test for
+	 * above threshold, because threshold is same for both channels: above zero,
+	 * and also that the blobs overlap perfectly or not at all.
+	 */
 	@Test
 	public void mandersPaperImagesTest() throws MissingPreconditionException {
 		MandersColocalization<UnsignedByteType> mc =
@@ -126,5 +142,43 @@ public class MandersColocalizationTest extends ColocalisationTest {
 
 		assertEquals(0.083d, r.m1, 0.001);
 		assertEquals(0.75d, r.m2, 0.0001);
+	}
+	
+	/**
+	 * This method tests real experimental noisy but 
+	 * biologically perfectly colocalized test images, 
+	 * using auto thresholds (.above mode)
+	 * Hopefully it is sensitive to choosing the wrong channel
+	 * to test for above threshold
+	 */
+	@Test
+	public void mandersRealNoisyImagesTest() throws MissingPreconditionException {
+		MandersColocalization<UnsignedByteType> mrnc = 
+				new MandersColocalization<UnsignedByteType>();
+
+		// test biologically perfect but noisy image coloc combination
+		TwinCursor<UnsignedByteType> cursor;
+		MandersResults r;
+		UnsignedByteType thresholdCh1 = null;
+		thresholdCh1.setReal(14.0);
+		UnsignedByteType thresholdCh2 = null;
+		thresholdCh2.setReal(12.0);
+		ThresholdMode tMode;
+		tMode = ThresholdMode.Above;
+		cursor = new TwinCursor<UnsignedByteType>(
+				positiveCorrelationImageCh1.randomAccess(),
+				positiveCorrelationImageCh2.randomAccess(),
+				// need to use the mask image here, instead of always on. 
+				// Views.iterable(mandersAlwaysTrueMask).localizingCursor());
+				positiveCorrelationAlwaysTrueMask.localizingCursor());
+				//Cursor<T> cursor = mask.localizingCursor();
+
+		// should use the constructor that takes autothresholds and mask channel, not this one?
+		// thresholds of ch1=14 and ch2=12 can be used,
+		// that's what autothresholds (bisection) calculates.
+		r = mrnc.calculateMandersCorrelation(cursor, thresholdCh1, thresholdCh2, tMode);
+
+		assertEquals(0.795d, r.m1, 0.0001);
+		assertEquals(0.773d, r.m2, 0.0001);
 	}
 }
