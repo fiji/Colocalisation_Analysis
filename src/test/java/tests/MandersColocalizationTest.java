@@ -178,9 +178,9 @@ public class MandersColocalizationTest extends ColocalisationTest {
 		// Manually set the thresholds for ch1 and ch2 with the results from a
 		// Costes Autothreshold using bisection implementation of regression, of the images used
 		UnsignedByteType thresholdCh1 = new UnsignedByteType();
-		thresholdCh1.setInteger(14);
+		thresholdCh1.setInteger(70);
 		UnsignedByteType thresholdCh2 = new UnsignedByteType();
-		thresholdCh2.setInteger(12);
+		thresholdCh2.setInteger(53);
 		//Set the threshold mode
 		ThresholdMode tMode;
 		tMode = ThresholdMode.Above;
@@ -196,7 +196,7 @@ public class MandersColocalizationTest extends ColocalisationTest {
 		// that's what autothresholds (bisection) calculates.
 		r = mrnc.calculateMandersCorrelation(twinCursor, thresholdCh1, thresholdCh2, tMode);
 
-		assertEquals(0.795d, r.m1, 0.0001);
-		assertEquals(0.773d, r.m2, 0.0001);
+		assertEquals(0.705665d, r.m1, 0.000001);
+		assertEquals(0.724752d, r.m2, 0.000001);
 	}
 }
