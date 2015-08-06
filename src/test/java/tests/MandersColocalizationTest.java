@@ -5,7 +5,10 @@ import algorithms.MandersColocalization;
 import algorithms.MandersColocalization.MandersResults;
 import algorithms.MissingPreconditionException;
 import net.imglib2.Cursor;
+import net.imglib2.IterableInterval;
 import net.imglib2.TwinCursor;
+import net.imglib2.converter.Converter;
+import net.imglib2.converter.Converters;
 import net.imglib2.img.Img;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
@@ -160,16 +163,24 @@ public class MandersColocalizationTest extends ColocalisationTest {
 				new MandersColocalization<UnsignedByteType>();
 
 		// test biologically perfect but noisy image coloc combination
-		Cursor<BitType> mask;
-		mask = positiveCorrelationMaskImage.cursor();
+		Cursor<BitType> mask = Converters.convert((IterableInterval<UnsignedByteType>) positiveCorrelationMaskImage,
+                new Converter<UnsignedByteType, BitType>() {
+
+                    @Override
+                    public void convert(UnsignedByteType arg0, BitType arg1) {
+                        arg1.set(arg0.get() > 0);                    }
+                }, new BitType()).cursor();
+
+		//mask = positiveCorrelationMaskImage.cursor();
+		
 		TwinCursor<UnsignedByteType> twinCursor;
 		MandersResults r;
 		// Manually set the thresholds for ch1 and ch2 with the results from a
 		// Costes Autothreshold using bisection implementation of regression, of the images used
 		UnsignedByteType thresholdCh1 = new UnsignedByteType();
-		thresholdCh1.setReal(14.0);
+		thresholdCh1.setInteger(14);
 		UnsignedByteType thresholdCh2 = new UnsignedByteType();
-		thresholdCh2.setReal(12.0);
+		thresholdCh2.setInteger(12);
 		//Set the threshold mode
 		ThresholdMode tMode;
 		tMode = ThresholdMode.Above;

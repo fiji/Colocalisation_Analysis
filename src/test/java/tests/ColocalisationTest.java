@@ -1,10 +1,8 @@
 package tests;
 
 import gadgets.MaskFactory;
-import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.math.ImageStatistics;
-import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
@@ -28,7 +26,7 @@ public abstract class ColocalisationTest {
 	RandomAccessibleInterval<UnsignedByteType> positiveCorrelationImageCh1;
 	RandomAccessibleInterval<UnsignedByteType> positiveCorrelationImageCh2;
 	//  open mask image as a bit type cursor
-	Img<BitType> positiveCorrelationMaskImage;
+	Img<UnsignedByteType> positiveCorrelationMaskImage;
 	RandomAccessibleInterval<BitType> positiveCorrelationAlwaysTrueMask;
 	double positiveCorrelationImageCh1Mean;
 	double positiveCorrelationImageCh2Mean;
