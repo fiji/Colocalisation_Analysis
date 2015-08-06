@@ -28,7 +28,7 @@ public abstract class ColocalisationTest {
 	RandomAccessibleInterval<UnsignedByteType> positiveCorrelationImageCh1;
 	RandomAccessibleInterval<UnsignedByteType> positiveCorrelationImageCh2;
 	//  open mask image as a bit type cursor
-	Cursor<BitType> positiveCorrelationMaskImage;
+	Img<BitType> positiveCorrelationMaskImage;
 	RandomAccessibleInterval<BitType> positiveCorrelationAlwaysTrueMask;
 	double positiveCorrelationImageCh1Mean;
 	double positiveCorrelationImageCh2Mean;
@@ -67,7 +67,7 @@ public abstract class ColocalisationTest {
 		positiveCorrelationImageCh2 = TestImageAccessor.loadTiffFromJar("/colocsample1b-red.tif");
 		positiveCorrelationImageCh2Mean = ImageStatistics.getImageMean(positiveCorrelationImageCh2);
 		
-		positiveCorrelationMaskImage = TestImageAccessor.loadTiffAsCursorFromJar("/colocsample1b-mask.tif");
+		positiveCorrelationMaskImage = TestImageAccessor.loadTiffFromJarAsImg("/colocsample1b-mask.tif");
 
 		final long[] dimPosCorrCh1 = new long[ positiveCorrelationImageCh1.numDimensions() ];
 		positiveCorrelationImageCh1.dimensions(dimPosCorrCh1);

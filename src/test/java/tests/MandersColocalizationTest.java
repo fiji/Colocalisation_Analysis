@@ -6,6 +6,8 @@ import algorithms.MandersColocalization.MandersResults;
 import algorithms.MissingPreconditionException;
 import net.imglib2.Cursor;
 import net.imglib2.TwinCursor;
+import net.imglib2.img.Img;
+import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
 
@@ -147,36 +149,41 @@ public class MandersColocalizationTest extends ColocalisationTest {
 	/**
 	 * This method tests real experimental noisy but 
 	 * biologically perfectly colocalized test images, 
-	 * using auto thresholds (.above mode)
-	 * Hopefully it is sensitive to choosing the wrong channel
-	 * to test for above threshold
+	 * using previously calculated autothresholds (.above mode)
+	 * Amongst other things, hopefully it is sensitive to
+	 * choosing the wrong channel to test for above threshold
 	 */
 	@Test
 	public void mandersRealNoisyImagesTest() throws MissingPreconditionException {
+		
 		MandersColocalization<UnsignedByteType> mrnc = 
 				new MandersColocalization<UnsignedByteType>();
 
 		// test biologically perfect but noisy image coloc combination
-		TwinCursor<UnsignedByteType> cursor;
+		Cursor<BitType> mask;
+		mask = positiveCorrelationMaskImage.cursor();
+		TwinCursor<UnsignedByteType> twinCursor;
 		MandersResults r;
-		UnsignedByteType thresholdCh1 = null;
+		// Manually set the thresholds for ch1 and ch2 with the results from a
+		// Costes Autothreshold using bisection implementation of regression, of the images used
+		UnsignedByteType thresholdCh1 = new UnsignedByteType();
 		thresholdCh1.setReal(14.0);
-		UnsignedByteType thresholdCh2 = null;
+		UnsignedByteType thresholdCh2 = new UnsignedByteType();
 		thresholdCh2.setReal(12.0);
+		//Set the threshold mode
 		ThresholdMode tMode;
 		tMode = ThresholdMode.Above;
-		cursor = new TwinCursor<UnsignedByteType>(
+
+		twinCursor = new TwinCursor<UnsignedByteType>(
 				positiveCorrelationImageCh1.randomAccess(),
 				positiveCorrelationImageCh2.randomAccess(),
-				// need to use the mask image here, instead of always on. 
-				// Views.iterable(mandersAlwaysTrueMask).localizingCursor());
-				positiveCorrelationMaskImage.localizingCursor());
-				//Cursor<T> cursor = mask.localizingCursor();
+				mask);
+
 
 		// should use the constructor that takes autothresholds and mask channel, not this one?
 		// thresholds of ch1=14 and ch2=12 can be used,
 		// that's what autothresholds (bisection) calculates.
-		r = mrnc.calculateMandersCorrelation(cursor, thresholdCh1, thresholdCh2, tMode);
+		r = mrnc.calculateMandersCorrelation(twinCursor, thresholdCh1, thresholdCh2, tMode);
 
 		assertEquals(0.795d, r.m1, 0.0001);
 		assertEquals(0.773d, r.m2, 0.0001);
