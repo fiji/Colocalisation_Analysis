@@ -163,15 +163,16 @@ public class MandersColocalizationTest extends ColocalisationTest {
 				new MandersColocalization<UnsignedByteType>();
 
 		// test biologically perfect but noisy image coloc combination
-		Cursor<BitType> mask = Converters.convert((IterableInterval<UnsignedByteType>) positiveCorrelationMaskImage,
+		// this cast is bad, so use Views.iterable instead. 
+		//Cursor<BitType> mask = Converters.convert((IterableInterval<UnsignedByteType>) positiveCorrelationMaskImage,
+		Cursor<BitType> mask = Converters.convert(Views.iterable(positiveCorrelationMaskImage),
                 new Converter<UnsignedByteType, BitType>() {
 
                     @Override
                     public void convert(UnsignedByteType arg0, BitType arg1) {
-                        arg1.set(arg0.get() > 0);                    }
+                        arg1.set(arg0.get() > 0);
+                    }
                 }, new BitType()).cursor();
-
-		//mask = positiveCorrelationMaskImage.cursor();
 		
 		TwinCursor<UnsignedByteType> twinCursor;
 		MandersResults r;
