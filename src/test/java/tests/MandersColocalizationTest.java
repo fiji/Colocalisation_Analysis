@@ -183,16 +183,13 @@ public class MandersColocalizationTest extends ColocalisationTest {
 		//Set the threshold mode
 		ThresholdMode tMode;
 		tMode = ThresholdMode.Above;
-
+		// Set the TwinCursor to have the mask image channel, and 2 images.
 		twinCursor = new TwinCursor<UnsignedByteType>(
 				positiveCorrelationImageCh1.randomAccess(),
 				positiveCorrelationImageCh2.randomAccess(),
 				mask);
 
-
-		// should use the constructor that takes autothresholds and mask channel, not this one?
-		// thresholds of ch1=14 and ch2=12 can be used,
-		// that's what autothresholds (bisection) calculates.
+		// Use the constructor that takes ch1 and ch2 autothresholds and threshold mode.
 		r = mrnc.calculateMandersCorrelation(twinCursor, thresholdCh1, thresholdCh2, tMode);
 
 		assertEquals(0.705665d, r.m1, 0.000001);
