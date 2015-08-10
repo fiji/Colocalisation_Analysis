@@ -148,11 +148,13 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	public void processResults(ResultHandler<T> handler) {
 		super.processResults(handler);
 
-		// I'm going to abuse a ValueResult for this,
-		// even though the jobName has no numerical value...only it's String name...
-		// because i want ot keep the jobName close to all the value results
+		// A ValueResult can be two Strings.
+		// The jobName has no numerical value...only it's String name...
+		// but I will give it the value "Done" until we decide to put
+		// something more informative in this result field
+		// We want to keep the jobName close to all the value results
 		// so they get shown together by whatever implementation of ResultsHandler.
-		handler.handleValue(colocJobName, -1.0, 0);
+		handler.handleValue(colocJobName, "Done");
 
 		// Make the ResultsHander implementation deal with the results.
 		handler.handleValue("% zero-zero pixels", zeroZeroPixelRatio, 2);
