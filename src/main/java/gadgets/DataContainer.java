@@ -42,7 +42,7 @@ public class DataContainer<T extends RealType< T >> {
 	int maskHash;
 	// The channels of the source images that the result relate to
 	int ch1, ch2;
-	// The masks bounding box
+	// The mask's bounding box
 	protected long[] maskBBSize = null;
 	protected long[] maskBBOffset = null;
 
