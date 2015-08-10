@@ -1,6 +1,7 @@
 package algorithms;
 
 import gadgets.DataContainer;
+import gadgets.DataContainer.MaskType;
 import ij.IJ;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
@@ -45,6 +46,10 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 	double ch1Integral;
 	double ch2Integral;
 
+	// Mask infos
+	MaskType maskType;
+	double maskID;
+
 	public InputCheck() {
 		super("input data check");
 	}
@@ -70,6 +75,10 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 		ch2Mean = container.getMeanCh2();
 		ch1Integral = container.getIntegralCh1();
 		ch2Integral = container.getIntegralCh2();
+
+		// get the info about the mask/ROI being used or not.
+		maskType = container.getMaskType();
+		maskID = (double)container.getMaskID();
 
 		// the total amount of pixels that have been taken into consideration
 		long N = 0;
@@ -160,5 +169,10 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 		handler.handleValue("Channel 2 Mean", ch2Mean, 3);
 		handler.handleValue("Channel 1 Integrated (Sum) Intensity", ch1Integral, 3);
 		handler.handleValue("Channel 2 Integrated (Sum) Intensity", ch2Integral, 3);
+
+		// Make the ResultsHandler implementation deal with the images'
+		// ROI or mask or lack thereof, so the user knows what they used.
+		handler.handleValue("Mask Type Used", maskType.name());
+		handler.handleValue("Mask ID Used", maskID, 0);
 	}
 }
