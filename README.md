@@ -1,5 +1,7 @@
 # Colocalisation Analysis
 
+[![Join the chat at https://gitter.im/fiji/Colocalisation_Analysis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fiji/Colocalisation_Analysis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Coloc 2 is ImageJ2 and Fiji's plugin for colocalization analysis. It implements
 and performs the pixel intensity correlation over space methods of Pearson,
 Manders, Costes, Li and more, for scatterplots, analysis, automatic thresholding
