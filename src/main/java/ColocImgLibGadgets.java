@@ -91,10 +91,10 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
 	long finishTime = System.currentTimeMillis();
 	long elapsed = finishTime - startTime;
 
-	// print some output
-	IJ.write("mean of ch1: " + mean1 + " " + "mean of ch2: " + mean2);
-	IJ.write("Pearson's Coefficient " + pearson);
-	IJ.write("That took: " + elapsed + " ms");
+	// print some output to IJ log
+	IJ.log("mean of ch1: " + mean1 + " " + "mean of ch2: " + mean2);
+	IJ.log("Pearson's Coefficient " + pearson);
+	IJ.log("That took: " + elapsed + " ms");
 
 	return pearson;
   }
