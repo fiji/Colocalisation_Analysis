@@ -20,6 +20,7 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
 
   protected Img<T> img1, img2;
 
+  @Override
   public void run(String arg) {
 	ImagePlus imp1 = IJ.openImage("/Users/dan/Documents/Dresden/ipf/colocPluginDesign/red.tif");
 	img1 = ImagePlusAdapter.wrap(imp1);

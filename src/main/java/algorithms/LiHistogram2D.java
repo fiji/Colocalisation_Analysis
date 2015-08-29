@@ -49,6 +49,7 @@ public class LiHistogram2D<T extends RealType< T >> extends Histogram2D<T> {
 		this.useCh1 = useCh1;
 	}
 
+	@Override
 	public void execute(DataContainer<T> container) throws MissingPreconditionException {
 		ch1Mean = swapChannels ? container.getMeanCh2() : container.getMeanCh1();
 		ch2Mean = swapChannels ? container.getMeanCh1() : container.getMeanCh2();
@@ -134,14 +135,17 @@ public class LiHistogram2D<T extends RealType< T >> extends Histogram2D<T> {
 		return swapChannels ? (useCh1 ? container.getMinCh1(): container.getMinCh2()) : liMin;
 	}
 
+	@Override
 	protected double getXMax(DataContainer<T> container) {
 		return swapChannels ? (useCh1 ? container.getMaxCh1(): container.getMaxCh2()) : liMax;
 	}
 
+	@Override
 	protected double getYMin(DataContainer<T> container) {
 		return swapChannels ? liMin : (useCh1 ? container.getMinCh1(): container.getMinCh2());
 	}
 
+	@Override
 	protected double getYMax(DataContainer<T> container) {
 		return swapChannels ? liMax : (useCh1 ? container.getMaxCh1(): container.getMaxCh2());
 	}

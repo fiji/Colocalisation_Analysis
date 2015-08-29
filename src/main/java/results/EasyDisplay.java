@@ -35,12 +35,14 @@ public class EasyDisplay<T extends RealType<T>> implements ResultHandler<T> {
 		this.container = container;
 	}
 
+	@Override
 	public void handleImage(RandomAccessibleInterval<T> image, String name) {
 		ImagePlus imp = ImageJFunctions.wrapFloat( image, name );
 		double max = ImageStatistics.getImageMax( image ).getRealDouble();
 		showImage( imp, max );
 	}
 
+	@Override
 	public void handleHistogram(Histogram2D<T> histogram, String name) {
 		ImagePlus imp = ImageJFunctions.wrapFloat( histogram.getPlotImage(), name );
 		double max = ImageStatistics.getImageMax( histogram.getPlotImage() ).getRealDouble();
@@ -53,6 +55,7 @@ public class EasyDisplay<T extends RealType<T>> implements ResultHandler<T> {
 		imp.show();
 	}
 
+	@Override
 	public void handleWarning(Warning warning) {
 		// no warnings are shown in easy display
 	}
@@ -63,10 +66,12 @@ public class EasyDisplay<T extends RealType<T>> implements ResultHandler<T> {
 				+ value + "\n");
 	}
 
+	@Override
 	public void handleValue(String name, double value) {
 		handleValue(name, value, 3);
 	}
 
+	@Override
 	public void handleValue(String name, double value, int decimals) {
 		handleValue(name, IJ.d2s(value, decimals));
 	}
@@ -80,6 +85,7 @@ public class EasyDisplay<T extends RealType<T>> implements ResultHandler<T> {
 		textWindow.getTextPanel().appendLine("Ch2 Max\t" + container.getMaxCh2() + "\n");
 	}
 
+	@Override
 	public void process() {
 		// print some general information about images
 		printTextStatistics(container);

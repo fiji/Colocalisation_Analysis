@@ -164,6 +164,7 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 	// indicates if a PDF should be saved automatically
 	protected boolean autoSavePdf;
 
+	@Override
 	public void run(String arg0) {
 		if (showDialog()) {
 			try {

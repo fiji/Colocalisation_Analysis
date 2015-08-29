@@ -144,6 +144,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		// add button for data display of histograms
 		listButton = new JButton("List");
 		listButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				showList();
 			}
@@ -152,6 +153,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		// add button for data copy of histograms
 		copyButton = new JButton("Copy");
 		copyButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				copyToClipboard();
 			}
@@ -160,6 +162,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		// add button for PDF printing
 		JButton pdfButten = new JButton("PDF");
 		pdfButten.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				pdfWriter.process();
 			}
@@ -192,6 +195,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		pack();
     }
 
+	@Override
 	public void process() {
 		// if wanted, display source images
 		if ( displayOriginalImages ) {
@@ -214,11 +218,13 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		this.setVisible(true);
 	}
 
+	@Override
 	public void handleImage(RandomAccessibleInterval<T> image, String name) {
 		listOfImages.add( new NamedContainer<RandomAccessibleInterval<? extends RealType<?>> >(
 				image, name ) );
 	}
 
+	@Override
 	public void handleHistogram(Histogram2D<T> histogram, String name) {
 		listOfImages.add( new NamedContainer<RandomAccessibleInterval<? extends RealType<?>> >(
 				histogram.getPlotImage(), name ) );
@@ -227,6 +233,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		listOfLUTs.put(histogram.getPlotImage(), "Fire");
 	}
 
+	@Override
 	public void handleWarning(Warning warning) {
 		warnings.add( warning );
 	}
@@ -236,10 +243,12 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		valueResults.add( new ValueResult(name, value));
 	}
 
+	@Override
 	public void handleValue(String name, double value) {
 		handleValue(name, value, 3);
 	}
 
+	@Override
 	public void handleValue(String name, double value, int decimals) {
 		valueResults.add( new ValueResult(name, value, decimals));
 	}
@@ -601,6 +610,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		getContentPane().repaint();
 	}
 
+	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			RandomAccessibleInterval<? extends RealType<?>> img =
@@ -623,12 +633,14 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		imagePanel.repaint();
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == log) {
 			toggleLogarithmic(log.isSelected());
 		}
 	}
 
+	@Override
 	public void lostOwnership(Clipboard clipboard, Transferable contents) {
 		// nothing to do here
 	}

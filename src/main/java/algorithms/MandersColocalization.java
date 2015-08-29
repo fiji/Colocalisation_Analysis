@@ -178,9 +178,11 @@ public class MandersColocalization<T extends RealType< T >> extends Algorithm<T>
 		// without thresholds: M1 and M1
 		if (tMode == ThresholdMode.None) {
 			mandersAccum = new SplitCoeffAccumulator(cursor) {
+				@Override
 				final boolean acceptMandersCh1(T type1, T type2) {
 					return (type2.compareTo(zero) > 0);
 				}
+				@Override
 				final boolean acceptMandersCh2(T type1, T type2) {
 					return (type1.compareTo(zero) > 0);
 				}
@@ -188,10 +190,12 @@ public class MandersColocalization<T extends RealType< T >> extends Algorithm<T>
 		// with thresholds - below thresholds
 		} else if (tMode == ThresholdMode.Below) {
 			mandersAccum = new SplitCoeffAccumulator(cursor) {
+				@Override
 				final boolean acceptMandersCh1(T type1, T type2) {
 					return (type2.compareTo(zero) > 0) &&
 						(type2.compareTo(thresholdCh2) <= 0);
 				}
+				@Override
 				final boolean acceptMandersCh2(T type1, T type2) {
 					return (type1.compareTo(zero) > 0) &&
 						(type1.compareTo(thresholdCh1) <= 0);
@@ -200,10 +204,12 @@ public class MandersColocalization<T extends RealType< T >> extends Algorithm<T>
 		// with thresholds - above thresholds: tM1 and tM2
 		} else if (tMode == ThresholdMode.Above) {
 			mandersAccum = new SplitCoeffAccumulator(cursor) {
+				@Override
 				final boolean acceptMandersCh1(T type1, T type2) {
 					return (type2.compareTo(zero) > 0) &&
 						(type2.compareTo(thresholdCh2) >= 0);
 				}
+				@Override
 				final boolean acceptMandersCh2(T type1, T type2) {
 					return (type1.compareTo(zero) > 0) &&
 						(type1.compareTo(thresholdCh1) >= 0);
