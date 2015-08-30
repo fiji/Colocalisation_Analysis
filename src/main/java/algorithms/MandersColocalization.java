@@ -103,22 +103,22 @@ public class MandersColocalization<T extends RealType< T >> extends Algorithm<T>
 			acc = new MandersAccumulator(cursor) {
 				final boolean accecptCh1(T type1, T type2) {
 					return (type2.compareTo(zero) > 0) &&
-						(type1.compareTo(thresholdCh1) <= 0);
+						(type2.compareTo(thresholdCh2) <= 0);
 				}
 				final boolean accecptCh2(T type1, T type2) {
 					return (type1.compareTo(zero) > 0) &&
-						(type2.compareTo(thresholdCh2) <= 0);
+						(type1.compareTo(thresholdCh1) <= 0);
 				}
 			};
 		} else if (tMode == ThresholdMode.Above) {
 			acc = new MandersAccumulator(cursor) {
 				final boolean accecptCh1(T type1, T type2) {
 					return (type2.compareTo(zero) > 0) &&
-						(type1.compareTo(thresholdCh1) >= 0);
+						(type2.compareTo(thresholdCh2) >= 0);
 				}
 				final boolean accecptCh2(T type1, T type2) {
 					return (type1.compareTo(zero) > 0) &&
-						(type2.compareTo(thresholdCh2) >= 0);
+						(type1.compareTo(thresholdCh1) >= 0);
 				}
 			};
 		} else {
