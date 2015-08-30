@@ -26,7 +26,7 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
 	ImagePlus imp2 = IJ.openImage("/Users/dan/Documents/Dresden/ipf/colocPluginDesign/green.tif");
 	img2 = ImagePlusAdapter.wrap(imp2);
 
-	double person = calculatePerson();
+	double pearson = calculatePearson();
 
 	Img<T> ranImg = generateRandomImageStack(img1, new int[] {2,2,1});
   }
@@ -75,7 +75,7 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
 	return randomStack;
   }
 
-  protected double calculatePerson() {
+  protected double calculatePearson() {
 	Cursor<T> cursor1 = img1.cursor();
 	Cursor<T> cursor2 = img2.cursor();
 
@@ -85,7 +85,7 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
 	// Do some rather simple performance testing
 	long startTime = System.currentTimeMillis();
 
-	double pearson = calculatePerson(cursor1, mean1, cursor2, mean2);
+	double pearson = calculatePearson(cursor1, mean1, cursor2, mean2);
 
 	// End performance testing
 	long finishTime = System.currentTimeMillis();
@@ -99,7 +99,7 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
 	return pearson;
   }
 
-  protected double calculatePerson(Cursor<T> cursor1, double mean1, Cursor<T> cursor2, double mean2) {
+  protected double calculatePearson(Cursor<T> cursor1, double mean1, Cursor<T> cursor2, double mean2) {
 	double pearsonDenominator = 0;
 	double ch1diffSquaredSum = 0;
 	double ch2diffSquaredSum = 0;
