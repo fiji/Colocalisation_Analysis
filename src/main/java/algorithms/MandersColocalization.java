@@ -23,6 +23,48 @@ import results.ResultHandler;
  * M1 = sum of Channel 1 intensity in pixels over the channel 2 threshold / total Channel 1 intensity.
  * M2 is vice versa.
  * The result is a fraction (range 0-1, but often misrepresented as a %. We wont do that here.
+ * 
+ * Further, it also calculates other split colocalization coefficients,
+ * such as fraction of pixels (voxels) colocalized, 
+ * or fraction of intensity colocalized, as described at:
+ * http://www.uhnresearch.ca/facilities/wcif/imagej/colour_analysis.htm
+ * copy pasted here - credits to Tony Collins. 
+ * 
+ * Number of colocalised voxels – Ncoloc
+ * This is the number of voxels which have both channel 1 and channel 2 intensities above threshold
+ * (i.e., the number of pixels in the yellow area of the scatterplot).
+ * 
+ * %Image volume colocalised – %Volume
+ * This is the percentage of voxels which have both channel 1 and channel 2 intensities above threshold,
+ * expressed as a percentage of the total number of pixels in the image (including zero-zero pixels);
+ * in other words, the number of pixels in the scatterplot’s yellow area ÷  total number of pixels in the scatter plot (the Red + Green + Blue + Yellow areas).
+ * 
+ * %Voxels Colocalised – %Ch1 Vol; %Ch2 Vol
+ * This generates a value for each channel. This is the number of voxels for each channel
+ * which have both channel 1 and channel 2 intensities above threshold,
+ * expressed as a percentage of the total number of voxels for each channel
+ * above their respective thresholds; in other words, for channel 1 (along the x-axis),
+ * this equals the (the number of pixels in the Yellow area) ÷ (the number of pixels in the Blue + Yellow areas). 
+ * For channel 2 this is calculated as follows:
+ * (the number of pixels in the Yellow area) ÷ (the number of pixels in the Red + Yellow areas).
+ * 
+ * %Intensity Colocalised – %Ch1 Int; %Ch2 Int
+ * This generates a value for each channel. For channel 1, this value is equal to
+ * the sum of the pixel intensities, with intensities above both channel 1 and channel 2 thresholds
+ * expressed as a percentage of the sum of all channel 1 intensities;
+ * in other words, it is calculated as follows:
+ * (the sum of channel 1 pixel intensities in the Yellow area) ÷ (the sum of channel 1 pixels intensities in the Red + Green + Blue + Yellow areas).
+ 
+ * %Intensities above threshold colocalised – %Ch1 Int > thresh; %Ch2 Int > thresh
+ * This generates a value for each channel. For channel 1,
+ * this value is equal to the sum of the pixel intensities
+ * with intensities above both channel 1 and channel 2 thresholds
+ * expressed as a percentage of the sum of all channel 1 intensities above the threshold for channel 1.
+ * In other words, it is calculated as follows:
+ * (the sum of channel 1 pixel intensities in the Yellow area) ÷ (sum of channel 1 pixels intensities in the Blue + Yellow area)
+ *
+ * The results are often represented as % values, but to make them consistent with Manders'
+ * split coefficients, we will also report them as fractions (range 0-1).
  *
  * @param <T>
  */
@@ -34,6 +76,22 @@ public class MandersColocalization<T extends RealType< T >> extends Algorithm<T>
 	// thresholded Manders M1 and M2 values,
 	// fraction of intensity of a channel, in pixels above threshold in the other channel.
 	double mandersThresholdedM1, mandersThresholdedM2;
+
+	// Number of colocalized voxels (pixels) – Ncoloc
+	long numberOfPixelsAboveBothThresholds;
+
+	// Fraction of Image volume colocalized – Fraction of Volume
+	double fractionOfPixelsAboveBothThresholds;
+
+	// Fraction Voxels (pixels) Colocalized – Fraction of Ch1 Vol; Fraction of Ch2 Vol
+	double fractionOfColocCh1Pixels,  fractionOfColocCh2Pixels; 
+
+	// Fraction Intensity Colocalized – Fraction of Ch1 Int; Fraction of Ch2 Int
+	double fractionOfColocCh1Intensity,  fractionOfColocCh2Intensity;
+
+	// Fraction of Intensities above threshold, colocalized – 
+	// Fraction of Ch1 Int > thresh; Fraction of Ch2 Int > thresh
+	double fractionOfColocCh1IntensityAboveCh1Thresh, fractionOfColocCh2IntensityAboveCh2Thresh;
 
 	/**
 	 * A result container for Manders' calculations.
