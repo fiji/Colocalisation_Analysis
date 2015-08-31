@@ -165,6 +165,7 @@ public class Histogram2D<T extends RealType< T >> extends Algorithm<T> {
 		return swapChannels ? ch1Label : ch2Label;
 	}
 
+	@Override
 	public void execute(DataContainer<T> container) throws MissingPreconditionException {
 		generateHistogramData(container);
 	}
@@ -257,6 +258,7 @@ public class Histogram2D<T extends RealType< T >> extends Algorithm<T> {
 		return sb.toString();
 	}
 
+	@Override
 	public void processResults(ResultHandler<T> handler) {
 		super.processResults(handler);
 

@@ -105,4 +105,9 @@
 		</dependency>
 	</dependencies>
 
+	<url>http://fiji.sc/Coloc_2</url>
+	<issueManagement>
+		<system>github.com</system>
+		<url>https://github.com/fiji/Colocalisation_Analysis</url>
+	</issueManagement>
 </project>

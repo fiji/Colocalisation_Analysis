@@ -281,6 +281,7 @@ public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<
 		return min > val ? min : max < val ? max : val;
 	}
 
+	@Override
 	public void processResults(ResultHandler<T> handler) {
 		super.processResults(handler);
 

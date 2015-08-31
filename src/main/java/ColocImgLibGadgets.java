@@ -20,13 +20,14 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
 
   protected Img<T> img1, img2;
 
+  @Override
   public void run(String arg) {
 	ImagePlus imp1 = IJ.openImage("/Users/dan/Documents/Dresden/ipf/colocPluginDesign/red.tif");
 	img1 = ImagePlusAdapter.wrap(imp1);
 	ImagePlus imp2 = IJ.openImage("/Users/dan/Documents/Dresden/ipf/colocPluginDesign/green.tif");
 	img2 = ImagePlusAdapter.wrap(imp2);
 
-	double person = calculatePerson();
+	double pearson = calculatePearson();
 
 	Img<T> ranImg = generateRandomImageStack(img1, new int[] {2,2,1});
   }
@@ -75,7 +76,7 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
 	return randomStack;
   }
 
-  protected double calculatePerson() {
+  protected double calculatePearson() {
 	Cursor<T> cursor1 = img1.cursor();
 	Cursor<T> cursor2 = img2.cursor();
 
@@ -85,21 +86,21 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
 	// Do some rather simple performance testing
 	long startTime = System.currentTimeMillis();
 
-	double pearson = calculatePerson(cursor1, mean1, cursor2, mean2);
+	double pearson = calculatePearson(cursor1, mean1, cursor2, mean2);
 
 	// End performance testing
 	long finishTime = System.currentTimeMillis();
 	long elapsed = finishTime - startTime;
 
-	// print some output
-	IJ.write("mean of ch1: " + mean1 + " " + "mean of ch2: " + mean2);
-	IJ.write("Pearson's Coefficient " + pearson);
-	IJ.write("That took: " + elapsed + " ms");
+	// print some output to IJ log
+	IJ.log("mean of ch1: " + mean1 + " " + "mean of ch2: " + mean2);
+	IJ.log("Pearson's Coefficient " + pearson);
+	IJ.log("That took: " + elapsed + " ms");
 
 	return pearson;
   }
 
-  protected double calculatePerson(Cursor<T> cursor1, double mean1, Cursor<T> cursor2, double mean2) {
+  protected double calculatePearson(Cursor<T> cursor1, double mean1, Cursor<T> cursor2, double mean2) {
 	double pearsonDenominator = 0;
 	double ch1diffSquaredSum = 0;
 	double ch2diffSquaredSum = 0;

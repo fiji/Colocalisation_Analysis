@@ -24,6 +24,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
 import net.imglib2.algorithm.gauss.Gauss;
 import net.imglib2.algorithm.math.ImageStatistics;
+import net.imglib2.img.Img;
 import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
@@ -56,6 +57,26 @@ public class TestImageAccessor {
 	 * @return The file as ImgLib image.
 	 */
 	public static <T extends RealType<T> & NativeType<T>> RandomAccessibleInterval<T> loadTiffFromJar(String relPath) {
+		InputStream is = TestImageAccessor.class.getResourceAsStream(relPath);
+		BufferedInputStream bis = new BufferedInputStream(is);
+
+		ImagePlus imp = opener.openTiff(bis, "The Test Image");
+		assumeNotNull(imp);
+		return ImagePlusAdapter.wrap(imp);
+	}
+	
+	/**
+	 * Loads a Tiff file from within the jar to use as a mask Cursor.
+	 * So we use Img<T> which has a cursor() method. 
+	 * The given path is treated
+	 * as relative to this tests-package (i.e. "Data/test.tiff" refers
+	 * to the test.tiff in sub-folder Data).
+	 *
+	 * @param <T> The wanted output type.
+	 * @param relPath The relative path to the Tiff file.
+	 * @return The file as ImgLib image.
+	 */
+	public static <T extends RealType<T> & NativeType<T>> Img<T> loadTiffFromJarAsImg(String relPath) {
 		InputStream is = TestImageAccessor.class.getResourceAsStream(relPath);
 		BufferedInputStream bis = new BufferedInputStream(is);
 

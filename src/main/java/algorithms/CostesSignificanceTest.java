@@ -360,6 +360,7 @@ public class CostesSignificanceTest<T extends RealType< T > & NativeType<T>> ext
 			costesPValue = 0.0;
 	}
 
+	@Override
 	public void processResults(ResultHandler<T> handler) {
 		super.processResults(handler);
 

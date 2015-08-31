@@ -66,6 +66,7 @@ public class Colocalisation_Threshold implements PlugIn {
 	String[] chooseROI=  { "None","Channel 1", "Channel 2",};
 	protected static TextWindow textWindow;
 
+	@Override
 	public void run(String arg) {
 		if (showDialog())
 			correlate(imp1, imp2);

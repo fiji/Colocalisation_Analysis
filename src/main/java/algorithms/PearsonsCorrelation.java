@@ -47,6 +47,7 @@ public class PearsonsCorrelation<T extends RealType< T >> extends Algorithm<T> {
 		this(Implementation.Fast);
 	}
 
+	@Override
 	public void execute(DataContainer<T> container) throws MissingPreconditionException {
 		// get the 2 images for the calculation of Pearson's
 		RandomAccessibleInterval<T> img1 = container.getSourceImage1();
@@ -245,12 +246,14 @@ public class PearsonsCorrelation<T extends RealType< T >> extends Algorithm<T> {
 
 		if (tMode == ThresholdMode.None) {
 			acc = new Accumulator<T>(cursor, meanCh1, meanCh2) {
+				@Override
 				final public boolean accept(T type1, T type2) {
 					return true;
 				}
 			};
 		} else if (tMode == ThresholdMode.Below) {
 			acc = new Accumulator<T>(cursor, meanCh1, meanCh2) {
+				@Override
 				final public boolean accept(T type1, T type2) {
 					return type1.compareTo(thresholdCh1) < 0 ||
 							type2.compareTo(thresholdCh2) < 0;
@@ -258,6 +261,7 @@ public class PearsonsCorrelation<T extends RealType< T >> extends Algorithm<T> {
 			};
 		} else if (tMode == ThresholdMode.Above) {
 			acc = new Accumulator<T>(cursor, meanCh1, meanCh2) {
+				@Override
 				final public boolean accept(T type1, T type2) {
 					return type1.compareTo(thresholdCh1) > 0 ||
 							type2.compareTo(thresholdCh2) > 0;
@@ -298,12 +302,14 @@ public class PearsonsCorrelation<T extends RealType< T >> extends Algorithm<T> {
 
 		if (tMode == ThresholdMode.None) {
 			acc = new Accumulator<T>(cursor) {
+				@Override
 				final public boolean accept(T type1, T type2) {
 					return true;
 				}
 			};
 		} else if (tMode == ThresholdMode.Below) {
 			acc = new Accumulator<T>(cursor) {
+				@Override
 				final public boolean accept(T type1, T type2) {
 					return type1.compareTo(thresholdCh1) < 0 ||
 							type2.compareTo(thresholdCh2) < 0;
@@ -311,6 +317,7 @@ public class PearsonsCorrelation<T extends RealType< T >> extends Algorithm<T> {
 			};
 		} else if (tMode == ThresholdMode.Above) {
 			acc = new Accumulator<T>(cursor) {
+				@Override
 				final public boolean accept(T type1, T type2) {
 					return type1.compareTo(thresholdCh1) > 0 ||
 							type2.compareTo(thresholdCh2) > 0;

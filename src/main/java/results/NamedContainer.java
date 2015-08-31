@@ -18,6 +18,7 @@ public class NamedContainer<T> {
 		return object;
 	}
 
+	@Override
 	public String toString() {
 		return name;
 	}

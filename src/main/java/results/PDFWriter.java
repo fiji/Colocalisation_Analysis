@@ -60,6 +60,7 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 		this.container = container;
 	}
 
+	@Override
 	public void handleImage(RandomAccessibleInterval<T> image, String name) {
 		ImagePlus imp = ImageJFunctions.wrapFloat( image, name );
 
@@ -74,6 +75,7 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 	 * display range, apply the Fire LUT and finally store it as an iText PDF image.
 	 * Afterwards the image is reset to its orignal state again
 	 */
+	@Override
 	public void handleHistogram(Histogram2D<T> histogram, String name) {
 		RandomAccessibleInterval<LongType> image = histogram.getPlotImage();
 		ImagePlus imp = ImageJFunctions.wrapFloat( image, name );
@@ -105,6 +107,7 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 		}
 	}
 
+	@Override
 	public void handleWarning(Warning warning) {
 		listOfPDFTexts.add(new Paragraph("Warning! " + warning.getShortMessage() + " - " + warning.getLongMessage()));
 	}
@@ -116,10 +119,12 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 		listOfPDFTexts.add(new Paragraph(name + ": " + value));
 	}
 
+	@Override
 	public void handleValue(String name, double value) {
 		handleValue(name, value, 3);
 	}
 
+	@Override
 	public void handleValue(String name, double value, int decimals) {
 		listOfPDFTexts.add(new Paragraph(name + ": " + IJ.d2s(value, decimals)));
 	}
@@ -170,6 +175,7 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 		isFirst = false;
 	}
 
+	@Override
 	public void process() {
 		try {
 			// Use the getJobName() in DataContainer for the job name.

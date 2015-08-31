@@ -72,10 +72,14 @@ import results.Warning;
  */
 
 /**
- * A plugin which does pixel intensity correlation based colocalisation analysis
- * on a pair of images.
+ * An ImageJ plugin which does pixel intensity correlation based
+ * colocalisation analysis on a pair of images,
+ * with optional Mask or ROI.
  *
  * @param <T>
+ * @author Daniel J. White
+ * @author Tom Kazimiers
+ * @author Johannes Schindelin
  */
 public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugIn {
 
@@ -160,6 +164,7 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 	// indicates if a PDF should be saved automatically
 	protected boolean autoSavePdf;
 
+	@Override
 	public void run(String arg0) {
 		if (showDialog()) {
 			try {

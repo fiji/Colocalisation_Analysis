@@ -35,6 +35,7 @@ public class TwinCursor<T extends Type<T>> implements Cursor<T>, PairIterator<T>
 			mask.localize(position);
 		}
 
+		@Override
 		final public boolean hasNext() {
 			gotNext = false;
 			return mask.hasNext();
@@ -50,11 +51,13 @@ public class TwinCursor<T extends Type<T>> implements Cursor<T>, PairIterator<T>
 			gotNext = true;
 		}
 
+		@Override
 		final public T getFirst() {
 			getNext();
 			return channel1.get();
 		}
 
+		@Override
 		final public T getSecond() {
 			getNext();
 			return channel2.get();

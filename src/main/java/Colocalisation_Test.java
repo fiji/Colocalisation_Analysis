@@ -63,6 +63,7 @@ public class Colocalisation_Test implements PlugIn
     boolean rBlocks= false;
     protected static TextWindow textWindow;
 
+    @Override
     public void run(String arg) 
 	{startTime = System.currentTimeMillis();
      	if (showDialog())
