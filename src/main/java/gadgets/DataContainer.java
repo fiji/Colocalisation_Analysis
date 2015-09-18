@@ -16,8 +16,9 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * The DataContainer keeps all the source data, jobName, pre-processing results
- * and algorithm results that have been computed. It allows a client to get most
- * of its content and makes the source image and channel information available
+ * and algorithm results that have been computed. It allows a
+ * ResultsHandler implementation to get most of its content
+ * and makes the source image and channel information available
  * to a client.
  *
  * @param <T>
@@ -41,7 +42,7 @@ public class DataContainer<T extends RealType< T >> {
 	int maskHash;
 	// The channels of the source images that the result relate to
 	int ch1, ch2;
-	// The masks bounding box
+	// The mask's bounding box
 	protected long[] maskBBSize = null;
 	protected long[] maskBBOffset = null;
 
@@ -66,8 +67,8 @@ public class DataContainer<T extends RealType< T >> {
 			String name1, String name2) {
 		sourceImage1 = src1;
 		sourceImage2 = src2;
-		sourceImage1Name = name1;
-		sourceImage2Name = name2;
+		sourceImage1Name = "Ch1_" + name1;
+		sourceImage2Name = "Ch2_" + name2;
 
 		// create a mask that is true at all pixels.
 		final long[] dims = new long[src1.numDimensions()];
@@ -86,7 +87,7 @@ public class DataContainer<T extends RealType< T >> {
 		maskHash = mask.hashCode();
 		// create a jobName so ResultHandler instances can all use the same object
 		// for the job name.
-		jobName = "Colocalization_of_" + name1 + "_versus_" + name2 + "_" + maskHash;
+		jobName = "Colocalization_of_" + sourceImage1Name + "_versus_" + sourceImage2Name + "_" + maskHash;
 
 		calculateStatistics();
 	}
@@ -117,8 +118,8 @@ public class DataContainer<T extends RealType< T >> {
 		sourceImage2 = src2;
 		this.ch1 = ch1;
 		this.ch2 = ch2;
-		sourceImage1Name = name1;
-		sourceImage2Name = name2;
+		sourceImage1Name = "Ch1_" + name1;
+		sourceImage2Name = "Ch2_" + name2;
 
 		final int numDims = src1.numDimensions();
 		maskBBOffset = new long[numDims];
@@ -135,7 +136,7 @@ public class DataContainer<T extends RealType< T >> {
 		maskHash = mask.hashCode();
 		// create a jobName so ResultHandler instances can all use the same
 		// object for the job name.
-		jobName = "Colocalization_of_" + name1 + "_versus_" + name2 + "_" + maskHash;
+		jobName = "Colocalization_of_" + sourceImage1Name + "_versus_" + sourceImage2Name + "_" + maskHash;
 
 		calculateStatistics();
 	}
@@ -160,8 +161,8 @@ public class DataContainer<T extends RealType< T >> {
 			throws MissingPreconditionException {
 		sourceImage1 = src1;
 		sourceImage2 = src2;
-		sourceImage1Name = name1;
-		sourceImage1Name = name2;
+		sourceImage1Name = "Ch1_" + name1;
+		sourceImage2Name = "Ch2_" + name2;
 		
 		final int numDims = src1.numDimensions();
 		final long[] dim = new long[numDims];
@@ -185,7 +186,7 @@ public class DataContainer<T extends RealType< T >> {
 		maskHash = mask.hashCode();
 		// create a jobName so ResultHandler instances can all use the same
 		// object for the job name.
-		jobName = "Colocalization_of_" + name1 + "_versus_" + name2 + "_" + maskHash;
+		jobName = "Colocalization_of_" + sourceImage1Name + "_versus_" + sourceImage2Name + "_" + maskHash;
 
 		calculateStatistics();
 	}
@@ -247,10 +248,6 @@ public class DataContainer<T extends RealType< T >> {
 		}
 	}
 
-	public MaskType getMaskType() {
-		return maskType;
-	}
-
 	public RandomAccessibleInterval<T> getSourceImage1() {
 		return sourceImage1;
 	}
@@ -281,6 +278,14 @@ public class DataContainer<T extends RealType< T >> {
 
 	public long[] getMaskBBSize() {
 		return maskBBSize.clone();
+	}
+
+	public MaskType getMaskType(){
+		return maskType;
+	}
+
+	public int getMaskID(){
+		return maskHash;
 	}
 
 	public int getCh1() {
