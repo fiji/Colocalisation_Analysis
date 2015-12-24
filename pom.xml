@@ -14,6 +14,7 @@
 
 	<name>plugins/Colocalisation_Analysis.jar</name>
 	<description />
+	<url>http://fiji.sc/Coloc_2</url>
 
 	<developers>
 		<developer>
@@ -102,6 +103,10 @@
 		<tag>HEAD</tag>
 		<url>https://github.com/fiji/Colocalisation_Analysis</url>
 	</scm>
+	<issueManagement>
+		<system>github.com</system>
+		<url>https://github.com/fiji/Colocalisation_Analysis</url>
+	</issueManagement>
 	<ciManagement>
 		<system>Jenkins</system>
 		<url>http://jenkins.imagej.net/job/Colocalisation_Analysis/</url>
@@ -154,10 +159,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<url>http://fiji.sc/Coloc_2</url>
-	<issueManagement>
-		<system>github.com</system>
-		<url>https://github.com/fiji/Colocalisation_Analysis</url>
-	</issueManagement>
 </project>
