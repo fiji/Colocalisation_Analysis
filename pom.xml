@@ -20,6 +20,7 @@
 		<developer>
 			<id>chalkie666</id>
 			<name>Daniel James White</name>
+			<url>http://imagej.net/User:White</url>
 			<roles>
 				<role>lead</role>
 				<role>reviewer</role>
@@ -30,6 +31,7 @@
 		<developer>
 			<id>tomka</id>
 			<name>Tom Kazimiers</name>
+			<url>http://imagej.net/User:Kazimiers</url>
 			<roles>
 				<role>lead</role>
 				<role>debugger</role>
@@ -39,6 +41,7 @@
 		<developer>
 			<id>etarena</id>
 			<name>Ellen Arena</name>
+			<url>http://imagej.net/User:Etarena</url>
 			<roles>
 				<role>developer</role>
 				<role>debugger</role>
@@ -49,9 +52,7 @@
 		<developer>
 			<id>ctrueden</id>
 			<name>Curtis Rueden</name>
-			<url>http://loci.wisc.edu/people/curtis-rueden</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<url>http://imagej.net/User:Rueden</url>
 			<roles>
 				<role>maintainer</role>
 			</roles>
@@ -60,9 +61,7 @@
 		<developer>
 			<id>hinerm</id>
 			<name>Mark Hiner</name>
-			<url>http://loci.wisc.edu/people/mark-hiner</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<url>http://imagej.net/User:Hinerm</url>
 			<roles>
 				<role>maintainer</role>
 			</roles>
