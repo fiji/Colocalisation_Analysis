@@ -20,7 +20,6 @@
 		<developer>
 			<id>chalkie666</id>
 			<name>Daniel James White</name>
-			<email>dan@chalkie.org.uk</email>
 			<roles>
 				<role>lead</role>
 				<role>reviewer</role>
@@ -31,7 +30,6 @@
 		<developer>
 			<id>tomka</id>
 			<name>Tom Kazimiers</name>
-			<email>tom@voodoo-arts.net</email>
 			<roles>
 				<role>lead</role>
 				<role>debugger</role>
@@ -41,7 +39,6 @@
 		<developer>
 			<id>etarena</id>
 			<name>Ellen Arena</name>
-			<email>earena@wisc.edu</email>
 			<roles>
 				<role>developer</role>
 				<role>debugger</role>
@@ -52,7 +49,6 @@
 		<developer>
 			<id>ctrueden</id>
 			<name>Curtis Rueden</name>
-			<email>ctrueden@wisc.edu</email>
 			<url>http://loci.wisc.edu/people/curtis-rueden</url>
 			<organization>UW-Madison LOCI</organization>
 			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
@@ -64,7 +60,6 @@
 		<developer>
 			<id>hinerm</id>
 			<name>Mark Hiner</name>
-			<email>hiner@wisc.edu</email>
 			<url>http://loci.wisc.edu/people/mark-hiner</url>
 			<organization>UW-Madison LOCI</organization>
 			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
