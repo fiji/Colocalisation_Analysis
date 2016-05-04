@@ -56,7 +56,6 @@
 			<roles>
 				<role>maintainer</role>
 			</roles>
-			<timezone>-6</timezone>
 		</developer>
 		<developer>
 			<id>hinerm</id>
@@ -65,7 +64,6 @@
 			<roles>
 				<role>maintainer</role>
 			</roles>
-			<timezone>-6</timezone>
 		</developer>
 	</developers>
 	<contributors>
