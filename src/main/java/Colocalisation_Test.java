@@ -96,15 +96,15 @@ public class Colocalisation_Test implements PlugIn
 	if (index1>=titles.length)index1 = 0;
 	if (index2>=titles.length)index2 = 0;
 	GenericDialog gd = new GenericDialog("Colocalisation Test");
-	gd.addChoice("Channel 1", titles, titles[index1]);
-	gd.addChoice("Channel 2", titles, titles[index2]);
+	gd.addChoice("Channel_1", titles, titles[index1]);
+	gd.addChoice("Channel_2", titles, titles[index2]);
 	gd.addChoice("ROI or Mask", chooseROI, chooseROI[indexRoi]);
 	gd.addChoice("Randomization method", chooseRand,chooseRand[indexRand]);
 	//gd.addCheckbox("Ignore zero-zero pixels", ignoreZeroZero);
-	gd.addCheckbox("Current slice only (Ch1)", currentSlice);
-	gd.addCheckbox("Keep example randomized image", keep);
+	gd.addCheckbox("Current_slice only (Ch1)", currentSlice);
+	gd.addCheckbox("Keep_example randomized image", keep);
 
-	gd.addCheckbox("Show all R values from Ch1 vs  Ch2(rand)", showR);
+	gd.addCheckbox("Show_all_R_values from Ch1 vs  Ch2(rand)", showR);
 	gd.addMessage("See: http://uhnresearch.ca/wcif/imagej");
 	gd.showDialog();
 	if (gd.wasCanceled())	return false;
@@ -172,12 +172,12 @@ public class Colocalisation_Test implements PlugIn
 		GenericDialog gd2 = new GenericDialog("PSF details");
 		gd2.addCheckbox("Randomize pixels in z-axis", randZ);
 		gd2.addNumericField("Pixel Size (µm)", pixelSize,3);
-		gd2.addNumericField("Channel 2 wavelength (nm)", ch2Lambda,0);
+		gd2.addNumericField("Channel_2_wavelength (nm)", ch2Lambda,0);
 		gd2.addNumericField("NA of objective", NA,2);
 		gd2.addNumericField("Iterations",iterations,0);
 		gd2.addMessage("");
-		gd2.addCheckbox("Use manual PSF", useManPSF);
-		gd2.addNumericField("PSF radius in pixels", manPSF, 0);
+		gd2.addCheckbox("Use_manual_PSF", useManPSF);
+		gd2.addNumericField("PSF_radius in pixels", manPSF, 0);
 		gd2.showDialog();
 		if (gd2.wasCanceled())	return false;
 		randZ = gd2.getNextBoolean();
