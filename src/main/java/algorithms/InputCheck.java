@@ -125,6 +125,12 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 		// get job name so the ResultsHandler implementation can have it.
 		colocJobName = container.getJobName();
 
+		// add warnings if images contain negative values
+		if (ch1Min < 0 || ch2Min < 0) {
+			addWarning("negative minimum grey value found",
+					"The minimum grey value in at least one of the is channels is negative. Negative values may cause faulty results in some analysis methods. The reason is a basic assumption: The pixels grey value is assumed to be proportional to the photon count in a certain area. Negative photon counts are not possible.");
+		}
+
 		// add warnings if values are not in tolerance range
 		if ( Math.abs(zeroZeroRatio) > maxZeroZeroRatio ) {
 
