@@ -127,24 +127,24 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 
 		// add warnings if images contain negative values
 		if (ch1Min < 0 || ch2Min < 0) {
-			addWarning("negative minimum pixel value found",
-					"The minimum pixel value in at least one of the is channels is negative. Negative values might break the logic of some analysis methods. The reason is a basic assumption: The pixel value is assumed to be proportional to the photon count detected in a pixel. Negative photon counts make no physical sense.");
+			addWarning("Negative minimum pixel value found.",
+					"The minimum pixel value in at least one of the channels is negative. Negative values might break the logic of some analysis methods by breaking a basic basic assumption: The pixel value is assumed to be proportional to the number of photons detected in a pixel. Negative photon counts make no physical sense. Set negative pixel values to zero, or shift pixel intensities higher so there are no negative pixel values.");
 		}
 
 		// add warnings if values are not in tolerance range
 		if ( Math.abs(zeroZeroRatio) > maxZeroZeroRatio ) {
 
-			addWarning("zero-zero ratio too high",
+			addWarning("Zero-zero ratio too high",
 				"The ratio between zero-zero pixels and other pixels is large: "
 				+ IJ.d2s(zeroZeroRatio, 2) + ". Maybe you should use a ROI.");
 		}
 		if ( Math.abs(ch1SaturatedRatio) > maxSaturatedRatio ) {
-			addWarning("saturated ch1 ratio too high",
+			addWarning("Saturated ch1 ratio too high",
 				"The ratio between saturated pixels and other pixels in channel one is large: "
 				+ IJ.d2s(maxSaturatedRatio, 2) + ". Maybe you should use a ROI.");
 		}
 		if ( Math.abs(ch1SaturatedRatio) > maxSaturatedRatio ) {
-			addWarning("saturated ch2 ratio too high",
+			addWarning("Saturated ch2 ratio too high",
 				"The ratio between saturated pixels and other pixels in channel two is large: "
 				+ IJ.d2s(maxSaturatedRatio, 2) + ". Maybe you should use a ROI.");
 		}
