@@ -127,25 +127,25 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 
 		// add warnings if images contain negative values
 		if (ch1Min < 0 || ch2Min < 0) {
-			addWarning("negative minimum grey value found",
-					"The minimum grey value in at least one of the is channels is negative. Negative values may cause faulty results in some analysis methods. The reason is a basic assumption: The pixels grey value is assumed to be proportional to the photon count in a certain area. Negative photon counts are not possible.");
+			addWarning("negative minimum pixel value found",
+					"The minimum pixel value in at least one of the is channels is negative. Negative values might break the logic of some analysis methods. The reason is a basic assumption: The pixel value is assumed to be proportional to the photon count detected in a pixel. Negative photon counts make no physical sense.");
 		}
 
 		// add warnings if values are not in tolerance range
 		if ( Math.abs(zeroZeroRatio) > maxZeroZeroRatio ) {
 
 			addWarning("zero-zero ratio too high",
-				"The ratio between zero-zero pixels and other pixels is larger "
+				"The ratio between zero-zero pixels and other pixels is large: "
 				+ IJ.d2s(zeroZeroRatio, 2) + ". Maybe you should use a ROI.");
 		}
 		if ( Math.abs(ch1SaturatedRatio) > maxSaturatedRatio ) {
 			addWarning("saturated ch1 ratio too high",
-				"The ratio between saturated pixels and other pixels in channel one is larger "
+				"The ratio between saturated pixels and other pixels in channel one is large: "
 				+ IJ.d2s(maxSaturatedRatio, 2) + ". Maybe you should use a ROI.");
 		}
 		if ( Math.abs(ch1SaturatedRatio) > maxSaturatedRatio ) {
 			addWarning("saturated ch2 ratio too high",
-				"The ratio between saturated pixels and other pixels in channel two is larger "
+				"The ratio between saturated pixels and other pixels in channel two is large: "
 				+ IJ.d2s(maxSaturatedRatio, 2) + ". Maybe you should use a ROI.");
 		}
 	}
