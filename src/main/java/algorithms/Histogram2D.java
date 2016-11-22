@@ -191,6 +191,8 @@ public class Histogram2D<T extends RealType< T >> extends Algorithm<T> {
 		final RandomAccess<LongType> histogram2DCursor =
 			plotImage.randomAccess();
 
+		long ignoredPixelCount = 0;
+
 		// iterate over images
 		long[] pos = new long[ plotImage.numDimensions() ];
 		while (cursor.hasNext()) {
@@ -202,15 +204,26 @@ public class Histogram2D<T extends RealType< T >> extends Algorithm<T> {
 			 */
 			pos[0] = getXValue(ch1, ch1BinWidth, ch2, ch2BinWidth);
 			pos[1] = getYValue(ch1, ch1BinWidth, ch2, ch2BinWidth);
-			// set position of input/output cursor
-			histogram2DCursor.setPosition( pos );
-			// get current value at position and increment it
-			long count = histogram2DCursor.get().getIntegerLong();
-			count++;
 
-			histogram2DCursor.get().set(count);
+			if (pos[0] >= 0 && pos[1] >=0 && pos[0] < xBins && pos[1] < yBins) {
+				// set position of input/output cursor
+				histogram2DCursor.setPosition( pos );
+				// get current value at position and increment it
+				long count = histogram2DCursor.get().getIntegerLong();
+				count++;
+
+				histogram2DCursor.get().set(count);
+			} else {
+				ignoredPixelCount ++;
+			}
 		}
 
+		if (ignoredPixelCount > 0) {
+			addWarning("Ignored pixels while generating histogram.",
+					"" + ignoredPixelCount + " pixels were ignored while generating the 2D histogram \"" + title +
+							"\" because the grey values were out of range." +
+							"This may happen, if an image contains negative pixel values.");
+		}
 		xBinWidth = ch1BinWidth;
 		yBinWidth = ch2BinWidth;
 		xLabel = getLabelCh1();
