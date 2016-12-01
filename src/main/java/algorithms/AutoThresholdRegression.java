@@ -11,13 +11,13 @@ import results.ResultHandler;
 
 /**
  * A class implementing the automatic finding of a threshold
- * used for Person colocalisation calculation.
+ * used for Pearson colocalisation calculation.
  */
 public class AutoThresholdRegression<T extends RealType< T >> extends Algorithm<T> {
 	// Identifiers for choosing which implementation to use
 	public enum Implementation {Costes, Bisection};
 	Implementation implementation = Implementation.Bisection;
-	/* The threshold for ration of y-intercept : y-mean to raise a warning about
+	/* The threshold for ratio of y-intercept : y-mean to raise a warning about
 	 * it being to high or low, meaning far from zero. Don't use y-max as before,
 	 * since this could be a very high value outlier. Mean is probably more
 	 * reliable.
