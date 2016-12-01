@@ -30,13 +30,13 @@ public class Main {
 		// start ImageJ
 		new ImageJ();
 
-		// open the Clown sample
+		// open the FluorescentCells sample
 		ImagePlus image = IJ.openImage("http://imagej.net/images/FluorescentCells.zip");
 		ImagePlus[] channels = ChannelSplitter.split(image);
 		channels[0].show();
 		channels[1].show();
 
-		// run the plugin
+		// run the plugin, Coloc 2
 		IJ.run("Coloc 2","channel_1=C1-FluorescentCells.tif channel_2=C2-FluorescentCells.tif roi_or_mask=<None> threshold_regression=Costes li_histogram_channel_1 li_histogram_channel_2 li_icq spearman's_rank_correlation manders'_correlation kendall's_tau_rank_correlation 2d_instensity_histogram costes'_significance_test psf=3 costes_randomisations=10");
 	}
 }
