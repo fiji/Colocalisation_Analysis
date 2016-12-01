@@ -312,7 +312,7 @@ public class Histogram2D<T extends RealType< T >> extends Algorithm<T> {
 	/**
 	 * Calculates the locations x value.
 	 * @param ch1Val The intensity of channel one
-	 * @param ch1BinWidt The bin width for channel one
+	 * @param ch1BinWidth The bin width for channel one
 	 * @return The x value of the data point location
 	 */
 	protected int getXValue(double ch1Val, double ch1BinWidth, double ch2Val, double ch2BinWidth) {
@@ -322,7 +322,7 @@ public class Histogram2D<T extends RealType< T >> extends Algorithm<T> {
 	/**
 	 * Calculates the locations y value.
 	 * @param ch2Val The intensity of channel one
-	 * @param ch2BinWidt The bin width for channel one
+	 * @param ch2BinWidth The bin width for channel one
 	 * @return The x value of the data point location
 	 */
 	protected int getYValue(double ch1Val, double ch1BinWidth, double ch2Val, double ch2BinWidth) {
