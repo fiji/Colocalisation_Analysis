@@ -1,5 +1,6 @@
 package results;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -28,7 +29,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import algorithms.AutoThresholdRegression;
 import algorithms.Histogram2D;
@@ -186,7 +191,19 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		c.gridy++;
 		pane.add(dropDownList, c);
 		c.gridy++;  c.weighty = 1;
-		pane.add(imagePanel, c);
+		// code to include axis labels
+		JPanel imageAndLabelPanel = new JPanel();
+		imageAndLabelPanel.setLayout(new BorderLayout());
+		imageAndLabelPanel.add(imagePanel, BorderLayout.CENTER);
+		JLabel yAxisLabel = new JLabel("Channel 2");
+		yAxisLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		yAxisLabel.setBorder(new EmptyBorder(0, 15, 0, 0));
+		imageAndLabelPanel.add(yAxisLabel, BorderLayout.WEST);
+		JLabel xAxisLabel = new JLabel("                  " + "Channel 1");
+		xAxisLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		xAxisLabel.setBorder(new EmptyBorder(0, 0, 15, 0));
+		imageAndLabelPanel.add(xAxisLabel, BorderLayout.SOUTH);
+		pane.add(imageAndLabelPanel, c);
 		c.gridy++; c.weighty = 1;
 		pane.add(scrollPane, c);
 		c.weighty = 0; c.gridy++;
