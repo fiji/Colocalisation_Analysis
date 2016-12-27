@@ -67,8 +67,8 @@ public class DataContainer<T extends RealType< T >> {
 			String name1, String name2) {
 		sourceImage1 = src1;
 		sourceImage2 = src2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
+		sourceImage1Name = name1;
+		sourceImage2Name = name2;
 
 		// create a mask that is true at all pixels.
 		final long[] dims = new long[src1.numDimensions()];
@@ -118,8 +118,8 @@ public class DataContainer<T extends RealType< T >> {
 		sourceImage2 = src2;
 		this.ch1 = ch1;
 		this.ch2 = ch2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
+		sourceImage1Name = name1;
+		sourceImage2Name = name2;
 
 		final int numDims = src1.numDimensions();
 		maskBBOffset = new long[numDims];
@@ -161,8 +161,8 @@ public class DataContainer<T extends RealType< T >> {
 			throws MissingPreconditionException {
 		sourceImage1 = src1;
 		sourceImage2 = src2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
+		sourceImage1Name = name1;
+		sourceImage2Name = name2;
 		
 		final int numDims = src1.numDimensions();
 		final long[] dim = new long[numDims];
@@ -257,11 +257,11 @@ public class DataContainer<T extends RealType< T >> {
 	}
 
 	public String getSourceImage1Name() {
-		return sourceImage1Name;
+		return "Ch1_" + sourceImage1Name;
 	}
 
 	public String getSourceImage2Name() {
-		return sourceImage2Name;
+		return "Ch2_" + sourceImage2Name;
 	}
 
 	public String getJobName() {
