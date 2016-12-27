@@ -1,17 +1,5 @@
 package results;
 
-import algorithms.AutoThresholdRegression;
-import algorithms.Histogram2D;
-import fiji.util.gui.JImagePanel;
-import gadgets.DataContainer;
-import ij.IJ;
-import ij.ImageJ;
-import ij.ImagePlus;
-import ij.gui.Line;
-import ij.gui.Overlay;
-import ij.process.ImageProcessor;
-import ij.text.TextWindow;
-
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -42,6 +30,17 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import algorithms.AutoThresholdRegression;
+import algorithms.Histogram2D;
+import fiji.util.gui.JImagePanel;
+import gadgets.DataContainer;
+import ij.IJ;
+import ij.ImageJ;
+import ij.ImagePlus;
+import ij.gui.Line;
+import ij.gui.Overlay;
+import ij.process.ImageProcessor;
+import ij.text.TextWindow;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.display.imagej.ImageJFunctions;
