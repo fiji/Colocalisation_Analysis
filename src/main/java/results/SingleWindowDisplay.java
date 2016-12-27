@@ -195,11 +195,11 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		JPanel imageAndLabelPanel = new JPanel();
 		imageAndLabelPanel.setLayout(new BorderLayout());
 		imageAndLabelPanel.add(imagePanel, BorderLayout.CENTER);
-		JLabel yAxisLabel = new JLabel("Channel 2");
+		JLabel yAxisLabel = new JLabel("Channel 2 ("+ dataContainer.getSourceCh2Name() + ")");
 		yAxisLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		yAxisLabel.setBorder(new EmptyBorder(0, 15, 0, 0));
 		imageAndLabelPanel.add(yAxisLabel, BorderLayout.WEST);
-		JLabel xAxisLabel = new JLabel("                  " + "Channel 1");
+		JLabel xAxisLabel = new JLabel("Channel 1 ("+ dataContainer.getSourceCh1Name() + ")");
 		xAxisLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		xAxisLabel.setBorder(new EmptyBorder(0, 0, 15, 0));
 		imageAndLabelPanel.add(xAxisLabel, BorderLayout.SOUTH);
