@@ -264,6 +264,14 @@ public class DataContainer<T extends RealType< T >> {
 		return "Ch2_" + sourceImage2Name;
 	}
 
+	public String getSourceCh1Name() {
+		return sourceImage1Name;
+	}
+
+	public String getSourceCh2Name() {
+		return sourceImage2Name;
+	}
+
 	public String getJobName() {
 		return jobName;
 	}
