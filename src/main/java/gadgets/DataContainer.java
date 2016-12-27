@@ -27,21 +27,21 @@ public class DataContainer<T extends RealType< T >> {
 	// enumeration of different mask types
 	public enum MaskType { Regular, Irregular, None };
 	// some general image statistics
-	double meanCh1, meanCh2, minCh1, maxCh1, minCh2, maxCh2, integralCh1, integralCh2;
+	private double meanCh1, meanCh2, minCh1, maxCh1, minCh2, maxCh2, integralCh1, integralCh2;
 	// The source images that the results are based on
-	RandomAccessibleInterval<T> sourceImage1, sourceImage2;
+	private RandomAccessibleInterval<T> sourceImage1, sourceImage2;
 	// The names of the two source images
-	String sourceImage1Name, sourceImage2Name;
+	private String sourceImage1Name, sourceImage2Name;
 	// The name of the colocalisation run job
 	public String jobName;
 	// The mask for the images
-	RandomAccessibleInterval<BitType> mask;
+	private RandomAccessibleInterval<BitType> mask;
 	// Type of the used mask
 	protected MaskType maskType;
 	// the hash code integer of the mask object
-	int maskHash;
+	private int maskHash;
 	// The channels of the source images that the result relate to
-	int ch1, ch2;
+	private int ch1, ch2;
 	// The mask's bounding box
 	protected long[] maskBBSize = null;
 	protected long[] maskBBOffset = null;
@@ -67,8 +67,8 @@ public class DataContainer<T extends RealType< T >> {
 			String name1, String name2) {
 		sourceImage1 = src1;
 		sourceImage2 = src2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
+		sourceImage1Name = name1;
+		sourceImage2Name = name2;
 
 		// create a mask that is true at all pixels.
 		final long[] dims = new long[src1.numDimensions()];
@@ -118,8 +118,8 @@ public class DataContainer<T extends RealType< T >> {
 		sourceImage2 = src2;
 		this.ch1 = ch1;
 		this.ch2 = ch2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
+		sourceImage1Name = name1;
+		sourceImage2Name = name2;
 
 		final int numDims = src1.numDimensions();
 		maskBBOffset = new long[numDims];
@@ -161,8 +161,8 @@ public class DataContainer<T extends RealType< T >> {
 			throws MissingPreconditionException {
 		sourceImage1 = src1;
 		sourceImage2 = src2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
+		sourceImage1Name = name1;
+		sourceImage2Name = name2;
 		
 		final int numDims = src1.numDimensions();
 		final long[] dim = new long[numDims];
@@ -257,10 +257,18 @@ public class DataContainer<T extends RealType< T >> {
 	}
 
 	public String getSourceImage1Name() {
-		return sourceImage1Name;
+		return "Ch1_" + sourceImage1Name;
 	}
 
 	public String getSourceImage2Name() {
+		return "Ch2_" + sourceImage2Name;
+	}
+
+	public String getSourceCh1Name() {
+		return sourceImage1Name;
+	}
+
+	public String getSourceCh2Name() {
 		return sourceImage2Name;
 	}
 
