@@ -27,21 +27,21 @@ public class DataContainer<T extends RealType< T >> {
 	// enumeration of different mask types
 	public enum MaskType { Regular, Irregular, None };
 	// some general image statistics
-	double meanCh1, meanCh2, minCh1, maxCh1, minCh2, maxCh2, integralCh1, integralCh2;
+	private double meanCh1, meanCh2, minCh1, maxCh1, minCh2, maxCh2, integralCh1, integralCh2;
 	// The source images that the results are based on
-	RandomAccessibleInterval<T> sourceImage1, sourceImage2;
+	private RandomAccessibleInterval<T> sourceImage1, sourceImage2;
 	// The names of the two source images
-	String sourceImage1Name, sourceImage2Name;
+	private String sourceImage1Name, sourceImage2Name;
 	// The name of the colocalisation run job
 	public String jobName;
 	// The mask for the images
-	RandomAccessibleInterval<BitType> mask;
+	private RandomAccessibleInterval<BitType> mask;
 	// Type of the used mask
 	protected MaskType maskType;
 	// the hash code integer of the mask object
-	int maskHash;
+	private int maskHash;
 	// The channels of the source images that the result relate to
-	int ch1, ch2;
+	private int ch1, ch2;
 	// The mask's bounding box
 	protected long[] maskBBSize = null;
 	protected long[] maskBBOffset = null;
