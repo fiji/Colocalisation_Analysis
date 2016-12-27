@@ -195,11 +195,11 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		JPanel imageAndLabelPanel = new JPanel();
 		imageAndLabelPanel.setLayout(new BorderLayout());
 		imageAndLabelPanel.add(imagePanel, BorderLayout.CENTER);
-		JLabel yAxisLabel = new JLabel("Channel 2 ("+ dataContainer.getSourceCh2Name() + ")");
+		JLabel yAxisLabel = new JLabel(labelName(2, dataContainer.getSourceCh2Name()));
 		yAxisLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		yAxisLabel.setBorder(new EmptyBorder(0, 15, 0, 0));
 		imageAndLabelPanel.add(yAxisLabel, BorderLayout.WEST);
-		JLabel xAxisLabel = new JLabel("Channel 1 ("+ dataContainer.getSourceCh1Name() + ")");
+		JLabel xAxisLabel = new JLabel(labelName(1, dataContainer.getSourceCh1Name()));
 		xAxisLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		xAxisLabel.setBorder(new EmptyBorder(0, 0, 15, 0));
 		imageAndLabelPanel.add(xAxisLabel, BorderLayout.SOUTH);
@@ -210,6 +210,13 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		pane.add(buttons, c);
 		pack();
     }
+
+	private String labelName(int ch, String s) {
+		final int maxLen = 30;
+		final String shortName = s.length() > maxLen ? //
+			s.substring(0, maxLen - 3) + "..." : s;
+		return "<html><center>Channel " + ch + "<br>("+ shortName + ")</center>";
+	}
 
 	@Override
 	public void process() {
