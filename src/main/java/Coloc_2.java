@@ -37,13 +37,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.imglib2.Cursor;
+import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
 import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
+import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
@@ -503,9 +506,12 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 				channel1 = container.getSourceImage1();
 				channel2 = container.getSourceImage2();
 			}
+			channel1 = project(channel1);
+			channel2 = project(channel2);
+
 			for (ResultHandler<T> r : listOfResultHandlers) {
-				r.handleImage (channel1, "Channel 1");
-				r.handleImage (channel2, "Channel 2");
+				r.handleImage (channel1, "Channel 1 (Max Projection)");
+				r.handleImage (channel2, "Channel 2 (Max Projection)");
 			}
 		}
 		// do the actual results processing
@@ -522,6 +528,40 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 		if (autoSavePdf)
 			pdfWriter.process();
     }
+
+	private RandomAccessibleInterval<T> project(RandomAccessibleInterval<T> image) {
+		if (image.numDimensions() < 2) {
+			throw new IllegalArgumentException("Dimensionality too small: " + image.numDimensions());
+		}
+
+		final IterableInterval<T> input = Views.iterable(image);
+		final T type = input.firstElement(); // e.g. unsigned 8-bit
+		final long xLen = image.dimension(0);
+		final long yLen = image.dimension(1);
+
+		// initialize output image with minimum value of the pixel type
+		final long[] outputDims = {xLen, yLen};
+		final Img<T> output = new ArrayImgFactory<T>().create(outputDims, type);
+		for (T sample : output) {
+			sample.setReal(type.getMinValue());
+		}
+
+		// loop over the input image, performing the max projection
+		final Cursor<T> inPos = input.localizingCursor();
+		RandomAccess<T> outPos = output.randomAccess();
+		while (inPos.hasNext()) {
+			final T inPix = inPos.next();
+			long xPos = inPos.getLongPosition(0);
+			long yPos = inPos.getLongPosition(1);
+			outPos.setPosition(xPos, 0);
+			outPos.setPosition(yPos, 1);
+			T outPix = outPos.get();
+			if (outPix.compareTo(inPix) < 0) {
+				outPix.set(inPix);
+			}
+		}
+		return output;
+	}
 
 	/**
 	 * A method to get the bounding box from the data in the given
