@@ -34,6 +34,8 @@ public class DataContainer<T extends RealType< T >> {
 	private String sourceImage1Name, sourceImage2Name;
 	// The name of the colocalisation run job
 	public String jobName;
+	// The name of the mask
+	private String maskName;
 	// The mask for the images
 	private RandomAccessibleInterval<BitType> mask;
 	// Type of the used mask
