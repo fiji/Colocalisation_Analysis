@@ -178,7 +178,7 @@ public class InputCheck<T extends RealType< T >> extends Algorithm<T> {
 
 		// Make the ResultsHandler implementation deal with the images'
 		// ROI or mask or lack thereof, so the user knows what they used.
-		handler.handleValue("Mask Type Used", maskType.name());
+		handler.handleValue("Mask Type Used", maskType.label());
 		handler.handleValue("Mask ID Used", maskID, 0);
 	}
 }
