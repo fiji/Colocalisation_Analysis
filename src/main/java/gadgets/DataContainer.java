@@ -24,8 +24,23 @@ import net.imglib2.type.numeric.RealType;
  * @param <T>
  */
 public class DataContainer<T extends RealType< T >> {
-	// enumeration of different mask types
-	public enum MaskType { Regular, Irregular, None };
+	// enumeration of different mask types, include labels
+	public enum MaskType {
+		Regular("ROI"),
+		Irregular("mask image"),
+		None("none");
+
+		private final String label;
+
+		// constructor for MaskType, including String label name
+		MaskType(String label) {
+			this.label = label;
+		}
+		// method to retrieve String label name of MaskType
+		public String label() {
+			return label;
+		}
+	}
 	// some general image statistics
 	private double meanCh1, meanCh2, minCh1, maxCh1, minCh2, maxCh2, integralCh1, integralCh2;
 	// The source images that the results are based on
@@ -34,8 +49,6 @@ public class DataContainer<T extends RealType< T >> {
 	private String sourceImage1Name, sourceImage2Name;
 	// The name of the colocalisation run job
 	public String jobName;
-	// The name of the mask
-	private String maskName;
 	// The mask for the images
 	private RandomAccessibleInterval<BitType> mask;
 	// Type of the used mask
