@@ -230,10 +230,10 @@ public class MandersColocalization<T extends RealType< T >> extends Algorithm<T>
 	@Override
 	public void processResults(ResultHandler<T> handler) {
 		super.processResults(handler);
-		handler.handleValue( "Manders' M1 (without thresholds)", mandersM1 );
-		handler.handleValue( "Manders' M2 (without thresholds)", mandersM2 );
-		handler.handleValue( "Manders' tM1 (with thresholds)", mandersThresholdedM1 );
-		handler.handleValue( "Manders' tM2 (with thresholds)", mandersThresholdedM2 );
+		handler.handleValue( "Manders' M1 (Above zero intensity of Ch2)", mandersM1 );
+		handler.handleValue( "Manders' M2 (Above zero intensity of Ch1)", mandersM2 );
+		handler.handleValue( "Manders' tM1 (Above autothreshold of Ch2)", mandersThresholdedM1 );
+		handler.handleValue( "Manders' tM2 (Above autothreshold of Ch1)", mandersThresholdedM2 );
 	}
 
 	/**
