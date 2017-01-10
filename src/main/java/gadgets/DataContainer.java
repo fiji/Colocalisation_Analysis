@@ -32,11 +32,10 @@ public class DataContainer<T extends RealType< T >> {
 
 		private final String label;
 
-		// constructor for MaskType, including String label name
 		MaskType(String label) {
 			this.label = label;
 		}
-		// method to retrieve String label name of MaskType
+
 		public String label() {
 			return label;
 		}
