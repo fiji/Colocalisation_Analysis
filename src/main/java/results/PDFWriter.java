@@ -114,8 +114,6 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 
 	@Override
 	public void handleValue(String name, String value) {
-		// send (output parameter name, value)  to IJ.log for scraping batch results
-		IJ.log(name + ", " + value);
 		listOfPDFTexts.add(new Paragraph(name + ": " + value));
 	}
 
