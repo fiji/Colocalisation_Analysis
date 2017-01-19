@@ -50,6 +50,8 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 		= new ArrayList<com.itextpdf.text.Image>();
 	protected List<Paragraph> listOfPDFTexts
 		= new ArrayList<Paragraph>();
+	// a list of PDF warnings
+	protected List<Paragraph> PDFwarnings = new ArrayList<Paragraph>();
 
 	/**
 	 * Creates a new PDFWriter that can access the container.
@@ -109,13 +111,11 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 
 	@Override
 	public void handleWarning(Warning warning) {
-		listOfPDFTexts.add(new Paragraph("Warning! " + warning.getShortMessage() + " - " + warning.getLongMessage()));
+		PDFwarnings.add(new Paragraph("Warning! " + warning.getShortMessage() + " - " + warning.getLongMessage()));
 	}
 
 	@Override
 	public void handleValue(String name, String value) {
-		// send (output parameter name, value)  to IJ.log for scraping batch results
-		IJ.log(name + ", " + value);
 		listOfPDFTexts.add(new Paragraph(name + ": " + value));
 	}
 
@@ -215,6 +215,11 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 			// iterate over all produced images
 			for (com.itextpdf.text.Image img : listOfPDFImages) {
 				addImage(img);
+			}
+
+			//iterate over all produced PDFwarnings
+			for (Paragraph p : PDFwarnings) {
+				document.add(p);
 			}
 
 			//iterate over all produced text objects
