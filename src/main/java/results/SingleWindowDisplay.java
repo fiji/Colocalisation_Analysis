@@ -334,21 +334,21 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		out.print("<H1 class=\"nowarn\">No warnings occured</H1>");
 	    }
 
-	    // print out simple value results
-	    out.print("<H1>Results</H1>");
-	    // Print out the table
-	    out.print("<TABLE><TR>");
-	    out.print("<TH>Name</TH><TH>Result</TH></TR>");
+		// print out simple value results
+		out.print("<H1>Results</H1>");
+		// Print out the table
+		out.print("<TABLE><TR>");
+		out.print("<TH>Name</TH><TH>Result</TH></TR>");
 
 		// Print table rows and spit warnings to the IJ log.
-	    IJ.log("!!! WARNINGS !!!");
+		IJ.log("!!! WARNINGS !!!");
 		for (Warning war : warnings) {
 			IJ.log("Warning! " + war.getShortMessage() + " - " + war.getLongMessage());
 		}
 
 		// Print table rows and spit results to the IJ log.
-	    IJ.log("RESULTS:");
-		for ( ValueResult vr : valueResults) {
+		IJ.log("RESULTS:");
+		for (ValueResult vr : valueResults) {
 			if (vr.isNumber) {
 				printTableRow(out, vr.name, vr.number, vr.decimals);
 				IJ.log(vr.name + ", " + IJ.d2s(vr.number, vr.decimals));
