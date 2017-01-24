@@ -333,18 +333,17 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	    } else {
 		out.print("<H1 class=\"nowarn\">No warnings occurred.</H1>");
 	    }
-
+	    
+		// Spit warnings to the IJ log
+		IJ.log("!!! WARNINGS !!!");
+		for (Warning war : warnings) {
+			IJ.log("Warning! " + war.getShortMessage() + " - " + war.getLongMessage());
+		}
 		// print out simple value results
 		out.print("<H1>Results</H1>");
 		// Print out the table
 		out.print("<TABLE><TR>");
 		out.print("<TH>Name</TH><TH>Result</TH></TR>");
-
-		// Print table rows and spit warnings to the IJ log.
-		IJ.log("!!! WARNINGS !!!");
-		for (Warning war : warnings) {
-			IJ.log("Warning! " + war.getShortMessage() + " - " + war.getLongMessage());
-		}
 
 		// Print table rows and spit results to the IJ log.
 		IJ.log("RESULTS:");
