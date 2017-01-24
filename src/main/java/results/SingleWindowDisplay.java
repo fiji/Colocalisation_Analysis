@@ -331,7 +331,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		    }
 		    out.println("</TABLE>");
 	    } else {
-		out.print("<H1 class=\"nowarn\">No warnings occured</H1>");
+		out.print("<H1 class=\"nowarn\">No warnings occurred.</H1>");
 	    }
 
 		// print out simple value results
