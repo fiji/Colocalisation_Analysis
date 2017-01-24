@@ -315,6 +315,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 			+ "h1 {color: black; font-weight: bold; font-size: 10px;}"
 			+ "h1.warn {color: red;}"
 			+ "h1.nowarn {color: green;}"
+			+ "h1.results {color: black;}"
 			+ "table {width: auto;}"
 			+ "td { border-width:1px; border-style: solid; vertical-align:top; overflow:hidden;}"
 			+ "</style>");
@@ -333,7 +334,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	    } else {
 		out.print("<H1 class=\"nowarn\">No warnings occurred.</H1>");
 	    }
-	    
+
 		// Spit warnings to the IJ log
 		IJ.log("!!! WARNINGS !!!");
 		for (Warning war : warnings) {
@@ -342,7 +343,8 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		// print out simple value results
 		out.print("<H1>Results</H1>");
 		// Print out the table
-		out.print("<TABLE><TR>");
+		//out.print("<TABLE><TR>");
+		out.print("<TABLE class=\"results\"><TR>");
 		out.print("<TH>Name</TH><TH>Result</TH></TR>");
 
 		// Print table rows and spit results to the IJ log.
