@@ -53,11 +53,12 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.LongType;
 
 /**
- * This class displays the container contents in one single window
- * and offers features like the use of different LUTs.
+ * This class displays the container contents in one single window and offers
+ * features like the use of different LUTs.
  *
  */
-public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implements ResultHandler<T>, ItemListener, ActionListener, ClipboardOwner, MouseMotionListener {
+public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
+		implements ResultHandler<T>, ItemListener, ActionListener, ClipboardOwner, MouseMotionListener {
 	private static final long serialVersionUID = -5642321584354176878L;
 	protected static final int WIN_WIDTH = 350;
 	protected static final int WIN_HEIGHT = 600;
@@ -72,21 +73,20 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	protected RandomAccessibleInterval<? extends RealType<?>> currentlyDisplayedImageResult;
 
 	// a list of the available result images, no matter what specific kinds
-	protected List< NamedContainer< RandomAccessibleInterval<? extends RealType<?>>> > listOfImages
-		= new ArrayList< NamedContainer< RandomAccessibleInterval<? extends RealType<?>>> >();
-	protected Map<RandomAccessibleInterval<LongType>, Histogram2D<T>> mapOf2DHistograms
-		= new HashMap<RandomAccessibleInterval<LongType>, Histogram2D<T>>();
+	protected List<NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>> listOfImages = new ArrayList<NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>>();
+	protected Map<RandomAccessibleInterval<LongType>, Histogram2D<T>> mapOf2DHistograms = new HashMap<RandomAccessibleInterval<LongType>, Histogram2D<T>>();
 	// a list of warnings
 	protected List<Warning> warnings = new ArrayList<Warning>();
 	// a list of named values, collected from algorithms
 	protected List<ValueResult> valueResults = new ArrayList<ValueResult>();
 
-	/* a map of images and corresponding LUTs. When an image is not in
-	 * there no LUT should be applied.
+	/*
+	 * a map of images and corresponding LUTs. When an image is not in there no
+	 * LUT should be applied.
 	 */
 	protected Map<Object, String> listOfLUTs = new HashMap<Object, String>();
 
-	//make a cursor so we can get pixel values from the image
+	// make a cursor so we can get pixel values from the image
 	protected RandomAccess<? extends RealType<?>> pixelAccessCursor;
 
 	// A PDF writer to call if user wants PDF print
@@ -100,12 +100,12 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	protected JButton listButton, copyButton;
 	protected JCheckBox log;
 
-	/* The data container with general information about
-	 * source images
+	/*
+	 * The data container with general information about source images
 	 */
 	protected DataContainer<T> dataContainer = null;
 
-	public SingleWindowDisplay(DataContainer<T> container, PDFWriter<T> pdfWriter){
+	public SingleWindowDisplay(DataContainer<T> container, PDFWriter<T> pdfWriter) {
 		// Show job name in title bar
 		super(container.getJobName());
 
@@ -123,10 +123,9 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	public void setup() {
 
 		JComboBox dropDownList = new JComboBox();
-		for(NamedContainer< RandomAccessibleInterval<? extends RealType<?>> > img : listOfImages) {
-			dropDownList.addItem(
-					new NamedContainer<RandomAccessibleInterval<? extends RealType<?>> >(
-							img.object, img.name));
+		for (NamedContainer<RandomAccessibleInterval<? extends RealType<?>>> img : listOfImages) {
+			dropDownList
+					.addItem(new NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>(img.object, img.name));
 		}
 		dropDownList.addItemListener(this);
 
@@ -135,9 +134,9 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 
 		// Create something to display it in
 		final JEditorPane editor = new JEditorPane();
-		editor.setEditable(false);				// we're browsing not editing
-		editor.setContentType("text/html");		// must specify HTML text
-		editor.setText(makeHtmlText());			// specify the text to display
+		editor.setEditable(false); // we're browsing not editing
+		editor.setContentType("text/html"); // must specify HTML text
+		editor.setText(makeHtmlText()); // specify the text to display
 
 		// Put the JEditorPane in a scrolling window and add it
 		JScrollPane scrollPane = new JScrollPane(editor);
@@ -173,8 +172,9 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		});
 		buttons.add(pdfButten);
 
-		/* We want the image to be log scale by default
-		 * so the user can see something.
+		/*
+		 * We want the image to be log scale by default so the user can see
+		 * something.
 		 */
 		log = new JCheckBox("Log");
 		log.setSelected(true);
@@ -190,7 +190,8 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		c.gridwidth = GridBagConstraints.BOTH;
 		c.gridy++;
 		pane.add(dropDownList, c);
-		c.gridy++;  c.weighty = 1;
+		c.gridy++;
+		c.weighty = 1;
 		// code to include axis labels
 		JPanel imageAndLabelPanel = new JPanel();
 		imageAndLabelPanel.setLayout(new BorderLayout());
@@ -204,30 +205,30 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		xAxisLabel.setBorder(new EmptyBorder(0, 0, 15, 0));
 		imageAndLabelPanel.add(xAxisLabel, BorderLayout.SOUTH);
 		pane.add(imageAndLabelPanel, c);
-		c.gridy++; c.weighty = 1;
+		c.gridy++;
+		c.weighty = 1;
 		pane.add(scrollPane, c);
-		c.weighty = 0; c.gridy++;
+		c.weighty = 0;
+		c.gridy++;
 		pane.add(buttons, c);
 		pack();
-    }
+	}
 
 	private String labelName(int ch, String s) {
 		final int maxLen = 30;
 		final String shortName = s.length() > maxLen ? //
-			s.substring(0, maxLen - 3) + "..." : s;
-		return "<html><center>Channel " + ch + "<br>("+ shortName + ")</center>";
+				s.substring(0, maxLen - 3) + "..." : s;
+		return "<html><center>Channel " + ch + "<br>(" + shortName + ")</center>";
 	}
 
 	@Override
 	public void process() {
 		// if wanted, display source images
-		if ( displayOriginalImages ) {
-			listOfImages.add( new NamedContainer<RandomAccessibleInterval<? extends RealType<?>> >(
-					dataContainer.getSourceImage1(),
-					dataContainer.getSourceImage1Name() ) );
-			listOfImages.add( new NamedContainer<RandomAccessibleInterval<? extends RealType<?>> >(
-					dataContainer.getSourceImage2(),
-					dataContainer.getSourceImage2Name() ) );
+		if (displayOriginalImages) {
+			listOfImages.add(new NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>(
+					dataContainer.getSourceImage1(), dataContainer.getSourceImage1Name()));
+			listOfImages.add(new NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>(
+					dataContainer.getSourceImage2(), dataContainer.getSourceImage2Name()));
 		}
 
 		// set up the GUI, which runs makeHtmlText() for the value results
@@ -243,14 +244,13 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 
 	@Override
 	public void handleImage(RandomAccessibleInterval<T> image, String name) {
-		listOfImages.add( new NamedContainer<RandomAccessibleInterval<? extends RealType<?>> >(
-				image, name ) );
+		listOfImages.add(new NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>(image, name));
 	}
 
 	@Override
 	public void handleHistogram(Histogram2D<T> histogram, String name) {
-		listOfImages.add( new NamedContainer<RandomAccessibleInterval<? extends RealType<?>> >(
-				histogram.getPlotImage(), name ) );
+		listOfImages.add(
+				new NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>(histogram.getPlotImage(), name));
 		mapOf2DHistograms.put(histogram.getPlotImage(), histogram);
 		// link the histogram to a LUT
 		listOfLUTs.put(histogram.getPlotImage(), "Fire");
@@ -258,12 +258,12 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 
 	@Override
 	public void handleWarning(Warning warning) {
-		warnings.add( warning );
+		warnings.add(warning);
 	}
 
 	@Override
 	public void handleValue(String name, String value) {
-		valueResults.add( new ValueResult(name, value));
+		valueResults.add(new ValueResult(name, value));
 	}
 
 	@Override
@@ -273,7 +273,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 
 	@Override
 	public void handleValue(String name, double value, int decimals) {
-		valueResults.add( new ValueResult(name, value, decimals));
+		valueResults.add(new ValueResult(name, value, decimals));
 	}
 
 	/**
@@ -286,54 +286,43 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	/**
 	 * Prints an HTML table entry onto the stream.
 	 */
-	protected void printTableRow(PrintWriter out, String name, double number) {
-		printTableRow(out, name, number, 3);
-	}
-
-	/**
-	 * Prints an HTML table entry onto the stream.
-	 */
 	protected void printTableRow(PrintWriter out, String name, double number, int decimalPlaces) {
 		printTableRow(out, name, IJ.d2s(number, decimalPlaces));
 	}
 
 	/**
-	 * This method creates CSS formatted HTML source out of the
-	 * results stored in the member variables and adds some
-	 * image statistics found in the data container.
+	 * This method creates CSS formatted HTML source out of the results stored
+	 * in the member variables and adds some image statistics found in the data
+	 * container.
+	 * 
 	 * @return The HTML source to display
 	 */
 	protected String makeHtmlText() {
 
 		StringWriter sout = new StringWriter();
-		PrintWriter out = new PrintWriter( sout );
+		PrintWriter out = new PrintWriter(sout);
 
-	    out.print("<html><head>");
-	    // add some style information
-	    out.print("<style type=\"text/css\">"
-			+ "body {font-size: 9px; font-family: sans-serif;}"
-			+ "h1 {color: black; font-weight: bold; font-size: 10px;}"
-			+ "h1.warn {color: red;}"
-			+ "h1.nowarn {color: green;}"
-			+ "h1.results {color: black;}"
-			+ "table {width: auto;}"
-			+ "td { border-width:1px; border-style: solid; vertical-align:top; overflow:hidden;}"
-			+ "</style>");
-	    out.print("</head>");
+		out.print("<html><head>");
+		// add some style information
+		out.print("<style type=\"text/css\">" + "body {font-size: 9px; font-family: sans-serif;}"
+				+ "h1 {color: black; font-weight: bold; font-size: 10px;}" + "h1.warn {color: red;}"
+				+ "h1.nowarn {color: green;}" + "h1.results {color: black;}" + "table {width: auto;}"
+				+ "td { border-width:1px; border-style: solid; vertical-align:top; overflow:hidden;}" + "</style>");
+		out.print("</head>");
 
-	    // print out warnings, if any
-	    if ( warnings.size() > 0 ) {
-		    out.print("<H1 class=\"warn\">Warnings</H1>");
-		    // Print out the table
-		    out.print("<TABLE class=\"warn\"><TR>");
-		    out.print("<TH>Type</TH><TH>Message</TH></TR>");
-		    for (Warning w : warnings) {
+		// print out warnings, if any
+		if (warnings.size() > 0) {
+			out.print("<H1 class=\"warn\">Warnings</H1>");
+			// Print out the table
+			out.print("<TABLE class=\"warn\"><TR>");
+			out.print("<TH>Type</TH><TH>Message</TH></TR>");
+			for (Warning w : warnings) {
 				printTableRow(out, w.getShortMessage(), w.getLongMessage());
-		    }
-		    out.println("</TABLE>");
-	    } else {
-		out.print("<H1 class=\"nowarn\">No warnings occurred.</H1>");
-	    }
+			}
+			out.println("</TABLE>");
+		} else {
+			out.print("<H1 class=\"nowarn\">No warnings occurred.</H1>");
+		}
 
 		// Spit warnings to the IJ log
 		IJ.log("!!! WARNINGS !!!");
@@ -341,9 +330,9 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 			IJ.log("Warning! " + war.getShortMessage() + " - " + war.getLongMessage());
 		}
 		// print out simple value results
-		out.print("<H1>Results</H1>");
+		out.print("<H1 class=\"results\">Results</H1>");
 		// Print out the table
-		//out.print("<TABLE><TR>");
+		// out.print("<TABLE><TR>");
 		out.print("<TABLE class=\"results\"><TR>");
 		out.print("<TH>Name</TH><TH>Result</TH></TR>");
 
@@ -359,21 +348,22 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 			}
 		}
 
-	    out.println("</TABLE>");
-	    out.print("</html>");
-	    out.close();
+		out.println("</TABLE>");
+		out.print("</html>");
+		out.close();
 
-	    // Get the string of HTML from the StringWriter and return it.
-	    return sout.toString();
+		// Get the string of HTML from the StringWriter and return it.
+		return sout.toString();
 	}
 
 	/**
-	 * If the currently selected ImageResult is an HistrogramResult,
-	 * a table of x-values, y-values and the counts.
+	 * If the currently selected ImageResult is an HistrogramResult, a table of
+	 * x-values, y-values and the counts.
 	 */
 	protected void showList() {
-		/* check if we are dealing with an histogram result
-		 * or a generic image result
+		/*
+		 * check if we are dealing with an histogram result or a generic image
+		 * result
 		 */
 		if (isHistogram(currentlyDisplayedImageResult)) {
 			Histogram2D<T> hr = mapOf2DHistograms.get(currentlyDisplayedImageResult);
@@ -388,23 +378,24 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 			// get the actual histogram data
 			String histogramData = hr.getData();
 
-			TextWindow tw = new TextWindow(getTitle(), vHeadingX + "\t" +
-					vHeadingY + "\tcount", histogramData, 250, 400);
+			TextWindow tw = new TextWindow(getTitle(), vHeadingX + "\t" + vHeadingY + "\tcount", histogramData, 250,
+					400);
 			tw.setVisible(true);
 		}
 	}
 
 	/**
-	 * If the currently selected ImageResult is an HistogramRestult,
-	 * this method copies its data into to the clipboard.
+	 * If the currently selected ImageResult is an HistogramRestult, this method
+	 * copies its data into to the clipboard.
 	 */
 	protected void copyToClipboard() {
-		/* check if we are dealing with an histogram result
-		 * or a generic image result
+		/*
+		 * check if we are dealing with an histogram result or a generic image
+		 * result
 		 */
 		if (isHistogram(currentlyDisplayedImageResult)) {
-			/* try to get the system clipboard and return
-			 * if we can't get it
+			/*
+			 * try to get the system clipboard and return if we can't get it
 			 */
 			Clipboard systemClipboard = null;
 			try {
@@ -413,7 +404,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 				systemClipboard = null;
 			}
 
-			if (systemClipboard==null) {
+			if (systemClipboard == null) {
 				IJ.error("Unable to copy to Clipboard.");
 				return;
 			}
@@ -421,7 +412,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 			IJ.showStatus("Copying histogram values...");
 
 			String text = mapOf2DHistograms.get(currentlyDisplayedImageResult).getData();
-			StringSelection contents = new StringSelection( text );
+			StringSelection contents = new StringSelection(text);
 			systemClipboard.setContents(contents, this);
 
 			IJ.showStatus(text.length() + " characters copied to Clipboard");
@@ -437,21 +428,20 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	public void mouseMoved(MouseEvent e) {
 		if (e.getSource().equals(imagePanel)) {
 			/*
-			 *  calculate the mouse position relative to the upper left
-			 *  corner of the displayed image.
+			 * calculate the mouse position relative to the upper left corner of
+			 * the displayed image.
 			 */
 			final int imgWidth = imagePanel.getSrcRect().width;
 			final int imgHeight = imagePanel.getSrcRect().height;
-			int displayWidth = (int)(imgWidth * imagePanel.getMagnification());
-			int displayHeight = (int)(imgHeight * imagePanel.getMagnification());
+			int displayWidth = (int) (imgWidth * imagePanel.getMagnification());
+			int displayHeight = (int) (imgHeight * imagePanel.getMagnification());
 			int offsetX = (imagePanel.getWidth() - displayWidth) / 2;
 			int offsetY = (imagePanel.getHeight() - displayHeight) / 2;
 			int onImageX = imagePanel.screenX(e.getX() - offsetX);
 			int onImageY = imagePanel.screenY(e.getY() - offsetY);
 
 			// make sure we stay within the image boundaries
-			if (onImageX >= 0 && onImageX < imgWidth
-					&& onImageY >= 0 && onImageY < imgHeight ) {
+			if (onImageX >= 0 && onImageX < imgWidth && onImageY >= 0 && onImageY < imgHeight) {
 				mouseMoved(onImageX, onImageY);
 			} else {
 				IJ.showStatus("");
@@ -460,38 +450,42 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	}
 
 	/**
-	 * Displays information about the pixel below the mouse cursor of
-	 * the currently displayed image result. The coordinates passed are
-	 * expected to be within the image boundaries.
+	 * Displays information about the pixel below the mouse cursor of the
+	 * currently displayed image result. The coordinates passed are expected to
+	 * be within the image boundaries.
 	 *
 	 * @param x
 	 * @param y
 	 */
-	public void mouseMoved( int x, int y) {
+	public void mouseMoved(int x, int y) {
 		final ImageJ ij = IJ.getInstance();
 		if (ij != null && currentlyDisplayedImageResult != null) {
-			/* If Alt key is not pressed, display the calibrated data.
-			 * If not, display image positions and data.
-			 * Non log image intensity from original image or 2D histogram result is always shown in status bar,
-			 * not the log intensity that might actually be displayed in the image.
+			/*
+			 * If Alt key is not pressed, display the calibrated data. If not,
+			 * display image positions and data. Non log image intensity from
+			 * original image or 2D histogram result is always shown in status
+			 * bar, not the log intensity that might actually be displayed in
+			 * the image.
 			 */
 			if (!IJ.altKeyDown()) {
 
-				// the alt key is not pressed use x and y values that are bin widths or calibrated intensities not the x y image coordinates.
+				// the alt key is not pressed use x and y values that are bin
+				// widths or calibrated intensities not the x y image
+				// coordinates.
 				if (isHistogram(currentlyDisplayedImageResult)) {
 					Histogram2D<T> histogram = mapOf2DHistograms.get(currentlyDisplayedImageResult);
 
-					synchronized( pixelAccessCursor )
-					{
+					synchronized (pixelAccessCursor) {
 						// set position of output cursor
 						pixelAccessCursor.setPosition(x, 0);
 						pixelAccessCursor.setPosition(y, 1);
 
-						// for a histogram coordinate display we need to invert the Y axis
-						y = (int)currentlyDisplayedImageResult.dimension(1) - 1 - y;
+						// for a histogram coordinate display we need to invert
+						// the Y axis
+						y = (int) currentlyDisplayedImageResult.dimension(1) - 1 - y;
 
 						// get current value at position
-						RandomAccess<LongType> cursor = (RandomAccess<LongType>)pixelAccessCursor;
+						RandomAccess<LongType> cursor = (RandomAccess<LongType>) pixelAccessCursor;
 						long val = cursor.get().getIntegerLong();
 
 						double calibratedXBinBottom = histogram.getXMin() + x / histogram.getXBinWidth();
@@ -500,36 +494,37 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 						double calibratedYBinBottom = histogram.getYMin() + y / histogram.getYBinWidth();
 						double calibratedYBinTop = histogram.getYMin() + (y + 1) / histogram.getYBinWidth();
 
-						IJ.showStatus("x = " + IJ.d2s(calibratedXBinBottom) + " to " + IJ.d2s(calibratedXBinTop) +
-								", y = " + IJ.d2s(calibratedYBinBottom) + " to " + IJ.d2s(calibratedYBinTop) + ", value = " + val );
+						IJ.showStatus("x = " + IJ.d2s(calibratedXBinBottom) + " to " + IJ.d2s(calibratedXBinTop)
+								+ ", y = " + IJ.d2s(calibratedYBinBottom) + " to " + IJ.d2s(calibratedYBinTop)
+								+ ", value = " + val);
 					}
 				} else {
 					RandomAccessibleInterval<T> img = (RandomAccessibleInterval<T>) currentlyDisplayedImageResult;
-					ImagePlus imp = ImageJFunctions.wrapFloat( img, "TODO" );
+					ImagePlus imp = ImageJFunctions.wrapFloat(img, "TODO");
 					imp.mouseMoved(x, y);
 				}
 			} else {
-				// alt key is down, so show the image coordinates for x y in status bar.
+				// alt key is down, so show the image coordinates for x y in
+				// status bar.
 				RandomAccessibleInterval<T> img = (RandomAccessibleInterval<T>) currentlyDisplayedImageResult;
-				ImagePlus imp = ImageJFunctions.wrapFloat( img, "TODO" );
+				ImagePlus imp = ImageJFunctions.wrapFloat(img, "TODO");
 				imp.mouseMoved(x, y);
 			}
 		}
-    }
+	}
 
 	/**
-	 * Draws the passed ImageResult on the ImagePlus of this class.
-	 * If the image is part of a CompositeImageResult then contained
-	 * lines will also be drawn
+	 * Draws the passed ImageResult on the ImagePlus of this class. If the image
+	 * is part of a CompositeImageResult then contained lines will also be drawn
 	 */
 	protected void drawImage(RandomAccessibleInterval<? extends RealType<?>> img) {
 		// get ImgLib image as ImageJ image
-		imp = ImageJFunctions.wrapFloat( (RandomAccessibleInterval<T>) img, "TODO" );
+		imp = ImageJFunctions.wrapFloat((RandomAccessibleInterval<T>) img, "TODO");
 		imagePanel.updateImage(imp);
 		// set the display range
 
 		// check if a LUT should be applied
-		if ( listOfLUTs.containsKey(img) ) {
+		if (listOfLUTs.containsKey(img)) {
 			// select linked look up table
 			IJ.run(imp, listOfLUTs.get(img), null);
 		}
@@ -541,15 +536,15 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 		// if it is the 2d histogram, we want to show the regression line
 		if (isHistogram(img)) {
 			Histogram2D<T> histogram = mapOf2DHistograms.get(img);
-			/* check if we should draw a regression line for the
-			 * current histogram.
+			/*
+			 * check if we should draw a regression line for the current
+			 * histogram.
 			 */
-			if ( histogram.getDrawingSettings().contains(Histogram2D.DrawingFlags.RegressionLine) ) {
+			if (histogram.getDrawingSettings().contains(Histogram2D.DrawingFlags.RegressionLine)) {
 				AutoThresholdRegression<T> autoThreshold = dataContainer.getAutoThreshold();
 				if (histogram != null && autoThreshold != null) {
 					if (img == histogram.getPlotImage()) {
-						drawLine(overlay, img,
-								autoThreshold.getAutoThresholdSlope(),
+						drawLine(overlay, img, autoThreshold.getAutoThresholdSlope(),
 								autoThreshold.getAutoThresholdIntercept());
 						overlayModified = true;
 					}
@@ -567,7 +562,9 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 
 	/**
 	 * Tests whether the given image is a histogram or not.
-	 * @param img The image to test
+	 * 
+	 * @param img
+	 *            The image to test
 	 * @return true if histogram, false otherwise
 	 */
 	protected boolean isHistogram(RandomAccessibleInterval<? extends RealType<?>> img) {
@@ -577,13 +574,14 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	/**
 	 * Draws the line on the overlay.
 	 */
-	protected void drawLine(Overlay overlay, RandomAccessibleInterval<? extends RealType<?>> img,
-			double slope, double intercept) {
+	protected void drawLine(Overlay overlay, RandomAccessibleInterval<? extends RealType<?>> img, double slope,
+			double intercept) {
 		double startX, startY, endX, endY;
 		long imgWidth = img.dimension(0);
 		long imgHeight = img.dimension(1);
-		/* since we want to draw the line over the whole image
-		 * we can directly use screen coordinates for x values.
+		/*
+		 * since we want to draw the line over the whole image we can directly
+		 * use screen coordinates for x values.
 		 */
 		startX = 0.0;
 		endX = imgWidth;
@@ -602,25 +600,27 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 			endY = slope * endX + intercept;
 		}
 
-		/* since the screen origin is in the top left
-		 * of the image, we need to x-mirror our line
+		/*
+		 * since the screen origin is in the top left of the image, we need to
+		 * x-mirror our line
 		 */
-		 startY = ( imgHeight - 1 ) - startY;
-		 endY = ( imgHeight - 1 ) - endY;
+		startY = (imgHeight - 1) - startY;
+		endY = (imgHeight - 1) - endY;
 		// create the line ROI and add it to the overlay
 		Line lineROI = new Line(startX, startY, endX, endY);
-		/* Set drawing width of line to one, in case it has
-		 * been changed globally.
+		/*
+		 * Set drawing width of line to one, in case it has been changed
+		 * globally.
 		 */
 		lineROI.setStrokeWidth(1.0f);
 		overlay.add(lineROI);
 	}
 
-	protected void adjustDisplayedImage (RandomAccessibleInterval<? extends RealType<?>> img) {
-		/* when changing the result image to display
-		 * need to set the image we were looking at
-		 * back to not log scale,
-		 * so we don't log it twice if its reselected.
+	protected void adjustDisplayedImage(RandomAccessibleInterval<? extends RealType<?>> img) {
+		/*
+		 * when changing the result image to display need to set the image we
+		 * were looking at back to not log scale, so we don't log it twice if
+		 * its reselected.
 		 */
 		if (log.isSelected())
 			toggleLogarithmic(false);
@@ -630,8 +630,8 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 
 		// Currently disabled, due to lag of non-histograms :-)
 		// disable list and copy button if it is no histogram result
-		listButton.setEnabled( isHistogram(img) );
-		copyButton.setEnabled( isHistogram(img) );
+		listButton.setEnabled(isHistogram(img));
+		copyButton.setEnabled(isHistogram(img));
 
 		drawImage(img);
 		toggleLogarithmic(log.isSelected());
@@ -644,13 +644,13 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
-			RandomAccessibleInterval<? extends RealType<?>> img =
-					((NamedContainer<RandomAccessibleInterval<? extends RealType<?>> >)(e.getItem())).getObject();
+			RandomAccessibleInterval<? extends RealType<?>> img = ((NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>) (e
+					.getItem())).getObject();
 			adjustDisplayedImage(img);
 		}
 	}
 
-	protected void toggleLogarithmic(boolean enabled){
+	protected void toggleLogarithmic(boolean enabled) {
 		if (imp == null)
 			return;
 		ImageProcessor ip = imp.getProcessor();
@@ -658,8 +658,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implement
 			ip.snapshot();
 			ip.log();
 			ip.resetMinAndMax();
-		}
-		else
+		} else
 			ip.reset();
 		imagePanel.repaint();
 	}
