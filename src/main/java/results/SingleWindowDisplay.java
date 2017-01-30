@@ -280,7 +280,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 	 * Prints an HTML table entry onto the stream.
 	 */
 	protected void printTableRow(PrintWriter out, String name, String text) {
-		out.print("<TR><TD>" + name + "</TD><TD>" + text + "</TD></TR");
+		out.print("<TR><TD>" + name + "</TD><TD>" + text + "</TD></TR>");
 	}
 
 	/**
