@@ -287,7 +287,8 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 	 * Prints an HTML table entry onto the stream.
 	 */
 	protected void printTableRow(PrintWriter out, String name, double number, int decimalPlaces) {
-		printTableRow(out, name, IJ.d2s(number, decimalPlaces));
+		String stringNum = IJ.d2s(number, decimalPlaces);
+		out.print("<TR><TD>" + name + "</TD><TD>" + stringNum + "</TD></TR>");
 	}
 
 	/**
