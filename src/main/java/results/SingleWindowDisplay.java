@@ -211,7 +211,6 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 		c.weighty = 0;
 		c.gridy++;
 		pane.add(buttons, c);
-		pack();
 	}
 
 	private String labelName(int ch, String s) {
@@ -239,6 +238,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 			adjustDisplayedImage(listOfImages.get(0).object);
 		}
 		// show the GUI
+		setSize(600,600);
 		this.setVisible(true);
 	}
 
