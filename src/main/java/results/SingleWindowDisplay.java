@@ -280,7 +280,32 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 	 * Prints an HTML table entry onto the stream.
 	 */
 	protected void printTableRow(PrintWriter out, String name, String text) {
-		out.print("<TR><TD>" + name + "</TD><TD>" + text + "</TD></TR>");
+		out.print("<TR><TD>" + name + "</TD><TD>" + escape(text) + "</TD></TR>");
+	}
+
+	private String escape(final String text) {
+		final int maxChars = 40, minChars = 10;
+		final StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (final String word : text.split(" ")) {
+			if (first) first = false;
+			else sb.append(" ");
+			sb.append(chop(word, maxChars, minChars));
+		}
+		return sb.toString();
+	}
+
+	/** Split up a monster word into chunks. */
+	private String chop(String word, int maxChars, int minChars) {
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < word.length(); i+=maxChars) {
+			int end = Math.min(i+maxChars, word.length());
+			String fragment = word.substring(i,end);
+			if (i > 0 && fragment.length() > minChars)
+				sb.append(" ");
+			sb.append(fragment);
+		}
+		return sb.toString();
 	}
 
 	/**
