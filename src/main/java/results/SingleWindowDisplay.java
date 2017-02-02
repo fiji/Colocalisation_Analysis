@@ -288,7 +288,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 	 */
 	protected void printTableRow(PrintWriter out, String name, double number, int decimalPlaces) {
 		String stringNum = IJ.d2s(number, decimalPlaces);
-		out.print("<TR><TD>" + name + "</TD><TD>" + stringNum + "</TD></TR>");
+		printTableRow(out, name, stringNum);
 	}
 
 	/**
