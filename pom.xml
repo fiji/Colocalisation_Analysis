@@ -3,18 +3,31 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>sc.fiji</groupId>
-		<artifactId>pom-fiji</artifactId>
-		<version>16.0.0</version>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>13.2.1</version>
 		<relativePath />
 	</parent>
 
+	<groupId>sc.fiji</groupId>
 	<artifactId>Colocalisation_Analysis</artifactId>
 	<version>2.2.2-SNAPSHOT</version>
 
-	<name>plugins/Colocalisation_Analysis.jar</name>
-	<description />
+	<name>Coloc 2</name>
+	<description>Fiji's plugin for colocalization analysis.</description>
 	<url>https://imagej.net/Coloc_2</url>
+	<inceptionYear>2009</inceptionYear>
+	<organization>
+		<name>Fiji</name>
+		<url>http://fiji.sc/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>GNU General Public License v3+</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<developers>
 		<developer>
@@ -86,6 +99,13 @@
 		</contributor>
 	</contributors>
 
+	<mailingLists>
+		<mailingList>
+			<name>ImageJ Forum</name>
+			<archive>http://forum.imagej.net/</archive>
+		</mailingList>
+	</mailingLists>
+
 	<scm>
 		<connection>scm:git:git://github.com/fiji/Colocalisation_Analysis</connection>
 		<developerConnection>scm:git:git@github.com:fiji/Colocalisation_Analysis</developerConnection>
@@ -100,6 +120,11 @@
 		<system>Jenkins</system>
 		<url>http://jenkins.imagej.net/job/Colocalisation_Analysis/</url>
 	</ciManagement>
+
+	<properties>
+		<license.licenseName>gpl_v3</license.licenseName>
+		<license.copyrightOwners>Fiji developers.</license.copyrightOwners>
+	</properties>
 
 	<repositories>
 		<!-- NB: for project parent -->
