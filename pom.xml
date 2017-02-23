@@ -11,7 +11,7 @@
 
 	<groupId>sc.fiji</groupId>
 	<artifactId>Colocalisation_Analysis</artifactId>
-	<version>2.2.2-SNAPSHOT</version>
+	<version>2.2.2</version>
 
 	<name>Coloc 2</name>
 	<description>Fiji's plugin for colocalization analysis.</description>
@@ -109,7 +109,7 @@
 	<scm>
 		<connection>scm:git:git://github.com/fiji/Colocalisation_Analysis</connection>
 		<developerConnection>scm:git:git@github.com:fiji/Colocalisation_Analysis</developerConnection>
-		<tag>HEAD</tag>
+		<tag>Colocalisation_Analysis-2.2.2</tag>
 		<url>https://github.com/fiji/Colocalisation_Analysis</url>
 	</scm>
 	<issueManagement>
