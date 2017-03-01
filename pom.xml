@@ -117,8 +117,8 @@
 		<url>https://github.com/fiji/Colocalisation_Analysis</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://jenkins.imagej.net/job/Colocalisation_Analysis/</url>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/fiji/Colocalisation_Analysis</url>
 	</ciManagement>
 
 	<properties>
