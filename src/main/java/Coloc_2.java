@@ -474,9 +474,13 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		final AnalysisResults<T> analysisResults = new AnalysisResults<>();
 		listOfResultHandlers.add(analysisResults);
 		final PDFWriter<T> pdfWriter = new PDFWriter<>(container);
-		final SingleWindowDisplay<T> swDisplay = new SingleWindowDisplay<>(
-			container, pdfWriter);
-		listOfResultHandlers.add(swDisplay);
+		final boolean headless = Boolean.getBoolean("java.awt.headless");
+		final SingleWindowDisplay<T> swDisplay;
+		if (headless) swDisplay = null;
+		else {
+			swDisplay = new SingleWindowDisplay<>(container, pdfWriter);
+			listOfResultHandlers.add(swDisplay);
+		}
 		listOfResultHandlers.add(pdfWriter);
 		if (extraHandlers != null) listOfResultHandlers.addAll(extraHandlers);
 		// ResultHandler<T> resultHandler = new EasyDisplay<T>(container);
@@ -548,17 +552,20 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 				r.handleImage(channel2, "Channel 2 (Max Projection)");
 			}
 		}
-		// do the actual results processing
-		swDisplay.process();
-		// add window to the IJ window manager
-		swDisplay.addWindowListener(new WindowAdapter() {
+		if (swDisplay != null) {
+			// do the actual results processing
+			swDisplay.process();
+			// add window to the IJ window manager
+			swDisplay.addWindowListener(new WindowAdapter() {
 
-			@Override
-			public void windowClosed(final WindowEvent e) {
-				WindowManager.removeWindow(swDisplay);
-			}
-		});
-		WindowManager.addWindow(swDisplay);
+				@Override
+				public void windowClosed(final WindowEvent e) {
+					WindowManager.removeWindow(swDisplay);
+				}
+			});
+			WindowManager.addWindow(swDisplay);
+		}
+
 		// show PDF saving dialog if requested
 		if (autoSavePdf) pdfWriter.process();
 
