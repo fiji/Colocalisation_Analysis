@@ -120,7 +120,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 	// Allowed types of ROI configuration
 	protected enum RoiConfiguration {
 			None, Img1, Img2, Mask, RoiManager
-	};
+	}
 
 	// the ROI configuration to use
 	protected RoiConfiguration roiConfig = RoiConfiguration.Img1;
@@ -420,17 +420,17 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 	 * {@code extraHandlers}.
 	 * </p>
 	 *
-	 * @param img1
-	 * @param img2
+	 * @param image1
+	 * @param image2
 	 * @param roi
 	 * @param mask
 	 * @throws MissingPreconditionException
 	 */
-	public void colocalise(final Img<T> img1, final Img<T> img2,
+	public void colocalise(final Img<T> image1, final Img<T> image2,
 		final BoundingBox roi, final Img<T> mask)
 		throws MissingPreconditionException
 	{
-		colocalise(img1, img2, roi, mask, null);
+		colocalise(image1, image2, roi, mask, null);
 	}
 
 	/**
@@ -438,15 +438,15 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 	 * algorithms get run on the supplied images. You can specify the data further
 	 * by supplying appropriate information in the mask structure.
 	 *
-	 * @param img1 First image.
-	 * @param img2 Second image.
+	 * @param image1 First image.
+	 * @param image2 Second image.
 	 * @param roi Region of interest to which analysis is confined.
 	 * @param mask Mask to which analysis is confined.
 	 * @param extraHandlers additional objects to be notified of analysis results.
 	 * @return Data structure housing the results.
 	 * @throws MissingPreconditionException
 	 */
-	public AnalysisResults<T> colocalise(final Img<T> img1, final Img<T> img2,
+	public AnalysisResults<T> colocalise(final Img<T> image1, final Img<T> image2,
 		final BoundingBox roi, final Img<T> mask,
 		final List<ResultHandler<T>> extraHandlers)
 		throws MissingPreconditionException
@@ -454,17 +454,17 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		// create a new container for the selected images and channels
 		DataContainer<T> container;
 		if (mask != null) {
-			container = new DataContainer<>(img1, img2, img1Channel, img2Channel,
+			container = new DataContainer<>(image1, image2, img1Channel, img2Channel,
 				Ch1Name, Ch2Name, mask, roi.offset, roi.size);
 		}
 		else if (roi != null) {
 			// we have no mask, but a regular ROI in use
-			container = new DataContainer<>(img1, img2, img1Channel, img2Channel,
+			container = new DataContainer<>(image1, image2, img1Channel, img2Channel,
 				Ch1Name, Ch2Name, roi.offset, roi.size);
 		}
 		else {
 			// no mask and no ROI is present
-			container = new DataContainer<>(img1, img2, img1Channel, img2Channel,
+			container = new DataContainer<>(image1, image2, img1Channel, img2Channel,
 				Ch1Name, Ch2Name);
 		}
 
@@ -625,8 +625,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		final T offType = mask.firstElement().createVariable();
 		offType.setZero();
 		// the corners of the bounding box
-		long[] min = null;
-		long[] max = null;
+		final long[][] minMax = new long[2][];
 		// indicates if mask data has been found
 		boolean maskFound = false;
 		// a container for temporary position information
@@ -643,8 +642,8 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 					// we found mask data, first time
 					maskFound = true;
 					// init min and max with the current position
-					min = Arrays.copyOf(pos, numMaskDims);
-					max = Arrays.copyOf(pos, numMaskDims);
+					minMax[0] = Arrays.copyOf(pos, numMaskDims);
+					minMax[1] = Arrays.copyOf(pos, numMaskDims);
 				}
 				else {
 					/* Is is at least second hit, compare if it
@@ -652,31 +651,27 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 					 * is make the BB bigger?
 					 */
 					for (int d = 0; d < numMaskDims; d++) {
-						if (pos[d] < min[d]) {
+						if (pos[d] < minMax[0][d]) {
 							// is it smaller than min
-							min[d] = pos[d];
+							minMax[0][d] = pos[d];
 						}
-						else if (pos[d] > max[d]) {
+						else if (pos[d] > minMax[1][d]) {
 							// is it larger than max
-							max[d] = pos[d];
+							minMax[1][d] = pos[d];
 						}
 					}
 				}
 			}
 		}
+		if (!maskFound) return null;
 
-		if (!maskFound) {
-			return null;
-		}
-		else {
-			// calculate size
-			final long[] size = new long[numMaskDims];
-			for (int d = 0; d < numMaskDims; d++)
-				size[d] = max[d] - min[d] + 1;
-			// create and add bounding box
-			final BoundingBox bb = new BoundingBox(min, size);
-			return new MaskInfo(bb, mask);
-		}
+		// calculate size
+		final long[] size = new long[numMaskDims];
+		for (int d = 0; d < numMaskDims; d++)
+			size[d] = minMax[1][d] - minMax[0][d] + 1;
+		// create and add bounding box
+		final BoundingBox bb = new BoundingBox(minMax[0], size);
+		return new MaskInfo(bb, mask);
 	}
 
 	/**
