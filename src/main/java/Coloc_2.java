@@ -422,6 +422,26 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		final BoundingBox roi, final Img<T> mask)
 		throws MissingPreconditionException
 	{
+		colocalise(img1, img2, roi, mask, null);
+	}
+
+	/**
+	 * Call this method to run a whole colocalisation configuration, all selected
+	 * algorithms get run on the supplied images. You can specify the data further
+	 * by supplying appropriate information in the mask structure.
+	 *
+	 * @param img1 First image.
+	 * @param img2 Second image.
+	 * @param roi Region of interest to which analysis is confined.
+	 * @param mask Mask to which analysis is confined.
+	 * @param extraHandlers additional objects to be notified of analysis results.
+	 * @throws MissingPreconditionException
+	 */
+	public void colocalise(final Img<T> img1, final Img<T> img2,
+		final BoundingBox roi, final Img<T> mask,
+		final List<ResultHandler<T>> extraHandlers)
+		throws MissingPreconditionException
+	{
 		// create a new container for the selected images and channels
 		DataContainer<T> container;
 		if (mask != null) {
@@ -447,6 +467,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 			container, pdfWriter);
 		listOfResultHandlers.add(swDisplay);
 		listOfResultHandlers.add(pdfWriter);
+		if (extraHandlers != null) listOfResultHandlers.addAll(extraHandlers);
 		// ResultHandler<T> resultHandler = new EasyDisplay<T>(container);
 
 		// this contains the algorithms that will be run when the user clicks ok
