@@ -70,6 +70,7 @@ import ij.plugin.PlugIn;
 import ij.plugin.frame.RoiManager;
 import ij.process.Blitter;
 import ij.process.ImageProcessor;
+import results.AnalysisResults;
 import results.PDFWriter;
 import results.ResultHandler;
 import results.SingleWindowDisplay;
@@ -411,6 +412,13 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 	 * Call this method to run a whole colocalisation configuration, all selected
 	 * algorithms get run on the supplied images. You can specify the data further
 	 * by supplying appropriate information in the mask structure.
+	 * <p>
+	 * NB: This method returns {@code void} for binary backwards compatibility
+	 * with old code which might invoke it. If you want access to the
+	 * {@link AnalysisResults} directly, call
+	 * {@link #colocalise(Img, Img, BoundingBox, Img, List)} with {@code null} for
+	 * {@code extraHandlers}.
+	 * </p>
 	 *
 	 * @param img1
 	 * @param img2
@@ -435,9 +443,10 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 	 * @param roi Region of interest to which analysis is confined.
 	 * @param mask Mask to which analysis is confined.
 	 * @param extraHandlers additional objects to be notified of analysis results.
+	 * @return Data structure housing the results.
 	 * @throws MissingPreconditionException
 	 */
-	public void colocalise(final Img<T> img1, final Img<T> img2,
+	public AnalysisResults<T> colocalise(final Img<T> img1, final Img<T> img2,
 		final BoundingBox roi, final Img<T> mask,
 		final List<ResultHandler<T>> extraHandlers)
 		throws MissingPreconditionException
@@ -462,6 +471,8 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		// create a results handler
 		final List<ResultHandler<T>> listOfResultHandlers =
 			new ArrayList<>();
+		final AnalysisResults<T> analysisResults = new AnalysisResults<>();
+		listOfResultHandlers.add(analysisResults);
 		final PDFWriter<T> pdfWriter = new PDFWriter<>(container);
 		final SingleWindowDisplay<T> swDisplay = new SingleWindowDisplay<>(
 			container, pdfWriter);
@@ -550,6 +561,8 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		WindowManager.addWindow(swDisplay);
 		// show PDF saving dialog if requested
 		if (autoSavePdf) pdfWriter.process();
+
+		return analysisResults;
 	}
 
 	private RandomAccessibleInterval<T> project(
