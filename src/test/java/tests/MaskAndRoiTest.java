@@ -49,7 +49,8 @@ import org.junit.Test;
  * This class contains JUnit 4 test cases for the ROI and masks
  * implementation.
  *
- * @author Dan White & Tom Kazimiers
+ * @author Dan White
+ * @author Tom Kazimiers
  */
 public class MaskAndRoiTest extends ColocalisationTest {
 

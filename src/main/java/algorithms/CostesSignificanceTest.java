@@ -253,7 +253,8 @@ public class CostesSignificanceTest<T extends RealType< T > & NativeType<T>> ext
 	 *
 	 * @param img The image to create cursors on.
 	 * @param blockList The list to put newly created cursors into
-	 * @param outOfBoundsFactory Defines what to do if a block has parts out of image bounds.
+	 * @param offset
+	 * @param size
 	 */
 	protected void generateBlocks(RandomAccessible<T> img, List<IterableInterval<T>> blockList,
 			double[] offset, double[] size)
@@ -295,8 +296,7 @@ public class CostesSignificanceTest<T extends RealType< T > & NativeType<T>> ext
 	 * @param img The image to get the data and cursors from.
 	 * @param blockList The list to put the blocks into.
 	 * @param offset The current offset configuration. Only [0] and [1] will be changed.
-	 * @param outOfBoundsFactory The factory to create out-of-bounds-cursors with.
-	 * @param forceOutOfBounds Indicates if all cursors created should be out-of-bounds ones.
+	 * @param size
 	 */
 	protected void generateBlocksXY(RandomAccessible<T> img, List<IterableInterval<T>> blockList,
 			double[] offset, double[] size) {
@@ -325,8 +325,7 @@ public class CostesSignificanceTest<T extends RealType< T > & NativeType<T>> ext
 	 * @param img The image to get the data and cursors from.
 	 * @param blockList The list to put the blocks into.
 	 * @param offset The current offset configuration. Only [0] of it will be changed.
-	 * @param outOfBoundsFactory The factory to create out-of-bounds-cursors with.
-	 * @param forceOutOfBounds Indicates if all cursors created should be out-of-bounds ones.
+	 * @param size
 	 */
 	protected void generateBlocksX(RandomAccessible<T> img, List<IterableInterval<T>> blockList,
 			double[] offset, double[] size) {

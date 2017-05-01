@@ -19,7 +19,8 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-/**
+
+/*
  * Copyright (c) 2009--2010, Stephan Preibisch & Stephan Saalfeld
  * All rights reserved.
  *
@@ -45,9 +46,8 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
- * @author Dan White & Tom Kazimiers
  */
+
 package net.imglib2.algorithm.math;
 
 import net.imglib2.Cursor;
@@ -62,13 +62,15 @@ import net.imglib2.view.Views;
 /**
  * This class contains some basic image statistics
  * calculations.
+ *
+ * @author Dan White
+ * @author Tom Kazimiers
  */
 public class ImageStatistics {
 	/**
 	 * Calculates the number of pixels in the image.
 	 *
 	 * @param img The image to calculate the mean of
-	 * @param mask The mask to respect
 	 * @return The mean of the image passed
 	 */
 	final public static <T extends RealType<T>> long getNumPixels(

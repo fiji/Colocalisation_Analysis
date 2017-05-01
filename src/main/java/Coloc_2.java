@@ -422,7 +422,6 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 	 * @param img2
 	 * @param roi
 	 * @param mask
-	 * @param maskBB
 	 * @throws MissingPreconditionException
 	 */
 	public void colocalise(Img<T> img1, Img<T> img2, BoundingBox roi,
@@ -695,7 +694,7 @@ public class Coloc_2<T extends RealType< T > & NativeType< T >> implements PlugI
 	/**
 	 * Creates appropriate data structures from the ROI information
 	 * passed. If an irregular ROI is found, it will be put into a
-	 * frame of its bounding box size and put into an Image<T>.
+	 * frame of its bounding box size and put into an {@code Image<T>}.
 	 *
 	 * In the end the members ROIs, masks and maskBBs will be
 	 * filled if ROIs or masks were found. They will be null

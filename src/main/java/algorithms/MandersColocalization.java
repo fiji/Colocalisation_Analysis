@@ -43,7 +43,7 @@ import results.ResultHandler;
  *
  * <p>M1 = sum of Channel 1 intensity in pixels over the channel 2 threshold / total Channel 1 intensity.
  * M2 is vice versa.
- * The threshold may be everything > 0 in the other channel, which we call M1 and M2: without thresholds
+ * The threshold may be everything &gt; 0 in the other channel, which we call M1 and M2: without thresholds
  * or everything above some thresholds in the opposite channels 1 or 2, called tM1 and tM2: with thresholds
  * The result is a fraction (range 0-1, but often misrepresented as a %. We wont do that here.</p>
  *
@@ -78,7 +78,7 @@ import results.ResultHandler;
  * in other words, it is calculated as follows:
  * (the sum of channel 1 pixel intensities in the Yellow area) / (the sum of channel 1 pixels intensities in the Red + Green + Blue + Yellow areas).</p>
  *
- * <p>%Intensities above threshold colocalised - %Ch1 Int > thresh; %Ch2 Int > thresh
+ * <p>%Intensities above threshold colocalised - %Ch1 Int &gt; thresh; %Ch2 Int &gt; thresh
  * This generates a value for each channel. For channel 1,
  * this value is equal to the sum of the pixel intensities
  * with intensities above both channel 1 and channel 2 thresholds
@@ -181,10 +181,9 @@ public class MandersColocalization<T extends RealType< T >> extends Algorithm<T>
 	 * Calculates Manders' split coefficients, tM1 and tM2: with thresholds
 	 *
 	 * @param cursor A TwinCursor that walks over two images
-	 * @param type A type instance, its value is not relevant
 	 * @param thresholdCh1 type T
 	 * @param thresholdCh2 type T
-	 * @param tmode A ThresholdMode the threshold mode
+	 * @param tMode A ThresholdMode the threshold mode
 	 * @return Both thresholded Manders' split coefficients, tM1 and tM2.
 	 */
 	public MandersResults calculateMandersCorrelation(TwinCursor<T> cursor,

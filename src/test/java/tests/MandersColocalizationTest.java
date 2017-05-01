@@ -41,7 +41,8 @@ import org.junit.Test;
  * This class contains JUnit 4 test cases for the calculation
  * of Manders' split colocalization coefficients
  *
- * @author Dan White & Tom Kazimiers
+ * @author Dan White
+ * @author Tom Kazimiers
  */
 public class MandersColocalizationTest extends ColocalisationTest {
 

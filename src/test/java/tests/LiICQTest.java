@@ -33,7 +33,8 @@ import org.junit.Test;
  * This class contains JUnit 4 test cases for the calculation of Li's
  * ICQ value.
  *
- * @author Dan White & Tom Kazimiers
+ * @author Dan White
+ * @author Tom Kazimiers
  */
 public class LiICQTest extends ColocalisationTest {
 

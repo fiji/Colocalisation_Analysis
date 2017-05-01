@@ -206,7 +206,7 @@ public class SpearmanRankCorrelation<T extends RealType< T >> extends Algorithm<
 	/**
 	 * Returns sorted rankings for a list of sorted values.
 	 *
-	 * @param rankedVals - The sorted absolute values
+	 * @param sortedVals - The sorted absolute values
 	 * @return ranked sorted list of values
 	 */
 	public static double[] rankValues(double[] sortedVals) {

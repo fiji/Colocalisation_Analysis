@@ -60,7 +60,8 @@ import net.imglib2.view.Views;
  * to open Tiffs from within the Jar file and can generate noise
  * images.
  *
- * @author Dan White & Tom Kazimiers
+ * @author Dan White
+ * @author Tom Kazimiers
  */
 public class TestImageAccessor {
 	/* a static opener for opening images without the

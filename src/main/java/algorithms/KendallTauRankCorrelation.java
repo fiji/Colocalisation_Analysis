@@ -38,10 +38,12 @@ import results.ResultHandler;
 /**
  * This algorithm calculates Kendall's Tau-b rank correlation coefficient
  * <p>
- * According to
- * http://en.wikipedia.org/wiki/Kendall_tau_rank_correlation_coefficient, Tau-b
- * (appropriate if multiple pairs share the same first, or second, value), the
- * rank correlation of a set of pairs <tt>(x_1, y_1), ..., (x_n, y_n)</tt>:
+ * According to <a
+ * href="http://en.wikipedia.org/wiki/Kendall_tau_rank_correlation_coefficient">this
+ * article</a>, Tau-b (appropriate if multiple pairs share the same first, or
+ * second, value), the rank correlation of a set of pairs <tt>(x_1, y_1), ...,
+ * (x_n, y_n)</tt>:
+ * </p>
  * 
  * <pre>
  * Tau_B = (n_c - n_d) / sqrt( (n_0 - n_1) (n_0 - n_2) )
@@ -53,15 +55,13 @@ import results.ResultHandler;
  * n_0 = n (n - 1) / 2
  * n_1 = sum_i t_i (t_i - 1) / 2
  * n_2 = sum_j u_j (u_j - 1) / 2
- * n_c = #{ i, j; i != j && (x_i - x_j) * (y_i - y_j) > 0 },
+ * n_c = #{ i, j; i != j &amp;&amp; (x_i - x_j) * (y_i - y_j) &gt; 0 },
  * &nbsp; i.e. the number of pairs of pairs agreeing on the order of x and y, respectively
- * n_d = #{ i, j: i != j && (x_i - x_j) * (y_i - y_j) < 0 },
+ * n_d = #{ i, j: i != j &amp;&amp; (x_i - x_j) * (y_i - y_j) &lt; 0 },
  * &nbsp; i.e. the number of pairs of pairs where x and y are ordered opposite of each other
  * t_i = number of tied values in the i-th group of ties for the first quantity
  * u_j = number of tied values in the j-th group of ties for the second quantity
  * </pre>
- * 
- * </p>
  * 
  * @author Johannes Schindelin
  * @param <T>
@@ -179,15 +179,17 @@ public class KendallTauRankCorrelation<T extends RealType< T >> extends Algorith
 	/**
 	 * Calculate Tau-b efficiently.
 	 * <p>
-	 * This implementation is based on this description of the merge sort based
-	 * way to calculate Tau-b:
-	 * http://en.wikipedia.org/wiki/Kendall_tau_rank_correlation_coefficient
-	 * #Algorithms. This is supposed to be the method described in:
-	 * <blockquote>Knight, W. (1966).
-	 * "A Computer Method for Calculating Kendall's Tau with Ungrouped Data".
-	 * Journal of the American Statistical Association 61 (314): 436–439.
-	 * doi:10.2307/2282833.</blockquote> but since that article is not available
-	 * as Open Access, it is unnecessarily hard to verify.
+	 * This implementation is based on <a
+	 * href="http://en.wikipedia.org/wiki/Kendall_tau_rank_correlation_coefficient#Algorithms">this
+	 * description of the merge sort based way to calculate Tau-b</a>. This is
+	 * supposed to be the method described in:
+	 * </p>
+	 * <blockquote>Knight, W. (1966). "A Computer Method for Calculating
+	 * Kendall's Tau with Ungrouped Data". Journal of the American Statistical
+	 * Association 61 (314): 436–439. doi:10.2307/2282833.</blockquote>
+	 * <p>
+	 * but since that article is not available as Open Access, it is
+	 * unnecessarily hard to verify.
 	 * </p>
 	 * 
 	 * @param iterator the iterator of the pairs

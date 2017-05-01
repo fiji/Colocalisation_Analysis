@@ -54,7 +54,7 @@ public class PearsonsCorrelation<T extends RealType< T >> extends Algorithm<T> {
 	/**
 	 * Creates a new Pearson's Correlation and allows us to define
 	 * which implementation of the calculation to use.
-	 * @param theImplementation The implementation of Pearson's Coefficient calculation to use.
+	 * @param implementation The implementation of Pearson's Coefficient calculation to use.
 	 */
 	public PearsonsCorrelation(Implementation implementation) {
 		super("Pearson correlation");
@@ -249,9 +249,9 @@ public class PearsonsCorrelation<T extends RealType< T >> extends Algorithm<T> {
 	 * conditions for each channel. The cursor is not closed in here.
 	 *
 	 * @param <T> The image base type
-	 * @param img1 Channel one
-	 * @param img2 Channel two
 	 * @param cursor The cursor that defines the walk over both images.
+	 * @param meanCh1 Mean of channel 1.
+	 * @param meanCh2 Mean of channel 2.
 	 * @return Person's R value
 	 */
 	public static <T extends RealType<T>> double classicPearsons(TwinCursor<T> cursor,
@@ -305,8 +305,6 @@ public class PearsonsCorrelation<T extends RealType< T >> extends Algorithm<T> {
 	 * conditions for each channel. The cursor is not closed in here.
 	 *
 	 * @param <T> The image base type
-	 * @param img1 Channel one
-	 * @param img2 Channel two
 	 * @param cursor The cursor that defines the walk over both images.
 	 * @return Person's R value
 	 */

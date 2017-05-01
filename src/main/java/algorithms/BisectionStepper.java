@@ -51,8 +51,8 @@ public class BisectionStepper extends Stepper {
 	}
 
 	/**
-	 * Update threshold by a bisection step. If {@value} is below zero or not
-	 * a number, the step is made upwards. If it is above zero, the stoep is
+	 * Update threshold by a bisection step. If {@code value} is below zero or
+	 * not a number, the step is made upwards. If it is above zero, the stoep is
 	 * downwards.
 	 */
 	@Override
@@ -81,9 +81,9 @@ public class BisectionStepper extends Stepper {
 	}
 
 	/**
-	 * If the difference between both thresholds is < 1, we consider
-     * that as reasonable close to abort the regression.
-     * */
+	 * If the difference between both thresholds is &lt; 1, we consider
+	 * that as reasonable close to abort the regression.
+	 */
 	@Override
 	public boolean isFinished() {
 		return iterations > maxIterations || thrDiff < 1.0;

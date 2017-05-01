@@ -152,8 +152,7 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 
 	/**
 	 * Prints an image into the opened PDF.
-	 * @param img The image to print.
-	 * @param printName The name to print under the image.
+	 * @param image The image to print.
 	 */
 	protected void addImage(com.itextpdf.text.Image image)
 			throws DocumentException, IOException {

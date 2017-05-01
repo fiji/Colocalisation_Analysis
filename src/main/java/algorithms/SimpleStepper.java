@@ -48,7 +48,7 @@ public class SimpleStepper extends Stepper {
 
 	/**
 	 * Decrement the threshold if the stepper is not marked as finished.
-	 * Rendering a stepper finished happens if {@value} is not a number,
+	 * Rendering a stepper finished happens if {@code value} is not a number,
 	 * below or equal zero or bigger than the last update value. The same
 	 * thing happens if the internal threshold falls below one.
 	 */
