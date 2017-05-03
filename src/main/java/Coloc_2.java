@@ -577,8 +577,9 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 			swDisplay.addWindowListener(new WindowAdapter() {
 
 				@Override
-				public void windowClosed(final WindowEvent e) {
+				public void windowClosing(final WindowEvent e) {
 					WindowManager.removeWindow(swDisplay);
+					swDisplay.dispose();
 				}
 			});
 			WindowManager.addWindow(swDisplay);
