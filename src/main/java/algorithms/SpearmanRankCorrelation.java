@@ -51,16 +51,16 @@ import results.ResultHandler;
  */
 public class SpearmanRankCorrelation<T extends RealType< T >> extends Algorithm<T> {
 	// the resulting Spearman rho value
-	static double rhoValue;
-	static double tStatisticSpearman;
-	static int dfSpearman;
+	double rhoValue;
+	double tStatisticSpearman;
+	int dfSpearman;
 
 	// create two paired arrays: one with raw pixel values and one for the corresponding ranks
-	static double[][] data;
-	static double[] ch1raw;
-	static double[] ch2raw;
-	static double[] ch1ranks;
-	static double[] ch2ranks;
+	double[][] data;
+	double[] ch1raw;
+	double[] ch2raw;
+	double[] ch1ranks;
+	double[] ch2ranks;
 	
 	public SpearmanRankCorrelation() {
 		super("Spearman's Rank Corelation calculation");
@@ -88,7 +88,7 @@ public class SpearmanRankCorrelation<T extends RealType< T >> extends Algorithm<
 	 * @param cursor A TwinCursor that iterates over two images
 	 * @return Spearman's rank correlation coefficient (rho) value
 	 */
-	public static <T extends RealType<T>> double calculateSpearmanRank(TwinCursor<T> cursor) {
+	public <T extends RealType<T>> double calculateSpearmanRank(TwinCursor<T> cursor) {
 		
 		// Step 0: Count the pixels first.
 		int n = 0;
@@ -118,7 +118,7 @@ public class SpearmanRankCorrelation<T extends RealType< T >> extends Algorithm<
 	 * @param data A 2D array containing the data to be ranked
 	 * @return Spearman's rank correlation coefficient (rho) value
 	 */
-	public static double calculateSpearmanRank(double[][] data) {
+	public double calculateSpearmanRank(double[][] data) {
 		final int n = data.length;
 		ch1raw = new double[n];
 		ch2raw = new double[n];
@@ -187,7 +187,7 @@ public class SpearmanRankCorrelation<T extends RealType< T >> extends Algorithm<
 	 * @param n - N (number of data pairs)
 	 * @return Spearman's rank degrees of freedom.
 	 */
-	public static int getSpearmanDF(int n) {
+	public int getSpearmanDF(int n) {
 		return n - 2;
 	}
 	
@@ -198,7 +198,7 @@ public class SpearmanRankCorrelation<T extends RealType< T >> extends Algorithm<
 	 * @param n - N (number of data pairs)
 	 * @return Spearman's rank correlation t-statistic
 	 */
-	public static double getTStatistic(double rho, int n) {
+	public double getTStatistic(double rho, int n) {
 		double rho_squared = rho * rho;
 		return rho * Math.sqrt( (n - 2) / (1 - rho_squared) );
 	}
@@ -209,7 +209,7 @@ public class SpearmanRankCorrelation<T extends RealType< T >> extends Algorithm<
 	 * @param sortedVals - The sorted absolute values
 	 * @return ranked sorted list of values
 	 */
-	public static double[] rankValues(double[] sortedVals) {
+	public double[] rankValues(double[] sortedVals) {
 		
 		int len = sortedVals.length;
 		int start = 0;
@@ -269,7 +269,7 @@ public class SpearmanRankCorrelation<T extends RealType< T >> extends Algorithm<
 	 * @param y - ditto.
 	 * @return Spearman's rho.
 	 */
-	public static double calculateRho(double[] x, double[] y) {
+	public double calculateRho(double[] x, double[] y) {
 		// Define some variables.
 		double rho;
 		int len = x.length; // the lengths should be the same for each array

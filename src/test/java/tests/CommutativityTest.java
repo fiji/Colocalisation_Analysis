@@ -95,8 +95,9 @@ public class CommutativityTest extends ColocalisationTest {
 		assertEquals(manders1.m2, manders2.m1, 0.0001);
 		
 		// calculate Spearman's Rank rho values
-		double rho1 = SpearmanRankCorrelation.calculateSpearmanRank(cursor1);
-		double rho2 = SpearmanRankCorrelation.calculateSpearmanRank(cursor2);
+		SpearmanRankCorrelation src = new SpearmanRankCorrelation();
+		double rho1 = src.calculateSpearmanRank(cursor1);
+		double rho2 = src.calculateSpearmanRank(cursor2);
 		// make sure both ranks are the same
 		assertEquals(rho1, rho2, 0.0001);
 	}

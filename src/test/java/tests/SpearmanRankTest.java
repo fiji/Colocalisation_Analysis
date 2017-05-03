@@ -49,7 +49,7 @@ public class SpearmanRankTest extends ColocalisationTest {
 				positiveCorrelationImageCh2.randomAccess(),
 				Views.iterable(positiveCorrelationAlwaysTrueMask).localizingCursor());
 		// calculate Spearman's Rank rho value
-		double rho = SpearmanRankCorrelation.calculateSpearmanRank(cursor);
+		double rho = new SpearmanRankCorrelation().calculateSpearmanRank(cursor);
 		// Rho value = 0.5463...
 		assertTrue(rho > 0.546 && rho < 0.547);
 	}
@@ -65,7 +65,7 @@ public class SpearmanRankTest extends ColocalisationTest {
 				zeroCorrelationImageCh2.randomAccess(),
 				Views.iterable(zeroCorrelationAlwaysTrueMask).localizingCursor());
 		// calculate Spearman's Rank rho value
-		double rho = SpearmanRankCorrelation.calculateSpearmanRank(cursor);
+		double rho = new SpearmanRankCorrelation().calculateSpearmanRank(cursor);
 		// Rho value = -0.11...
 		assertTrue(Math.abs(rho) < 0.012);
 	}
@@ -96,23 +96,25 @@ public class SpearmanRankTest extends ColocalisationTest {
 		 };
 		int n = data.length;
 		
+		final SpearmanRankCorrelation src = new SpearmanRankCorrelation();
+
 		/*
 		 * Check the arithmetic for the rho calculation.
 		 * Rho is exactly -0.1743 (to 4 decimal points) using the 
 		 * exact calculation for Spearman's rho as implemented here.
 		 */
-		double rho = SpearmanRankCorrelation.calculateSpearmanRank(data);
+		double rho = src.calculateSpearmanRank(data);
 		assertEquals(-0.1743, rho, 0.001);
 		
 		// check the degrees of freedom calculation ( df = n - 2 )
 		int df = 0;
-		df = SpearmanRankCorrelation.getSpearmanDF(n);
+		df = src.getSpearmanDF(n);
 		assertEquals(df, n - 2);
 		
 		// check the t-statistic calculation ( t = rho * sqrt( df / (1-rho^2) ) )
 		// The t-stat = -0.6382
 		double tstat = 0.0;
-		tstat = SpearmanRankCorrelation.getTStatistic(rho, n);
+		tstat = src.getTStatistic(rho, n);
 		assertEquals(-0.6382, tstat, 0.001);
 	}
 	
@@ -129,7 +131,7 @@ public class SpearmanRankTest extends ColocalisationTest {
 				Views.iterable(syntheticNegativeCorrelationAlwaysTrueMask).localizingCursor());
 		
 		// calculate Spearman's Rank rho value
-		double rho = SpearmanRankCorrelation.calculateSpearmanRank(cursor);
+		double rho = new SpearmanRankCorrelation().calculateSpearmanRank(cursor);
 		assertTrue((rho > -0.178) && (rho < -0.173));
 	}
 	
