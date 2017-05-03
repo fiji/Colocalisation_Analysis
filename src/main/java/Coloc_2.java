@@ -57,7 +57,6 @@ import algorithms.MandersColocalization;
 import algorithms.MissingPreconditionException;
 import algorithms.PearsonsCorrelation;
 import algorithms.SpearmanRankCorrelation;
-import fiji.Debug;
 import gadgets.DataContainer;
 import ij.IJ;
 import ij.ImagePlus;
@@ -849,16 +848,5 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 	public static Roi[] split(final Roi roi) {
 		if (roi instanceof ShapeRoi) return ((ShapeRoi) roi).getRois();
 		return new Roi[] { roi };
-	}
-
-	/**
-	 * Main method for easier development. To run this plugin with Maven, use:
-	 * 
-	 * <pre>
-	 * mvn exec:java -Dexec.mainClass="Coloc_2"
-	 * </pre>
-	 */
-	public static void main(final String[] args) {
-		Debug.run(null, null);
 	}
 }
