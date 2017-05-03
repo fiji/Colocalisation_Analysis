@@ -291,9 +291,53 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		// do nothing if dialog has been canceled
 		if (gd.wasCanceled()) return false;
 
-		final ImagePlus imp1 = WindowManager.getImage(gd.getNextChoiceIndex() + 1);
-		final ImagePlus imp2 = WindowManager.getImage(gd.getNextChoiceIndex() + 1);
+		final ImagePlus gdImp1 = WindowManager.getImage(gd.getNextChoiceIndex() + 1);
+		final ImagePlus gdImp2 = WindowManager.getImage(gd.getNextChoiceIndex() + 1);
 
+		int gdIndexMask = gd.getNextChoiceIndex();
+		int gdIndexRegr = gd.getNextChoiceIndex();
+		boolean gdAutoSavePdf = gd.getNextBoolean();
+		boolean gdDisplayImages = gd.getNextBoolean();
+		boolean gdDisplayShuffledCostes = gd.getNextBoolean();
+		boolean gdUseLiCh1 = gd.getNextBoolean();
+		boolean gdUseLiCh2 = gd.getNextBoolean();
+		boolean gdUseLiICQ = gd.getNextBoolean();
+		boolean gdUseSpearmanRank = gd.getNextBoolean();
+		boolean gdUseManders = gd.getNextBoolean();
+		boolean gdUseKendallTau = gd.getNextBoolean();
+		boolean gdUseScatterplot = gd.getNextBoolean();
+		boolean gdUseCostes = gd.getNextBoolean();
+		int gdPsf = (int) gd.getNextNumber();
+		int gdNrCostesRandomisations = (int) gd.getNextNumber();
+
+		// save user preferences
+		Prefs.set(PREF_KEY + "regressionImplementation", gdIndexRegr);
+		Prefs.set(PREF_KEY + "autoSavePdf", gdAutoSavePdf);
+		Prefs.set(PREF_KEY + "displayImages", gdDisplayImages);
+		Prefs.set(PREF_KEY + "displayShuffledCostes", gdDisplayShuffledCostes);
+		Prefs.set(PREF_KEY + "useLiCh1", gdUseLiCh1);
+		Prefs.set(PREF_KEY + "useLiCh2", gdUseLiCh2);
+		Prefs.set(PREF_KEY + "useLiICQ", gdUseLiICQ);
+		Prefs.set(PREF_KEY + "useSpearmanRank", gdUseSpearmanRank);
+		Prefs.set(PREF_KEY + "useManders", gdUseManders);
+		Prefs.set(PREF_KEY + "useKendallTau", gdUseKendallTau);
+		Prefs.set(PREF_KEY + "useScatterplot", gdUseScatterplot);
+		Prefs.set(PREF_KEY + "useCostes", gdUseCostes);
+		Prefs.set(PREF_KEY + "psf", gdPsf);
+		Prefs.set(PREF_KEY + "nrCostesRandomisations", gdNrCostesRandomisations);
+
+		return initializeSettings(gdImp1, gdImp2, gdIndexMask, gdIndexRegr, gdAutoSavePdf, gdDisplayImages,
+				gdDisplayShuffledCostes, gdUseLiCh1, gdUseLiCh2, gdUseLiICQ, gdUseSpearmanRank, gdUseManders,
+				gdUseKendallTau, gdUseScatterplot, gdUseCostes, gdPsf, gdNrCostesRandomisations);
+	}
+
+	/** Programmatically initializes the colocalisation settings to match the given values. */
+	public boolean initializeSettings(ImagePlus imp1, ImagePlus imp2, int gdIndexMask, int gdIndexRegr,
+			boolean gdAutoSavePdf, boolean gdDisplayImages, boolean gdDisplayShuffledCostes, boolean gdUseLiCh1,
+			boolean gdUseLiCh2, boolean gdUseLiICQ, boolean gdUseSpearmanRank, boolean gdUseManders,
+			boolean gdUseKendallTau, boolean gdUseScatterplot, boolean gdUseCostes, int gdPsf,
+			int gdNrCostesRandomisations)
+	{
 		// get image names for output
 		Ch1Name = imp1.getTitle();
 		Ch2Name = imp2.getTitle();
@@ -305,7 +349,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		}
 
 		// get information about the mask/ROI to use
-		indexMask = gd.getNextChoiceIndex();
+		indexMask = gdIndexMask;
 		if (indexMask == 0) roiConfig = RoiConfiguration.None;
 		else if (indexMask == 1) roiConfig = RoiConfiguration.Img1;
 		else if (indexMask == 2) roiConfig = RoiConfiguration.Img2;
@@ -339,6 +383,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		}
 		else if (roiConfig == RoiConfiguration.Mask) {
 			// get the image to be used as mask
+			final int[] windowList = WindowManager.getIDList();
 			final ImagePlus maskImp = WindowManager.getImage(windowList[indexMask]);
 			final Img<T> maskImg = ImagePlusAdapter.<T> wrap(maskImp);
 			// get a valid mask info for the image
@@ -353,56 +398,29 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		}
 
 		// get information about the mask/ROI to use
-		indexRegr = gd.getNextChoiceIndex();
+		indexRegr = gdIndexRegr;
 
 		// read out GUI data
-		autoSavePdf = gd.getNextBoolean();
-		displayImages = gd.getNextBoolean();
-		displayShuffledCostes = gd.getNextBoolean();
-		useLiCh1 = gd.getNextBoolean();
-		useLiCh2 = gd.getNextBoolean();
-		useLiICQ = gd.getNextBoolean();
-		useSpearmanRank = gd.getNextBoolean();
-		useManders = gd.getNextBoolean();
-		useKendallTau = gd.getNextBoolean();
-		useScatterplot = gd.getNextBoolean();
-		useCostes = gd.getNextBoolean();
-		psf = (int) gd.getNextNumber();
-		nrCostesRandomisations = (int) gd.getNextNumber();
-
-		// save user preferences
-		Prefs.set(PREF_KEY + "regressionImplementation", indexRegr);
-		Prefs.set(PREF_KEY + "autoSavePdf", autoSavePdf);
-		Prefs.set(PREF_KEY + "displayImages", displayImages);
-		Prefs.set(PREF_KEY + "displayShuffledCostes", displayShuffledCostes);
-		Prefs.set(PREF_KEY + "useLiCh1", useLiCh1);
-		Prefs.set(PREF_KEY + "useLiCh2", useLiCh2);
-		Prefs.set(PREF_KEY + "useLiICQ", useLiICQ);
-		Prefs.set(PREF_KEY + "useSpearmanRank", useSpearmanRank);
-		Prefs.set(PREF_KEY + "useManders", useManders);
-		Prefs.set(PREF_KEY + "useKendallTau", useKendallTau);
-		Prefs.set(PREF_KEY + "useScatterplot", useScatterplot);
-		Prefs.set(PREF_KEY + "useCostes", useCostes);
-		Prefs.set(PREF_KEY + "psf", psf);
-		Prefs.set(PREF_KEY + "nrCostesRandomisations", nrCostesRandomisations);
+		autoSavePdf = gdAutoSavePdf;
+		displayImages = gdDisplayImages;
 
 		// Parse algorithm options
 		pearsonsCorrelation = new PearsonsCorrelation<>(
 			PearsonsCorrelation.Implementation.Fast);
 
-		if (useLiCh1) liHistogramCh1 = new LiHistogram2D<>("Li - Ch1", true);
-		if (useLiCh2) liHistogramCh2 = new LiHistogram2D<>("Li - Ch2", false);
-		if (useLiICQ) liICQ = new LiICQ<>();
-		if (useSpearmanRank) {
+		if (gdUseLiCh1) liHistogramCh1 = new LiHistogram2D<>("Li - Ch1", true);
+		if (gdUseLiCh2) liHistogramCh2 = new LiHistogram2D<>("Li - Ch2", false);
+		if (gdUseLiICQ) liICQ = new LiICQ<>();
+		if (gdUseSpearmanRank) {
 			SpearmanRankCorrelation = new SpearmanRankCorrelation<>();
 		}
-		if (useManders) mandersCorrelation = new MandersColocalization<>();
-		if (useKendallTau) kendallTau = new KendallTauRankCorrelation<>();
-		if (useScatterplot) histogram2D = new Histogram2D<>(
+		if (gdUseManders) mandersCorrelation = new MandersColocalization<>();
+		if (gdUseKendallTau) kendallTau = new KendallTauRankCorrelation<>();
+		if (gdUseScatterplot) histogram2D = new Histogram2D<>(
 			"2D intensity histogram");
-		if (useCostes) {
+		if (gdUseCostes) {
 			costesSignificance = new CostesSignificanceTest<>(pearsonsCorrelation,
-				psf, nrCostesRandomisations, displayShuffledCostes);
+				gdPsf, gdNrCostesRandomisations, gdDisplayShuffledCostes);
 		}
 
 		return true;
