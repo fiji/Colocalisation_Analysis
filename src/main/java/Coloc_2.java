@@ -579,6 +579,10 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 				public void windowClosing(final WindowEvent e) {
 					WindowManager.removeWindow(swDisplay);
 					swDisplay.dispose();
+					// NB: For some reason, garbage collection of this bundle of objects
+					// does not occur when this window listener reference remains in
+					// place. As such, we explicitly unregister ourself here.
+					swDisplay.removeWindowListener(this);
 				}
 			});
 			WindowManager.addWindow(swDisplay);
