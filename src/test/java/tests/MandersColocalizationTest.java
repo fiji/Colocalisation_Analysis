@@ -22,9 +22,7 @@
 package tests;
 
 import static org.junit.Assert.assertEquals;
-import algorithms.MandersColocalization;
-import algorithms.MandersColocalization.MandersResults;
-import algorithms.MissingPreconditionException;
+
 import net.imglib2.Cursor;
 import net.imglib2.TwinCursor;
 import net.imglib2.converter.Converter;
@@ -33,9 +31,12 @@ import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
 
-import gadgets.ThresholdMode;
-
 import org.junit.Test;
+
+import algorithms.MandersColocalization;
+import algorithms.MandersColocalization.MandersResults;
+import algorithms.MissingPreconditionException;
+import gadgets.ThresholdMode;
 
 /**
  * This class contains JUnit 4 test cases for the calculation

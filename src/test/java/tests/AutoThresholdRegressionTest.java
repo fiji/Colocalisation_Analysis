@@ -22,7 +22,7 @@
 package tests;
 
 import static org.junit.Assert.assertEquals;
-import gadgets.DataContainer;
+
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 
@@ -32,6 +32,7 @@ import algorithms.AutoThresholdRegression;
 import algorithms.AutoThresholdRegression.Implementation;
 import algorithms.MissingPreconditionException;
 import algorithms.PearsonsCorrelation;
+import gadgets.DataContainer;
 
 
 public class AutoThresholdRegressionTest extends ColocalisationTest {

@@ -21,12 +21,12 @@
  */
 package algorithms;
 
-import gadgets.DataContainer;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import net.imglib2.type.numeric.RealType;
+
+import gadgets.DataContainer;
 import results.ResultHandler;
 import results.Warning;
 

@@ -22,12 +22,13 @@
 package tests;
 
 import static org.junit.Assert.assertTrue;
-import gadgets.Statistics;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+
+import gadgets.Statistics;
 
 /**
  * This class contains JUnit 4 test cases for the implementation

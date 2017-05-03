@@ -24,12 +24,14 @@ package tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
-import algorithms.KendallTauRankCorrelation;
-import algorithms.MissingPreconditionException;
+
 import net.imglib2.PairIterator;
 import net.imglib2.type.numeric.real.DoubleType;
 
 import org.junit.Test;
+
+import algorithms.KendallTauRankCorrelation;
+import algorithms.MissingPreconditionException;
 
 /**
  * Tests the Kendall Tau implementation.

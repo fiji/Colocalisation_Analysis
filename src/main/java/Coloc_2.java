@@ -20,6 +20,18 @@
  * #L%
  */
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.Prefs;
+import ij.WindowManager;
+import ij.gui.GenericDialog;
+import ij.gui.Roi;
+import ij.gui.ShapeRoi;
+import ij.plugin.PlugIn;
+import ij.plugin.frame.RoiManager;
+import ij.process.Blitter;
+import ij.process.ImageProcessor;
+
 import java.awt.Checkbox;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
@@ -58,17 +70,6 @@ import algorithms.MissingPreconditionException;
 import algorithms.PearsonsCorrelation;
 import algorithms.SpearmanRankCorrelation;
 import gadgets.DataContainer;
-import ij.IJ;
-import ij.ImagePlus;
-import ij.Prefs;
-import ij.WindowManager;
-import ij.gui.GenericDialog;
-import ij.gui.Roi;
-import ij.gui.ShapeRoi;
-import ij.plugin.PlugIn;
-import ij.plugin.frame.RoiManager;
-import ij.process.Blitter;
-import ij.process.ImageProcessor;
 import results.AnalysisResults;
 import results.PDFWriter;
 import results.ResultHandler;

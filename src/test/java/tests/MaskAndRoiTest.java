@@ -23,8 +23,6 @@ package tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import algorithms.MissingPreconditionException;
-import gadgets.MaskFactory;
 
 import java.util.Arrays;
 
@@ -44,6 +42,9 @@ import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
 
 import org.junit.Test;
+
+import algorithms.MissingPreconditionException;
+import gadgets.MaskFactory;
 
 /**
  * This class contains JUnit 4 test cases for the ROI and masks

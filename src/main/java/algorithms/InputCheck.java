@@ -21,14 +21,16 @@
  */
 package algorithms;
 
-import gadgets.DataContainer;
-import gadgets.DataContainer.MaskType;
 import ij.IJ;
+
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
+
+import gadgets.DataContainer;
+import gadgets.DataContainer.MaskType;
 import results.ResultHandler;
 
 /**

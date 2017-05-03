@@ -21,7 +21,6 @@
  */
 package algorithms;
 
-import gadgets.DataContainer;
 import ij.measure.ResultsTable;
 
 import java.util.EnumSet;
@@ -35,6 +34,8 @@ import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.LongType;
 import net.imglib2.view.Views;
+
+import gadgets.DataContainer;
 import results.ResultHandler;
 
 /**

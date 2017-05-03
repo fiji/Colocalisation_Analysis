@@ -22,6 +22,7 @@
 package tests;
 
 import static org.junit.Assert.assertEquals;
+
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
 import net.imglib2.type.logic.BitType;

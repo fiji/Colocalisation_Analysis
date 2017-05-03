@@ -21,10 +21,6 @@
  */
 package algorithms;
 
-import gadgets.DataContainer;
-import gadgets.DataContainer.MaskType;
-import gadgets.Statistics;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +40,10 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
+
+import gadgets.DataContainer;
+import gadgets.DataContainer.MaskType;
+import gadgets.Statistics;
 import results.ResultHandler;
 
 public class CostesSignificanceTest<T extends RealType< T > & NativeType<T>> extends Algorithm<T> {

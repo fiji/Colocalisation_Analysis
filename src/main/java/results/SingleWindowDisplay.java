@@ -21,6 +21,14 @@
  */
 package results;
 
+import ij.IJ;
+import ij.ImageJ;
+import ij.ImagePlus;
+import ij.gui.Line;
+import ij.gui.Overlay;
+import ij.process.ImageProcessor;
+import ij.text.TextWindow;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -56,22 +64,16 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import algorithms.AutoThresholdRegression;
-import algorithms.Histogram2D;
-import fiji.util.gui.JImagePanel;
-import gadgets.DataContainer;
-import ij.IJ;
-import ij.ImageJ;
-import ij.ImagePlus;
-import ij.gui.Line;
-import ij.gui.Overlay;
-import ij.process.ImageProcessor;
-import ij.text.TextWindow;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.LongType;
+
+import algorithms.AutoThresholdRegression;
+import algorithms.Histogram2D;
+import fiji.util.gui.JImagePanel;
+import gadgets.DataContainer;
 
 /**
  * This class displays the container contents in one single window and offers

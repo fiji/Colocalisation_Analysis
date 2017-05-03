@@ -22,8 +22,7 @@
 package tests;
 
 import static org.junit.Assume.assumeNotNull;
-import algorithms.MissingPreconditionException;
-import gadgets.MaskFactory;
+
 import ij.ImagePlus;
 import ij.gui.NewImage;
 import ij.gui.Roi;
@@ -45,8 +44,8 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
 import net.imglib2.algorithm.gauss.Gauss;
 import net.imglib2.algorithm.math.ImageStatistics;
-import net.imglib2.img.Img;
 import net.imglib2.img.ImagePlusAdapter;
+import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.NativeType;
@@ -54,6 +53,9 @@ import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
+
+import algorithms.MissingPreconditionException;
+import gadgets.MaskFactory;
 
 /**
  * A class containing some testing helper methods. It allows

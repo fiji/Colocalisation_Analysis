@@ -21,7 +21,6 @@
  */
 package algorithms;
 
-import gadgets.DataContainer;
 import ij.IJ;
 
 import java.util.Arrays;
@@ -33,6 +32,8 @@ import net.imglib2.TwinCursor;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
+
+import gadgets.DataContainer;
 import results.ResultHandler;
 
 /**

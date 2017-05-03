@@ -21,8 +21,6 @@
  */
 package results;
 
-import algorithms.Histogram2D;
-
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -31,8 +29,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import gadgets.DataContainer;
-import gadgets.DataContainer.MaskType;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.io.SaveDialog;
@@ -47,6 +43,10 @@ import net.imglib2.algorithm.math.ImageStatistics;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.LongType;
+
+import algorithms.Histogram2D;
+import gadgets.DataContainer;
+import gadgets.DataContainer.MaskType;
 
 
 public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {

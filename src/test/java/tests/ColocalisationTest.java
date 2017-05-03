@@ -21,7 +21,6 @@
  */
 package tests;
 
-import gadgets.MaskFactory;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.math.ImageStatistics;
 import net.imglib2.img.Img;
@@ -31,6 +30,8 @@ import net.imglib2.type.numeric.integer.UnsignedByteType;
 
 import org.junit.After;
 import org.junit.Before;
+
+import gadgets.MaskFactory;
 
 
 public abstract class ColocalisationTest {

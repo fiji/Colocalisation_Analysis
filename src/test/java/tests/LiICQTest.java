@@ -22,12 +22,14 @@
 package tests;
 
 import static org.junit.Assert.assertTrue;
-import algorithms.LiICQ;
+
 import net.imglib2.TwinCursor;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
 
 import org.junit.Test;
+
+import algorithms.LiICQ;
 
 /**
  * This class contains JUnit 4 test cases for the calculation of Li's
