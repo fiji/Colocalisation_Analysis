@@ -6,6 +6,7 @@
 // This script demonstrates programmatic usage of Fiji's Coloc 2 plugin,
 // including how to extract quantitative measurements after execution.
 
+import sc.fiji.coloc.Coloc_2
 coloc2 = new Coloc_2()
 
 indexMask = 0
