@@ -22,6 +22,8 @@
 
 package sc.fiji.coloc.algorithms;
 
+import ij.Prefs;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -156,9 +158,14 @@ public class CostesSignificanceTest<T extends RealType<T> & NativeType<T>>
 
 		shuffledPearsonsResults = new ArrayList<>();
 
-		final int threadCount = 1;
+		final int threadCount = Math.min(Prefs.getThreads(), nrRandomizations);
+		final int perThread = nrRandomizations / threadCount;
+		final int leftover = nrRandomizations % threadCount;
+		System.out.println("threadCount = " + threadCount);
 		final Thread[] threads = new Thread[threadCount];
 		for (int t = 0; t < threadCount; t++) {
+			final int iterations = perThread + (t < leftover ? 1 : 0);
+			System.out.println("Thread #" + t + ": iterations=" + iterations + " (nrRandomizations=" + nrRandomizations + ")");
 			threads[t] = new Thread() {
 				@Override
 				public void run() {
@@ -193,7 +200,7 @@ public class CostesSignificanceTest<T extends RealType<T> & NativeType<T>>
 						smoothingPsfRadius[i] = psfRadius[i];
 					}
 
-					for (int i = 0; i < nrRandomizations; i++) {
+					for (int i = 0; i < iterations; i++) {
 						// shuffle the list
 						Collections.shuffle(inputBlocks);
 						// get an output random access
@@ -253,7 +260,7 @@ public class CostesSignificanceTest<T extends RealType<T> & NativeType<T>>
 							// increase retry count and the number of randomizations
 							retries[0]++;
 						}
-					} // end for (int i = 0; i < nrRandomizations; i++)
+					} // end for (int i = 0; i < iterations; i++)
 				} // end run()
 			}; // end new Thread(...)
 			threads[t].start();
