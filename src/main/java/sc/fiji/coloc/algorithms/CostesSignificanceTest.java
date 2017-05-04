@@ -148,106 +148,112 @@ public class CostesSignificanceTest<T extends RealType<T> & NativeType<T>>
 		final RandomAccessible<T> infiniteImg = Views.extendMirrorSingle(img1);
 		generateBlocks(infiniteImg, blockIntervals, floatOffset, floatDimensions);
 
-		// create input and output cursors and store them along their offset
-		final List<Cursor<T>> inputBlocks = new ArrayList<>(
-			nrBlocksPerImage);
-		final List<Cursor<T>> outputBlocks = new ArrayList<>(
-			nrBlocksPerImage);
-		for (final IterableInterval<T> roiIt : blockIntervals) {
-			inputBlocks.add(roiIt.localizingCursor());
-			outputBlocks.add(roiIt.localizingCursor());
-		}
+		{
+			{
+				{
+					// create input and output cursors and store them along their offset
+					final List<Cursor<T>> inputBlocks = new ArrayList<>(
+						nrBlocksPerImage);
+					final List<Cursor<T>> outputBlocks = new ArrayList<>(
+						nrBlocksPerImage);
+					for (final IterableInterval<T> roiIt : blockIntervals) {
+						inputBlocks.add(roiIt.localizingCursor());
+						outputBlocks.add(roiIt.localizingCursor());
+					}
 
-		// we will need a zero variable
-		final T zero = img1.randomAccess().get().createVariable();
-		zero.setZero();
+					// we will need a zero variable
+					final T zero = img1.randomAccess().get().createVariable();
+					zero.setZero();
 
-		/* Create a new image to contain the shuffled data and with
-		 * same dimensions as the original data.
-		 */
-		final long[] dims = new long[img1.numDimensions()];
-		img1.dimensions(dims);
-		final ImgFactory<T> factory = new ArrayImgFactory<>();
-		final Img<T> shuffledImage = factory.create(dims, img1.randomAccess().get()
-			.createVariable());
-		final RandomAccessible<T> infiniteShuffledImage = Views.extendValue(
-			shuffledImage, zero);
+					/* Create a new image to contain the shuffled data and with
+					 * same dimensions as the original data.
+					 */
+					final long[] dims = new long[img1.numDimensions()];
+					img1.dimensions(dims);
+					final ImgFactory<T> factory = new ArrayImgFactory<>();
+					final Img<T> shuffledImage = factory.create(dims, img1.randomAccess().get()
+						.createVariable());
+					final RandomAccessible<T> infiniteShuffledImage = Views.extendValue(
+						shuffledImage, zero);
 
-		// create a double version of the PSF for the smoothing
-		final double[] smoothingPsfRadius = new double[nrDimensions];
-		for (int i = 0; i < nrDimensions; i++) {
-			smoothingPsfRadius[i] = psfRadius[i];
-		}
+					// create a double version of the PSF for the smoothing
+					final double[] smoothingPsfRadius = new double[nrDimensions];
+					for (int i = 0; i < nrDimensions; i++) {
+						smoothingPsfRadius[i] = psfRadius[i];
+					}
 
-		// the retry count for error cases
-		int retries = 0;
+					// the retry count for error cases
+					int retries = 0;
 
-		shuffledPearsonsResults = new ArrayList<>();
-		for (int i = 0; i < nrRandomizations; i++) {
-			// shuffle the list
-			Collections.shuffle(inputBlocks);
-			// get an output random access
-			final RandomAccess<T> output = infiniteShuffledImage.randomAccess();
+					shuffledPearsonsResults = new ArrayList<>();
+					for (int i = 0; i < nrRandomizations; i++) {
+						// shuffle the list
+						Collections.shuffle(inputBlocks);
+						// get an output random access
+						final RandomAccess<T> output = infiniteShuffledImage.randomAccess();
 
-			// check if a mask is in use and further actions are needed
-			if (container.getMaskType() == MaskType.Irregular) {
-				final Cursor<T> siCursor = shuffledImage.cursor();
-				// black the whole intermediate image, just in case we have irr. masks
-				while (siCursor.hasNext()) {
-					siCursor.fwd();
-					output.setPosition(siCursor);
-					output.get().setZero();
-				}
-			}
+						// check if a mask is in use and further actions are needed
+						if (container.getMaskType() == MaskType.Irregular) {
+							final Cursor<T> siCursor = shuffledImage.cursor();
+							// black the whole intermediate image, just in case we have irr. masks
+							while (siCursor.hasNext()) {
+								siCursor.fwd();
+								output.setPosition(siCursor);
+								output.get().setZero();
+							}
+						}
 
-			// write out the shuffled input blocks into the output blocks
-			for (int j = 0; j < inputBlocks.size(); ++j) {
-				final Cursor<T> inputCursor = inputBlocks.get(j);
-				final Cursor<T> outputCursor = outputBlocks.get(j);
-				/* Iterate over both blocks. Theoretically the iteration
-				 * order could be different. Because we are dealing with
-				 * randomized data anyway, this is not a problem here.
-				 */
-				while (inputCursor.hasNext() && outputCursor.hasNext()) {
-					inputCursor.fwd();
-					outputCursor.fwd();
-					output.setPosition(outputCursor);
-					// write the data
-					output.get().set(inputCursor.get());
-				}
+						// write out the shuffled input blocks into the output blocks
+						for (int j = 0; j < inputBlocks.size(); ++j) {
+							final Cursor<T> inputCursor = inputBlocks.get(j);
+							final Cursor<T> outputCursor = outputBlocks.get(j);
+							/* Iterate over both blocks. Theoretically the iteration
+							 * order could be different. Because we are dealing with
+							 * randomized data anyway, this is not a problem here.
+							 */
+							while (inputCursor.hasNext() && outputCursor.hasNext()) {
+								inputCursor.fwd();
+								outputCursor.fwd();
+								output.setPosition(outputCursor);
+								// write the data
+								output.get().set(inputCursor.get());
+							}
 
-				/* Reset both cursors. If we wouldn't do that, the
-				 * image contents would not change on the next pass.
-				 */
-				inputCursor.reset();
-				outputCursor.reset();
-			}
+							/* Reset both cursors. If we wouldn't do that, the
+							 * image contents would not change on the next pass.
+							 */
+							inputCursor.reset();
+							outputCursor.reset();
+						}
 
-			smoothedShuffledImage = Gauss.inFloat(smoothingPsfRadius, shuffledImage);
+						smoothedShuffledImage = Gauss.inFloat(smoothingPsfRadius, shuffledImage);
 
-			try {
-				// calculate correlation value...
-				final double pValue = pearsonsCorrelation.calculatePearsons(
-					smoothedShuffledImage, img2, mask);
-				// ...and add it to the results list
-				shuffledPearsonsResults.add(pValue);
-			}
-			catch (final MissingPreconditionException e) {
-				/* if the randomized input data does not suit due to numerical
-				 * problems, try it three times again and then fail.
-				 */
-				if (retries < maxErrorRetries) {
-					// increase retry count and the number of randomizations
-					retries++;
-					nrRandomizations++;
-				}
-				else {
-					throw new MissingPreconditionException(
-						"Maximum retries have been made (" + +retries +
-							"), but errors keep on coming: " + e.getMessage(), e);
-				}
-			}
-		}
+						try {
+							// calculate correlation value...
+							final double pValue = pearsonsCorrelation.calculatePearsons(
+								smoothedShuffledImage, img2, mask);
+							// ...and add it to the results list
+							shuffledPearsonsResults.add(pValue);
+						}
+						catch (final MissingPreconditionException e) {
+							/* if the randomized input data does not suit due to numerical
+							 * problems, try it three times again and then fail.
+							 */
+							if (retries < maxErrorRetries) {
+								// increase retry count and the number of randomizations
+								retries++;
+								nrRandomizations++;
+							}
+							else {
+								throw new MissingPreconditionException(
+									"Maximum retries have been made (" + +retries +
+										"), but errors keep on coming: " + e.getMessage(), e);
+							}
+						}
+					} // end for (int i = 0; i < nrRandomizations; i++)
+				} // end run()
+			} // end new Thread(...)
+		} // end (int t = 0; t < threadCount; t++)
 
 		// calculate statistics on the randomized values and the original one
 		final double originalVal = pearsonsCorrelation
