@@ -127,6 +127,7 @@ public class CostesSignificanceTest<T extends RealType<T> & NativeType<T>>
 			// increase total count
 			nrBlocksPerImage *= nrBlocksPerDimension[i];
 		}
+		final int blocksPerImage = nrBlocksPerImage;
 
 		/* For creating the input and output blocks we need
 		 * offset and size as floating point array.
@@ -144,18 +145,28 @@ public class CostesSignificanceTest<T extends RealType<T> & NativeType<T>>
 		 * have an out of bounds strategy -- a mirror.
 		 */
 		List<IterableInterval<T>> blockIntervals;
-		blockIntervals = new ArrayList<>(nrBlocksPerImage);
+		blockIntervals = new ArrayList<>(blocksPerImage);
 		final RandomAccessible<T> infiniteImg = Views.extendMirrorSingle(img1);
 		generateBlocks(infiniteImg, blockIntervals, floatOffset, floatDimensions);
 
-		{
-			{
-				{
+		// the retry count for error cases
+		final int[] retries = { 0 };
+		final MissingPreconditionException[] retryError =
+			new MissingPreconditionException[1];
+
+		shuffledPearsonsResults = new ArrayList<>();
+
+		final int threadCount = 1;
+		final Thread[] threads = new Thread[threadCount];
+		for (int t = 0; t < threadCount; t++) {
+			threads[t] = new Thread() {
+				@Override
+				public void run() {
 					// create input and output cursors and store them along their offset
 					final List<Cursor<T>> inputBlocks = new ArrayList<>(
-						nrBlocksPerImage);
+						blocksPerImage);
 					final List<Cursor<T>> outputBlocks = new ArrayList<>(
-						nrBlocksPerImage);
+						blocksPerImage);
 					for (final IterableInterval<T> roiIt : blockIntervals) {
 						inputBlocks.add(roiIt.localizingCursor());
 						outputBlocks.add(roiIt.localizingCursor());
@@ -182,10 +193,6 @@ public class CostesSignificanceTest<T extends RealType<T> & NativeType<T>>
 						smoothingPsfRadius[i] = psfRadius[i];
 					}
 
-					// the retry count for error cases
-					int retries = 0;
-
-					shuffledPearsonsResults = new ArrayList<>();
 					for (int i = 0; i < nrRandomizations; i++) {
 						// shuffle the list
 						Collections.shuffle(inputBlocks);
@@ -239,21 +246,35 @@ public class CostesSignificanceTest<T extends RealType<T> & NativeType<T>>
 							/* if the randomized input data does not suit due to numerical
 							 * problems, try it three times again and then fail.
 							 */
-							if (retries < maxErrorRetries) {
-								// increase retry count and the number of randomizations
-								retries++;
-								nrRandomizations++;
+							if (retries[0] >= maxErrorRetries) {
+								retryError[0] = e;
+								break;
 							}
-							else {
-								throw new MissingPreconditionException(
-									"Maximum retries have been made (" + +retries +
-										"), but errors keep on coming: " + e.getMessage(), e);
-							}
+							// increase retry count and the number of randomizations
+							retries[0]++;
 						}
 					} // end for (int i = 0; i < nrRandomizations; i++)
 				} // end run()
-			} // end new Thread(...)
+			}; // end new Thread(...)
+			threads[t].start();
 		} // end (int t = 0; t < threadCount; t++)
+
+		// wait for all threads to finish computation
+		for (int t = 0; t < threadCount; t++) {
+			try {
+				threads[t].join();
+			}
+			catch (final InterruptedException exc) {
+				throw new RuntimeException("Thread #" + t + " interrupted", exc);
+			}
+			// fail globally if any of the threads failed
+			if (retries[0] >= maxErrorRetries) {
+				throw new MissingPreconditionException(
+					"Maximum retries have been made (" + retries[0] +
+						"), but errors keep on coming: " + retryError[0].getMessage(),
+					retryError[0]);
+			}
+		}
 
 		// calculate statistics on the randomized values and the original one
 		final double originalVal = pearsonsCorrelation
