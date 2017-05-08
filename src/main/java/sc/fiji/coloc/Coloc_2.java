@@ -435,8 +435,8 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 	 * NB: This method returns {@code void} for binary backwards compatibility
 	 * with old code which might invoke it. If you want access to the
 	 * {@link AnalysisResults} directly, call
-	 * {@link #colocalise(Img, Img, BoundingBox, Img, List)} with {@code null} for
-	 * {@code extraHandlers}.
+	 * {@link #colocalise(Img, Img, Coloc_2.BoundingBox, Img, List)} with
+	 * {@code null} for {@code extraHandlers}.
 	 * </p>
 	 *
 	 * @param image1
