@@ -274,10 +274,9 @@ protected <T extends RealType<T>> double[][] dataPreprocessing(final Iterable<Pa
 		final double[][] values = new double[capacity][2];
 		((Iterator) samples).reset();
 		int count = 0;
-		while (((Iterator) samples).hasNext()) {
-			((Iterator) samples).fwd();
-			values[count][0] = ((Object) samples).getFirst().getRealDouble();
-			values[count][1] = ((Object) samples).getSecond().getRealDouble();
+		for (Pair<T, U> sample : samples) {
+			values[count][0] = sample.getA().getRealDouble();
+			values[count][1] = sample.getB().getRealDouble();
 			count++;
 		}
 
