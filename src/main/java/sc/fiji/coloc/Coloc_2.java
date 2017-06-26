@@ -343,6 +343,12 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		Ch1Name = imp1.getTitle();
 		Ch2Name = imp2.getTitle();
 
+		// make sure neither image is RGB type
+		if (imp1.getBitDepth() == 24 || imp2.getBitDepth() == 24) {
+			IJ.showMessage("You should not use RGB color images to measure colocalization. Provide each channel as a 8-bit or 16-bit image.");
+			return false;
+		}
+
 		// make sure both images have the same bit-depth
 		if (imp1.getBitDepth() != imp2.getBitDepth()) {
 			IJ.showMessage("Both images must have the same bit-depth.");
