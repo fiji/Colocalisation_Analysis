@@ -130,9 +130,9 @@ public class PearsonsCorrelationTest extends ColocalisationTest {
 
 		for (double mean = initialMean; mean < 1; mean += spread) {
 			RandomAccessibleInterval<FloatType> ch1 = TestImageAccessor.produceMeanBasedNoiseImage(new FloatType(),
-					512, 512, mean, spread, sigma);
+					512, 512, mean, spread, sigma, 0x01234567);
 			RandomAccessibleInterval<FloatType> ch2 = TestImageAccessor.produceMeanBasedNoiseImage(new FloatType(),
-					512, 512, mean, spread, sigma);
+					512, 512, mean, spread, sigma, 0x98765432);
 
 			// create a twin value range cursor that iterates over all pixels of the input data
 			TwinCursor<FloatType> cursor = new TwinCursor<FloatType>(ch1.randomAccess(),

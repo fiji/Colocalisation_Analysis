@@ -33,6 +33,7 @@ import java.awt.Color;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Random;
 
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
@@ -181,7 +182,7 @@ public class TestImageAccessor {
 	 * @throws MissingPreconditionException if specified means and spreads are not valid
 	 */
 	public static <T extends RealType<T> & NativeType<T>> RandomAccessibleInterval<T> produceMeanBasedNoiseImage(T type, int width,
-			int height, double mean, double spread, double[] smoothingSigma) throws MissingPreconditionException {
+			int height, double mean, double spread, double[] smoothingSigma, long seed) throws MissingPreconditionException {
 		if (mean < spread || (mean + spread) > type.getMaxValue()) {
 			throw new MissingPreconditionException("Mean must be larger than spread, and mean plus spread must be smaller than max of the type");
 		}
@@ -189,8 +190,9 @@ public class TestImageAccessor {
 		ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 		RandomAccessibleInterval<T> noiseImage = imgFactory.create( new int[] {width, height}, type); // "Noise image");
 
+		Random r = new Random(seed);
 		for (T value : Views.iterable(noiseImage)) {
-			value.setReal( mean + ( (Math.random() - 0.5) * spread ) );
+			value.setReal( mean + ( (r.nextDouble() - 0.5) * spread ) );
 		}
 
 		return gaussianSmooth(noiseImage, smoothingSigma);
