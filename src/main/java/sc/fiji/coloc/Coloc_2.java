@@ -67,6 +67,7 @@ import sc.fiji.coloc.algorithms.KendallTauRankCorrelation;
 import sc.fiji.coloc.algorithms.LiHistogram2D;
 import sc.fiji.coloc.algorithms.LiICQ;
 import sc.fiji.coloc.algorithms.MandersColocalization;
+import sc.fiji.coloc.algorithms.MaxKendallTauOriginal;
 import sc.fiji.coloc.algorithms.MissingPreconditionException;
 import sc.fiji.coloc.algorithms.PearsonsCorrelation;
 import sc.fiji.coloc.algorithms.SpearmanRankCorrelation;
@@ -160,6 +161,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 	protected SpearmanRankCorrelation<T> SpearmanRankCorrelation;
 	protected MandersColocalization<T> mandersCorrelation;
 	protected KendallTauRankCorrelation<T> kendallTau;
+	protected MaxKendallTauOriginal<T> maxKendallTau;
 	protected Histogram2D<T> histogram2D;
 	protected CostesSignificanceTest<T> costesSignificance;
 	// indicates if images should be printed in result
@@ -238,6 +240,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		boolean useSpearmanRank = Prefs.get(PREF_KEY + "useSpearmanRank", true);
 		boolean useManders = Prefs.get(PREF_KEY + "useManders", true);
 		boolean useKendallTau = Prefs.get(PREF_KEY + "useKendallTau", true);
+		boolean useMaxKendallTau = Prefs.get(PREF_KEY + "useMaxendallTau", true);
 		boolean useScatterplot = Prefs.get(PREF_KEY + "useScatterplot", true);
 		boolean useCostes = Prefs.get(PREF_KEY + "useCostes", true);
 		int psf = (int) Prefs.get(PREF_KEY + "psf", 3);
@@ -271,6 +274,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		gd.addCheckbox("Spearman's_Rank_Correlation", useSpearmanRank);
 		gd.addCheckbox("Manders'_Correlation", useManders);
 		gd.addCheckbox("Kendall's_Tau_Rank_Correlation", useKendallTau);
+		gd.addCheckbox("Maximum Kendall Tau", useMaxKendallTau);
 		gd.addCheckbox("2D_Instensity_Histogram", useScatterplot);
 		gd.addCheckbox("Costes'_Significance_Test", useCostes);
 		final Checkbox costesCb = (Checkbox) gd.getCheckboxes().lastElement();
@@ -306,6 +310,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		boolean gdUseSpearmanRank = gd.getNextBoolean();
 		boolean gdUseManders = gd.getNextBoolean();
 		boolean gdUseKendallTau = gd.getNextBoolean();
+		boolean gdUseMaxKendallTau = gd.getNextBoolean();
 		boolean gdUseScatterplot = gd.getNextBoolean();
 		boolean gdUseCostes = gd.getNextBoolean();
 		int gdPsf = (int) gd.getNextNumber();
@@ -322,6 +327,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		Prefs.set(PREF_KEY + "useSpearmanRank", gdUseSpearmanRank);
 		Prefs.set(PREF_KEY + "useManders", gdUseManders);
 		Prefs.set(PREF_KEY + "useKendallTau", gdUseKendallTau);
+		Prefs.set(PREF_KEY + "useMaxKendallTau", gdUseMaxKendallTau);
 		Prefs.set(PREF_KEY + "useScatterplot", gdUseScatterplot);
 		Prefs.set(PREF_KEY + "useCostes", gdUseCostes);
 		Prefs.set(PREF_KEY + "psf", gdPsf);
@@ -329,14 +335,14 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 
 		return initializeSettings(gdImp1, gdImp2, gdIndexMask, gdIndexRegr, gdAutoSavePdf, gdDisplayImages,
 				gdDisplayShuffledCostes, gdUseLiCh1, gdUseLiCh2, gdUseLiICQ, gdUseSpearmanRank, gdUseManders,
-				gdUseKendallTau, gdUseScatterplot, gdUseCostes, gdPsf, gdNrCostesRandomisations);
+				gdUseKendallTau, gdUseMaxKendallTau, gdUseScatterplot, gdUseCostes, gdPsf, gdNrCostesRandomisations);
 	}
 
 	/** Programmatically initializes the colocalisation settings to match the given values. */
 	public boolean initializeSettings(ImagePlus imp1, ImagePlus imp2, int gdIndexMask, int gdIndexRegr,
 			boolean gdAutoSavePdf, boolean gdDisplayImages, boolean gdDisplayShuffledCostes, boolean gdUseLiCh1,
 			boolean gdUseLiCh2, boolean gdUseLiICQ, boolean gdUseSpearmanRank, boolean gdUseManders,
-			boolean gdUseKendallTau, boolean gdUseScatterplot, boolean gdUseCostes, int gdPsf,
+			boolean gdUseKendallTau, boolean gdUseMaxKendallTau, boolean gdUseScatterplot, boolean gdUseCostes, int gdPsf,
 			int gdNrCostesRandomisations)
 	{
 		// get image names for output
@@ -423,6 +429,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		}
 		if (gdUseManders) mandersCorrelation = new MandersColocalization<>();
 		if (gdUseKendallTau) kendallTau = new KendallTauRankCorrelation<>();
+		if (gdUseMaxKendallTau) maxKendallTau = new MaxKendallTauOriginal<>();
 		if (gdUseScatterplot) histogram2D = new Histogram2D<>(
 			"2D intensity histogram");
 		if (gdUseCostes) {
@@ -527,6 +534,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		addIfValid(SpearmanRankCorrelation, userSelectedJobs);
 		addIfValid(mandersCorrelation, userSelectedJobs);
 		addIfValid(kendallTau, userSelectedJobs);
+		addIfValid(maxKendallTau, userSelectedJobs);
 		addIfValid(histogram2D, userSelectedJobs);
 		addIfValid(costesSignificance, userSelectedJobs);
 

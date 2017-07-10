@@ -79,9 +79,9 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 			}
 		}
 		
-		double pvalue = count / distribution.length;
+		double pvalue1 = count / distribution.length;
 		
-		return pvalue;
+		return pvalue1;
 	}
 	
 	protected <T extends RealType<T>& NativeType<T>> Img<T> shuffleBlocks(List<IterableInterval<T>> blockIntervals, RandomAccessible<T> img, DataContainer<T> container) {
@@ -139,7 +139,7 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 		
 		for (int i = 0; i < nrDimensions; i++) {
 			blockSize[i] = (long) Math.floor(Math.sqrt(dimensions[i]));
-			nrBlocksPerDimension[i] = (long) (dimensions[i] / blockSize[i]);
+			nrBlocksPerDimension[i] = dimensions[i] / blockSize[i];
 			// if there is the need for a out-of-bounds block, increase count
 			if ( dimensions[i] % blockSize[i] != 0 )
 				nrBlocksPerDimension[i]++;
@@ -201,21 +201,21 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 	}
 	
 	protected <T extends RealType< T >& NativeType<T>> void generateBlocksX(RandomAccessible<T> img, List<IterableInterval<T>> blockList,
-			long[] offset, double[] size, long[] Blockszie) {
+			long[] offset, double[] size, long[] Blocksize) {
 		// potentially masked image width
 		double width = size[0];
 		final long originalX = offset[0];
 		// go through the width in steps of block width
 		long x;
-		double[] intiBlocksize= new double[Blockszie.length];
+		double[] intiBlocksize= new double[Blocksize.length];
 		double[] intioffset= new double[offset.length];
 		for (int i = 1;i < offset.length; i++ )
 		{
-			intiBlocksize[i] = Blockszie[i];
+			intiBlocksize[i] = Blocksize[i];
 			intioffset[i] = offset[i];
 		}
-		for ( x = Blockszie[0]; x <= width; x += Blockszie[0] ) {
-			offset[0] = originalX + x - Blockszie[0];
+		for ( x = Blocksize[0]; x <= width; x += Blocksize[0] ) {
+			offset[0] = originalX + x - Blocksize[0];
 			RectangleRegionOfInterest roi =
 					new RectangleRegionOfInterest(intioffset.clone(), intiBlocksize.clone());
 			IterableInterval<T> roiInterval = roi.getIterableIntervalOverROI(img);
@@ -227,7 +227,7 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 	protected <T extends RealType<T>> double calculateMaxTauIndex(final PairIterator<T> iterator) {
 		double[][] values;
 		double[][] rank;
-		double maxtau;
+		double maxKTau;
 		
 		int capacity = 0;
 		while (iterator.hasNext()) {
@@ -252,9 +252,9 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 		thresholdRank2 = 196241;
 		rank = rankTransformation(values, thresholdRank1, thresholdRank2, capacity);
 		
-		maxtau = calculateMaxKendallTau(rank, thresholdRank1, thresholdRank2, capacity);
+		maxKTau = calculateMaxKendallTau(rank, thresholdRank1, thresholdRank2, capacity);
 		
-		return maxtau;
+		return maxKTau;
 		
 	}
 	
@@ -332,7 +332,7 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 		return bestThre;
 	}
 	
-	protected double[][] rankTransformation(final double[][] values, double thresholdRank1, double thresholdRank2, int n) {	
+	protected double[][] rankTransformation(final double[][] values, double thresRank1, double thresRank2, int n) {	
 		double[][] tempRank = new double[n][2];
 		for( int i = 0; i < n; i++) {
 			tempRank[i][0] = values[i][0];
@@ -417,7 +417,7 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 		List<Integer> validIndex = new ArrayList<Integer>();
 		for (int i = 0; i < n; i++)
 		{
-			if(tempRank[i][0] >= thresholdRank1 && tempRank[i][1] >= thresholdRank2)
+			if(tempRank[i][0] >= thresRank1 && tempRank[i][1] >= thresRank2)
 			{
 				validIndex.add(i);
 			}
@@ -435,7 +435,7 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 		return finalrank;
 	}
 	
-	protected double calculateMaxKendallTau(final double[][] rank, double thresholdRank1, double thresholdRank2, int n) {
+	protected double calculateMaxKendallTau(final double[][] rank, double thresRank1, double thresRank2, int n) {
 		int rn = rank.length;
 		int an;
 		double step = 1+1.0/Math.log(Math.log(n));
@@ -447,10 +447,10 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 		double normalTau;
 		double maxNormalTau = Double.MIN_VALUE;
 		
-		while (tempOff1*step+thresholdRank1<n) {
+		while (tempOff1*step+thresRank1<n) {
 			tempOff1 *= step;
 			tempOff2 = 1;
-			while (tempOff2*step+thresholdRank2<n) {
+			while (tempOff2*step+thresRank2<n) {
 				tempOff2 *= step;
 				
 				activeIndex = new ArrayList<Integer>();
@@ -533,17 +533,15 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 			this.comparator = comparator;
 		}
 
-		public int[] getSorted() {
-			return index;
-		}
+//		public int[] getSorted() {
+//			return index;
+//		}
 
 		/**
 		 * Sorts the {@link #index} array.
 		 * <p>
 		 * This implements a non-recursive merge sort.
 		 * </p>
-		 * @param begin
-		 * @param end
 		 * @return the equivalent number of BubbleSort swaps
 		 */
 		public long sort() {
@@ -602,7 +600,7 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 	public void processResults(ResultHandler<T> handler) {
 		super.processResults(handler);
 		handler.handleValue("Max Kendall Tau correlation value", maxtau, 4);
-		handler.handleValue("P-value", pvalue, 4);
+		handler.handleValue("Max Kendall Tau P-value", pvalue, 4);
 	}
 
 }
