@@ -329,7 +329,7 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 	
 	protected double[][] rankTransformation(final double[][] values, double thresRank1, double thresRank2, int n) {	
 		
-		double[][] tempRank = new double[][] { values[0], values[1] };
+		double[][] tempRank = values;
 
 		Arrays.sort(tempRank, new Comparator<double[]>() {
 			@Override
@@ -338,25 +338,29 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 			}
 		});
 		
+		double[] tempRank1 = tempRank[1];
+		double[] tempRank2 = tempRank[0];
 		int start = 0;
 		int end = 0;
 		int rank=0;
 		while (end < n-1)
 		{
-			while (Double.compare(tempRank[start][1],tempRank[end][1]) == 0) ///////////////////////////////////////////////////////////////////////////////////////////////////(same as below [0]) what are you trying to compare here??
+			while (Double.compare(tempRank1[start],tempRank1[end]) == 0) 
 			{
 				end++;
 				if(end >= n)
 					break;
 			}
 			for (int i = start; i < end; i++){
-				tempRank[i][1]=rank+Math.random(); //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////(same as below [0]) ???
+				tempRank1[i]=rank+Math.random(); 
 			}
 			rank++;
 			start=end;
 		}
+		// reset tempRank with new tempRank1
+		tempRank = new double[][] {tempRank2, tempRank1};
 		
-		Arrays.sort(tempRank, new Comparator<double[]>() { //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////(same as below [0]) ???
+		Arrays.sort(tempRank, new Comparator<double[]>() { 
 			@Override
 			public int compare(double[] row1, double[] row2) {
 				return Double.compare(row1[1], row2[1]);
@@ -364,9 +368,10 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 		});
 		
 		for (int i = 0; i < n; i++) {
-			tempRank[i][1] = i + 1; //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////(same as below [0]) ???
+			tempRank1[i] = i + 1; 
 		}
-		
+		// reset tempRank again with new tempRank1
+		tempRank = new double[][] {tempRank2, tempRank1};
 		
 		//second 
 		Arrays.sort(tempRank, new Comparator<double[]>() {
@@ -376,23 +381,28 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 			}
 		});
 		
+		// reset tempRank1 and tempRank2
+		tempRank1 = tempRank[1];
+		tempRank2 = tempRank[0];
 		start = 0;
 		end = 0;
 		rank=0;
 		while (end < n-1)
 		{
-			while (Double.compare(tempRank[start][0],tempRank[end][0]) == 0)
+			while (Double.compare(tempRank2[start],tempRank2[end]) == 0)
 			{
 				end++;
 				if(end >= n)
 					break;
 			}
 			for (int i = start; i < end; i++){
-				tempRank[i][0]=rank+Math.random();
+				tempRank2[i]=rank+Math.random();
 			}
 			rank++;
 			start=end;
 		}
+		// reset tempRank with new tempRank2
+		tempRank = new double[][] {tempRank2, tempRank1};
 		
 		Arrays.sort(tempRank, new Comparator<double[]>() {
 			@Override
@@ -402,29 +412,34 @@ public class MaxKendallTauOriginal <T extends RealType< T >& NativeType<T>> exte
 		});
 		
 		for (int i = 0; i < n; i++) {
-			tempRank[i][0] = i + 1;
+			tempRank2[i] = i + 1;
 		}
-		
+		// reset tempRank again with new tempRank2
+		tempRank = new double[][] {tempRank2, tempRank1};
+		// reset tempRank1 and tempRank2
+		tempRank1 = tempRank[1];
+		tempRank2 = tempRank[0];
 		
 		List<Integer> validIndex = new ArrayList<Integer>();
 		for (int i = 0; i < n; i++)
 		{
-			if(tempRank[i][0] >= thresRank1 && tempRank[i][1] >= thresRank2) ///////////////////////////////////////////////////////////////////////////////////////// ????
+			if(tempRank2[i] >= thresRank1 && tempRank1[i] >= thresRank2) 
 			{
 				validIndex.add(i);
 			}
 		}
 		
-		int rn=validIndex.size();
-		double[][] finalrank = new double[rn][2]; /////////////////////////////////////////////////////////////////////////////////////////////////////// a final - what do you want here?
+		int rn = validIndex.size();
+		double[] finalRank1 = new double[rn];  
+		double[] finalRank2 = new double[rn];
 		int index = 0;
 		for( Integer i : validIndex ) {
-			finalrank[index][0] = tempRank[i][0];
-			finalrank[index][1] = tempRank[i][1];
+			finalRank2[index] = tempRank2[i];
+			finalRank1[index] = tempRank1[i];
 			index++;
 		}
 		
-		return finalrank;
+		return new double[][]{finalRank1, finalRank2};
 	}
 	
 	protected double calculateMaxKendallTau(final double[][] rank, double thresRank1, double thresRank2, int n) { ////////////////////////////////////////////////////////////////// 2D array issues cont...
