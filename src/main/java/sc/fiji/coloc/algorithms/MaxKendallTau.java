@@ -337,28 +337,27 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 				return Double.compare(row1[1], row2[1]);
 			}
 		});
-		
-		double[] tempRank1 = tempRank[1];
-		double[] tempRank2 = tempRank[0];
+		double[] tempRank1 = tempRank[0];
+		double[] tempRank2 = tempRank[1];
 		int start = 0;
 		int end = 0;
 		int rank=0;
 		while (end < n-1)
 		{
-			while (Double.compare(tempRank1[start],tempRank1[end]) == 0) 
+			while (Double.compare(tempRank2[start],tempRank2[end]) == 0) 
 			{
 				end++;
 				if(end >= n)
 					break;
 			}
 			for (int i = start; i < end; i++){
-				tempRank1[i]=rank+Math.random(); 
+				tempRank2[i]=rank+Math.random(); 
 			}
 			rank++;
 			start=end;
 		}
 		// reset tempRank with new tempRank1
-		tempRank = new double[][] {tempRank2, tempRank1};
+		tempRank = new double[][] {tempRank1, tempRank2};
 		
 		Arrays.sort(tempRank, new Comparator<double[]>() { 
 			@Override
@@ -368,10 +367,10 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		});
 		
 		for (int i = 0; i < n; i++) {
-			tempRank1[i] = i + 1; 
+			tempRank2[i] = i + 1; 
 		}
 		// reset tempRank again with new tempRank1
-		tempRank = new double[][] {tempRank2, tempRank1};
+		tempRank = new double[][] {tempRank1, tempRank2};
 		
 		//second 
 		Arrays.sort(tempRank, new Comparator<double[]>() {
@@ -382,27 +381,27 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		});
 		
 		// reset tempRank1 and tempRank2
-		tempRank1 = tempRank[1];
-		tempRank2 = tempRank[0];
+		tempRank1 = tempRank[0];
+		tempRank2 = tempRank[1];
 		start = 0;
 		end = 0;
 		rank=0;
 		while (end < n-1)
 		{
-			while (Double.compare(tempRank2[start],tempRank2[end]) == 0)
+			while (Double.compare(tempRank1[start],tempRank1[end]) == 0)
 			{
 				end++;
 				if(end >= n)
 					break;
 			}
 			for (int i = start; i < end; i++){
-				tempRank2[i]=rank+Math.random();
+				tempRank1[i]=rank+Math.random();
 			}
 			rank++;
 			start=end;
 		}
 		// reset tempRank with new tempRank2
-		tempRank = new double[][] {tempRank2, tempRank1};
+		tempRank = new double[][] {tempRank1, tempRank2};
 		
 		Arrays.sort(tempRank, new Comparator<double[]>() {
 			@Override
@@ -412,18 +411,18 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		});
 		
 		for (int i = 0; i < n; i++) {
-			tempRank2[i] = i + 1;
+			tempRank1[i] = i + 1;
 		}
 		// reset tempRank again with new tempRank2
-		tempRank = new double[][] {tempRank2, tempRank1};
+		tempRank = new double[][] {tempRank1, tempRank2};
 		// reset tempRank1 and tempRank2
-		tempRank1 = tempRank[1];
-		tempRank2 = tempRank[0];
+		tempRank1 = tempRank[0];
+		tempRank2 = tempRank[1];
 		
 		List<Integer> validIndex = new ArrayList<Integer>();
 		for (int i = 0; i < n; i++)
 		{
-			if(tempRank2[i] >= thresRank1 && tempRank1[i] >= thresRank2) 
+			if(tempRank1[i] >= thresRank1 && tempRank2[i] >= thresRank2) 
 			{
 				validIndex.add(i);
 			}
@@ -434,8 +433,8 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		double[] finalRank2 = new double[rn];
 		int index = 0;
 		for( Integer i : validIndex ) {
-			finalRank2[index] = tempRank2[i];
 			finalRank1[index] = tempRank1[i];
+			finalRank2[index] = tempRank2[i];
 			index++;
 		}
 		
@@ -444,6 +443,8 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 	
 	protected double calculateMaxKendallTau(final double[][] rank, double thresRank1, double thresRank2, int n) { ////////////////////////////////////////////////////////////////// 2D array issues cont...
 		int rn = rank.length;
+		double [] rank1 = rank[0];
+		double [] rank2 = rank[1];
 		int an;
 		double step = 1+1.0/Math.log(Math.log(n));
 		double tempOff1=1;
@@ -454,16 +455,16 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		double normalTau;
 		double maxNormalTau = Double.MIN_VALUE;
 		
-		while (tempOff1*step+thresRank1<n) {
-			tempOff1 *= step;
+		while (tempOff1*step+thresRank1 < n) {
+			tempOff1 = tempOff1 * step;
 			tempOff2 = 1;
-			while (tempOff2*step+thresRank2<n) {
-				tempOff2 *= step;
+			while (tempOff2*step+thresRank2 < n) {
+				tempOff2 = tempOff2 * step;
 				
 				activeIndex = new ArrayList<Integer>();
 				for (int i = 0; i < rn; i++)
 				{
-					if(rank[i][0] >= n - tempOff1 && rank[i][1] >= n - tempOff2)
+					if(rank1[i] >= n - tempOff1 && rank2[i] >= n - tempOff2)
 					{
 						activeIndex.add(i);
 					}
