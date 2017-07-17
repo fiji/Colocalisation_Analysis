@@ -1,4 +1,3 @@
-
 package sc.fiji.coloc.algorithms;
 
 import java.util.ArrayList;
@@ -7,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import net.imagej.ImgPlus;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.PairIterator;
@@ -22,186 +20,163 @@ import net.imglib2.roi.RectangleRegionOfInterest;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
 
-import org.scijava.ItemIO;
-import org.scijava.command.Command;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
+import sc.fiji.coloc.gadgets.DataContainer;
+import sc.fiji.coloc.gadgets.DataContainer.MaskType;
+import sc.fiji.coloc.results.ResultHandler;
 
-@Plugin(type = MaxKendallTau.class, headless = true)
-public class MaxKendallTau<T extends RealType<T> & NativeType<T>> implements
-	Command
-{
 
-	@Parameter(label = "Img 1")
-	private ImgPlus<T> img1;
-
-	@Parameter(label = "Img 2")
-	private ImgPlus<T> img2;
-
-	@Parameter(label = "BitMask")
-	private ImgPlus<BitType> mask;
-
-	@Parameter(label = "Number of Randomizations")
-	private final int nrRandomizations;
-
-	@Parameter(type = ItemIO.OUTPUT, label = "Max Tau")
-	private double maxtau;
-
-	@Parameter(type = ItemIO.OUTPUT, label = "P-Value")
-	private double pvalue;
-
-	// internally used stuff
-	private int thresholdRank1;
-
-	private int thresholdRank2;
-
-	private double[] sampleDistribution;
-
+public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algorithm<T> {
+	
+	int nrRandomizations;
+	
+	public double maxtau;
+	public double pvalue;
+	public int thresholdRank1;
+	public int thresholdRank2;
+	public double[] sampleDistribution;
+	
 	public MaxKendallTau() {
+		super("Maximum of Kendall's Tau Rank Correlation");
 		this.nrRandomizations = 10;
 	}
-
+	
 	@Override
-	public void run() {
-		TwinCursor<T> cursor = new TwinCursor<T>(img1.randomAccess(), img2.randomAccess(), Views.iterable(mask).localizingCursor());
+	public void execute(DataContainer<T> container)
+		throws MissingPreconditionException
+	{
+		final RandomAccessible<T> img1 = container.getSourceImage1();
+		final RandomAccessible<T> img2 = container.getSourceImage2();
+		RandomAccessibleInterval<BitType> mask = container.getMask();
 
+		TwinCursor<T> cursor = new TwinCursor<T>(img1.randomAccess(),
+				img2.randomAccess(), Views.iterable(mask).localizingCursor());		
+		
 		maxtau = calculateMaxTauIndex(cursor);
-
-		final List<IterableInterval<T>> blockIntervals = generateBlocks(img1);
+		
+		List<IterableInterval<T>> blockIntervals = generateBlocks(container.getSourceImage1(), container);
 		Img<T> shuffledImage;
 		sampleDistribution = new double[nrRandomizations];
-
-		for (int i = 0; i < nrRandomizations; i++) {
-			shuffledImage = shuffleBlocks(blockIntervals, img1);
-			cursor = new TwinCursor<T>(shuffledImage.randomAccess(), img2
-				.randomAccess(), Views.iterable(mask).localizingCursor());
+		
+		for (int i=0; i < nrRandomizations; i++) {
+			shuffledImage = shuffleBlocks(blockIntervals, img1, container);
+			cursor = new TwinCursor<T>(shuffledImage.randomAccess(),
+					img2.randomAccess(), Views.iterable(mask).localizingCursor());
 			sampleDistribution[i] = calculateMaxTauIndex(cursor);
 		}
-
+		
 		pvalue = calculatePvalue(maxtau, sampleDistribution);
-
+		
 	}
-
-	protected double calculatePvalue(final double value,
-		final double[] distribution)
-	{
+	
+	protected double calculatePvalue (double value, double[] distribution) {
 		double count = 0;
-		for (int i = 0; i < distribution.length; i++) {
-			if (distribution[i] > value) {
+		for (int i = 0; i <  distribution.length; i++) {
+			if (distribution[i] > value)
+			{
 				count++;
 			}
 		}
-
-		final double pvalue = count / distribution.length;
-
-		return pvalue;
+		
+		double pvalue1 = count / distribution.length;
+		
+		return pvalue1;
 	}
-
-	protected <T extends RealType<T> & NativeType<T>> Img<T> shuffleBlocks(
-		final List<IterableInterval<T>> blockIntervals,
-		final RandomAccessibleInterval<T> img)
-	{
-		final int nrBlocksPerImage = blockIntervals.size();
-		final List<Cursor<T>> inputBlocks = new ArrayList<Cursor<T>>(
-			nrBlocksPerImage);
-		final List<Cursor<T>> outputBlocks = new ArrayList<Cursor<T>>(
-			nrBlocksPerImage);
-		for (final IterableInterval<T> roiIt : blockIntervals) {
+	
+	protected <T extends RealType<T>& NativeType<T>> Img<T> shuffleBlocks(List<IterableInterval<T>> blockIntervals, RandomAccessible<T> img, DataContainer<T> container) {
+		int nrBlocksPerImage = blockIntervals.size();
+		List<Cursor<T>> inputBlocks = new ArrayList<Cursor<T>>(nrBlocksPerImage);
+		List<Cursor<T>> outputBlocks = new ArrayList<Cursor<T>>(nrBlocksPerImage);
+		for (IterableInterval<T> roiIt : blockIntervals) {
 			inputBlocks.add(roiIt.localizingCursor());
 			outputBlocks.add(roiIt.localizingCursor());
 		}
-
+		
 		final T zero = img.randomAccess().get().createVariable();
 		zero.setZero();
 
-		final long[] dims = Intervals.dimensionsAsLongArray(img);
-		final ImgFactory<T> factory = new ArrayImgFactory<T>();
-		final Img<T> shuffledImage = factory.create(dims, img.randomAccess().get()
-			.createVariable());
-		final RandomAccessible<T> infiniteShuffledImage = Views.extendValue(
-			shuffledImage, zero);
-
-		Collections.shuffle(inputBlocks);
-		final RandomAccess<T> output = infiniteShuffledImage.randomAccess();
-
-		// FIXME ASSUMPTION FOR NOW: Mask is irregular
-		final Cursor<T> siCursor = shuffledImage.cursor();
-		// black the whole intermediate image, just in case we have irr. masks
-		while (siCursor.hasNext()) {
-			siCursor.fwd();
-			output.setPosition(siCursor);
-			output.get().setZero();
+		final long[] dims = new long[img.numDimensions()];
+		ImgFactory<T> factory = new ArrayImgFactory<T>();
+		Img<T> shuffledImage = factory.create(dims, img.randomAccess().get().createVariable());
+		RandomAccessible<T> infiniteShuffledImage = Views.extendValue(shuffledImage, zero );
+		
+		Collections.shuffle( inputBlocks );
+		RandomAccess<T> output = infiniteShuffledImage.randomAccess();
+		
+		if (container.getMaskType() == MaskType.Irregular) {
+			Cursor<T> siCursor = shuffledImage.cursor();
+			// black the whole intermediate image, just in case we have irr. masks
+			while (siCursor.hasNext()) {
+				siCursor.fwd();
+				output.setPosition(siCursor);
+				output.get().setZero();
+			}
 		}
-
+		
 		for (int j = 0; j < inputBlocks.size(); j++) {
-			final Cursor<T> inputCursor = inputBlocks.get(j);
-			final Cursor<T> outputCursor = outputBlocks.get(j);
+			Cursor<T> inputCursor = inputBlocks.get(j);
+			Cursor<T> outputCursor = outputBlocks.get(j);
 			while (inputCursor.hasNext() && outputCursor.hasNext()) {
 				inputCursor.fwd();
 				outputCursor.fwd();
 				output.setPosition(outputCursor);
-				output.get().set(inputCursor.get());
+				output.get().set( inputCursor.get() );
 				inputCursor.reset();
 				outputCursor.reset();
 			}
 		}
-
+		
 		return shuffledImage;
 	}
-
-	protected <T extends RealType<T> & NativeType<T>> List<IterableInterval<T>>
-		generateBlocks(final RandomAccessibleInterval<T> img)
-	{
-		final long[] dimensions = Intervals.dimensionsAsLongArray(mask);
-		final int nrDimensions = dimensions.length;
+	
+	protected <T extends RealType< T >& NativeType<T>> List<IterableInterval<T>> generateBlocks(RandomAccessibleInterval<T> img, DataContainer<T> container) {
+		long[] dimensions = container.getMaskBBSize();
+		int nrDimensions = dimensions.length;
 		int nrBlocksPerImage = 1;
-		final long[] nrBlocksPerDimension = new long[nrDimensions];
-		final long[] blockSize = new long[nrDimensions];
-
+		long[] nrBlocksPerDimension = new long[nrDimensions];
+		long[] blockSize = new long[nrDimensions];
+		
 		for (int i = 0; i < nrDimensions; i++) {
 			blockSize[i] = (long) Math.floor(Math.sqrt(dimensions[i]));
 			nrBlocksPerDimension[i] = dimensions[i] / blockSize[i];
 			// if there is the need for a out-of-bounds block, increase count
-			if (dimensions[i] % blockSize[i] != 0) nrBlocksPerDimension[i]++;
+			if ( dimensions[i] % blockSize[i] != 0 )
+				nrBlocksPerDimension[i]++;
 			nrBlocksPerImage *= nrBlocksPerDimension[i];
 		}
-
-		final long[] floatOffset = new long[img.numDimensions()];
-		final long[] longOffset = Intervals.minAsLongArray(mask);
-		for (int i = 0; i < longOffset.length; ++i)
+		
+		long[] floatOffset = new long[ img.numDimensions() ];
+		long[] longOffset = container.getMaskBBOffset();
+		for (int i=0; i< longOffset.length; ++i )
 			floatOffset[i] = longOffset[i];
-		final double[] floatDimensions = new double[nrDimensions];
-		for (int i = 0; i < nrDimensions; ++i)
+		double[] floatDimensions = new double[ nrDimensions ];
+		for (int i=0; i< nrDimensions; ++i )
 			floatDimensions[i] = dimensions[i];
 		List<IterableInterval<T>> blockIntervals;
-		blockIntervals = new ArrayList<IterableInterval<T>>(nrBlocksPerImage);
-		final RandomAccessible<T> infiniteImg = Views.extendMirrorSingle(img);
-		generateBlocksXYZ(infiniteImg, blockIntervals, floatOffset, floatDimensions,
-			blockSize);
-
+		blockIntervals = new ArrayList<IterableInterval<T>>( nrBlocksPerImage );
+		RandomAccessible< T> infiniteImg = Views.extendMirrorSingle( img );
+		generateBlocksXYZ(infiniteImg, blockIntervals, floatOffset, floatDimensions, blockSize);
+		
 		return blockIntervals;
-
+		
 	}
-
-	protected <T extends RealType<T> & NativeType<T>> void generateBlocksXYZ(
-		final RandomAccessible<T> infiniteImg,
-		final List<IterableInterval<T>> blockIntervals, final long[] offset,
-		final double[] size, final long[] Blockszie)
-	{
+	
+	protected <T extends RealType< T >& NativeType<T>> void generateBlocksXYZ(RandomAccessible<T> infiniteImg, List<IterableInterval<T>> blockIntervals,
+			long[] offset, double[] size, long[] Blockszie) {
 		// get the number of dimensions
-		final int nrDimensions = infiniteImg.numDimensions();
-		if (nrDimensions == 2) { // for a 2D image...
+		int nrDimensions = infiniteImg.numDimensions();
+		if (nrDimensions == 2)
+		{ // for a 2D image...
 			generateBlocksXY(infiniteImg, blockIntervals, offset, size, Blockszie);
 		}
-		else if (nrDimensions == 3) { // for a 3D image...
+		else if (nrDimensions == 3)
+		{ // for a 3D image...
 			final double depth = size[2];
 			long z;
-			final long originalZ = offset[2];
+			long originalZ = offset[2];
 			// go through the depth in steps of block depth
-			for (z = Blockszie[2]; z <= depth; z += Blockszie[2]) {
+			for ( z = Blockszie[2]; z <= depth; z += Blockszie[2] ) {
 
 				offset[2] = originalZ + z - Blockszie[2];
 				generateBlocksXY(infiniteImg, blockIntervals, offset, size, Blockszie);
@@ -209,111 +184,98 @@ public class MaxKendallTau<T extends RealType<T> & NativeType<T>> implements
 			offset[2] = originalZ;
 		}
 	}
-
-	protected <T extends RealType<T> & NativeType<T>> void generateBlocksXY(
-		final RandomAccessible<T> img, final List<IterableInterval<T>> blockList,
-		final long[] offset, final double[] size, final long[] Blockszie)
-	{
+	
+	protected <T extends RealType< T >& NativeType<T>> void generateBlocksXY(RandomAccessible<T> img, List<IterableInterval<T>> blockList,
+			long[] offset, double[] size, long[] Blockszie) {
 		// potentially masked image height
-		final double height = size[1];
+		double height = size[1];
 		final long originalY = offset[1];
 		// go through the height in steps of block width
 		long y;
-		for (y = Blockszie[1]; y <= height; y += Blockszie[1]) {
+		for ( y = Blockszie[1]; y <= height; y += Blockszie[1] ) {
 			offset[1] = originalY + y - Blockszie[1];
 			generateBlocksX(img, blockList, offset, size, Blockszie);
 		}
 		// check is we need to add a out of bounds strategy cursor
 		offset[1] = originalY;
 	}
-
-	protected <T extends RealType<T> & NativeType<T>> void generateBlocksX(
-		final RandomAccessible<T> img, final List<IterableInterval<T>> blockList,
-		final long[] offset, final double[] size, final long[] Blockszie)
-	{
+	
+	protected <T extends RealType< T >& NativeType<T>> void generateBlocksX(RandomAccessible<T> img, List<IterableInterval<T>> blockList,
+			long[] offset, double[] size, long[] Blocksize) {
 		// potentially masked image width
-		final double width = size[0];
+		double width = size[0];
 		final long originalX = offset[0];
 		// go through the width in steps of block width
 		long x;
-		final double[] intiBlocksize = new double[Blockszie.length];
-		final double[] intioffset = new double[offset.length];
-		for (int i = 1; i < offset.length; i++) {
-			intiBlocksize[i] = Blockszie[i];
+		double[] intiBlocksize= new double[Blocksize.length];
+		double[] intioffset= new double[offset.length];
+		for (int i = 1;i < offset.length; i++ )
+		{
+			intiBlocksize[i] = Blocksize[i];
 			intioffset[i] = offset[i];
 		}
-		for (x = Blockszie[0]; x <= width; x += Blockszie[0]) {
-			offset[0] = originalX + x - Blockszie[0];
-			final RectangleRegionOfInterest roi = new RectangleRegionOfInterest(
-				intioffset.clone(), intiBlocksize.clone());
-			final IterableInterval<T> roiInterval = roi.getIterableIntervalOverROI(
-				img);
+		for ( x = Blocksize[0]; x <= width; x += Blocksize[0] ) {
+			offset[0] = originalX + x - Blocksize[0];
+			RectangleRegionOfInterest roi =
+					new RectangleRegionOfInterest(intioffset.clone(), intiBlocksize.clone());
+			IterableInterval<T> roiInterval = roi.getIterableIntervalOverROI(img);
 			blockList.add(roiInterval);
 		}
 		offset[0] = originalX;
 	}
-
-	protected <T extends RealType<T>> double calculateMaxTauIndex(
-		final PairIterator<T> iterator)
-	{
+	
+	protected <T extends RealType<T>> double calculateMaxTauIndex(final PairIterator<T> iterator) {
 		double[][] values;
 		double[][] rank;
-		double maxtau;
-
+		double maxKTau;
+		
 		int capacity = 0;
 		while (iterator.hasNext()) {
 			iterator.fwd();
 			capacity++;
 		}
 		iterator.reset();
-
+		
 		values = dataPreprocessing(iterator, capacity);
-
-		final double[] values1 = new double[capacity];
-		final double[] values2 = new double[capacity];
-		for (int i = 0; i < capacity; i++) {
-			values1[i] = values[i][0];
-			values2[i] = values[i][1];
-		}
-
+		
+		double[] values1 = values[0];
+		double[] values2 = values[1];
+		
 		thresholdRank1 = calculateOtsuThreshold(values1);
-		// thresholdRank1 = 162930;
+		thresholdRank1 = 162930; ////////////////////////////////////////////////////////////////////////////////////////////////////// why override?
 		thresholdRank2 = calculateOtsuThreshold(values2);
-		// thresholdRank2 = 196241;
+		thresholdRank2 = 196241; ////////////////////////////////////////////////////////////////////////////////////////////////////// why override?
 		rank = rankTransformation(values, thresholdRank1, thresholdRank2, capacity);
-
-		maxtau = calculateMaxKendallTau(rank, thresholdRank1, thresholdRank2,
-			capacity);
-
-		return maxtau;
-
+		
+		maxKTau = calculateMaxKendallTau(rank, thresholdRank1, thresholdRank2, capacity);
+		
+		return maxKTau;
+		
 	}
-
-	protected <T extends RealType<T>> double[][] dataPreprocessing(
-		final PairIterator<T> iterator, final int capacity)
-	{
-		final double[][] values = new double[capacity][2];
+	
+	protected <T extends RealType<T>> double[][] dataPreprocessing(final PairIterator<T> iterator, int capacity) {
+		double[] values1 = new double[capacity];
+		double[] values2 = new double[capacity];
 		iterator.reset();
 		int count = 0;
 		while (iterator.hasNext()) {
 			iterator.fwd();
-			values[count][0] = iterator.getFirst().getRealDouble();
-			values[count][1] = iterator.getSecond().getRealDouble();
+			values1[count] = iterator.getFirst().getRealDouble();
+			values2[count] = iterator.getSecond().getRealDouble();
 			count++;
 		}
-
-		return values;
+		return new double[][] { values1, values2 };	
 	}
-
-	protected int calculateOtsuThreshold(final double[] data) {
-		final double[] sortdata = data.clone();
+	
+	protected int calculateOtsuThreshold(double[] data) {		
+		double[] sortdata = data.clone();
 		Arrays.sort(sortdata);
-
+		
 		int start = 0;
 		int end = 0;
-		int bestThre = 0;
+		int bestThre=0;
 		double bestVar = -1;
-		final int L = sortdata.length;
+		int L = sortdata.length;
 		double lessIns = 0;
 		int lessNum = 0;
 		double largeIns;
@@ -324,264 +286,280 @@ public class MaxKendallTau<T extends RealType<T> & NativeType<T>> implements
 		double varBetween;
 		int tempNum = 0;
 		double totalSum = 0;
-		for (int i = 0; i < L; i++) {
+		for (int i = 0; i < L; i++)
+		{
 			sortdata[i] = sortdata[i] / 100;
 			totalSum += sortdata[i];
 		}
-
+		
 		start = 0;
-		end = 0;
-		while (end < L - 1) {
-			while (end < L) {
-				if (Double.compare(sortdata[start], sortdata[end]) == 0) end++;
-				else break;
+		end = 0; 
+		while (end < L - 1)
+		{
+			while (end < L)
+			{
+				if (Double.compare(sortdata[start],sortdata[end]) == 0)
+					end++;
+				else
+					break;
 			}
-			tempNum = end - start;
+			tempNum = end-start;
 			lessNum += tempNum;
 			largeNum = L - lessNum;
-			lessIns += tempNum * sortdata[start];
+			lessIns += tempNum*sortdata[start];
 			largeIns = totalSum - lessIns;
 			lessMean = lessIns / lessNum;
 			largeMean = largeIns / largeNum;
 			diffMean = largeMean - lessMean;
 			varBetween = lessNum * largeNum * diffMean * diffMean;
-
-			if (varBetween > bestVar) {
+			
+			if (varBetween > bestVar)
+			{
 				bestVar = varBetween;
 				bestThre = lessNum;
 			}
-			start = end;
+			start = end; 
 		}
-
-		if (bestThre < L / 2) bestThre = L / 2;
-
+		
+		if (bestThre < L/2)
+			bestThre = L/2;
+		
 		return bestThre;
 	}
-
-	protected double[][] rankTransformation(final double[][] values,
-		final double thresholdRank1, final double thresholdRank2, final int n)
-	{
-		final double[][] tempRank = new double[n][2];
-		for (int i = 0; i < n; i++) {
-			tempRank[i][0] = values[i][0];
-			tempRank[i][1] = values[i][1];
-		}
+	
+	protected double[][] rankTransformation(final double[][] values, double thresRank1, double thresRank2, int n) {	
+		
+		double[][] tempRank = values;
 
 		Arrays.sort(tempRank, new Comparator<double[]>() {
-
 			@Override
-			public int compare(final double[] row1, final double[] row2) {
+			public int compare(double[] row1, double[] row2) {
 				return Double.compare(row1[1], row2[1]);
 			}
 		});
-
+		
+		double[] tempRank1 = tempRank[1];
+		double[] tempRank2 = tempRank[0];
 		int start = 0;
 		int end = 0;
-		int rank = 0;
-		while (end < n - 1) {
-			while (Double.compare(tempRank[start][1], tempRank[end][1]) == 0) {
+		int rank=0;
+		while (end < n-1)
+		{
+			while (Double.compare(tempRank1[start],tempRank1[end]) == 0) 
+			{
 				end++;
-				if (end >= n) break;
+				if(end >= n)
+					break;
 			}
-			for (int i = start; i < end; i++) {
-				tempRank[i][1] = rank + Math.random();
+			for (int i = start; i < end; i++){
+				tempRank1[i]=rank+Math.random(); 
 			}
 			rank++;
-			start = end;
+			start=end;
 		}
-
-		Arrays.sort(tempRank, new Comparator<double[]>() {
-
+		// reset tempRank with new tempRank1
+		tempRank = new double[][] {tempRank2, tempRank1};
+		
+		Arrays.sort(tempRank, new Comparator<double[]>() { 
 			@Override
-			public int compare(final double[] row1, final double[] row2) {
+			public int compare(double[] row1, double[] row2) {
 				return Double.compare(row1[1], row2[1]);
 			}
 		});
-
+		
 		for (int i = 0; i < n; i++) {
-			tempRank[i][1] = i + 1;
+			tempRank1[i] = i + 1; 
 		}
-
-		// second
+		// reset tempRank again with new tempRank1
+		tempRank = new double[][] {tempRank2, tempRank1};
+		
+		//second 
 		Arrays.sort(tempRank, new Comparator<double[]>() {
-
 			@Override
-			public int compare(final double[] row1, final double[] row2) {
+			public int compare(double[] row1, double[] row2) {
 				return Double.compare(row1[0], row2[0]);
 			}
 		});
-
+		
+		// reset tempRank1 and tempRank2
+		tempRank1 = tempRank[1];
+		tempRank2 = tempRank[0];
 		start = 0;
 		end = 0;
-		rank = 0;
-		while (end < n - 1) {
-			while (Double.compare(tempRank[start][0], tempRank[end][0]) == 0) {
+		rank=0;
+		while (end < n-1)
+		{
+			while (Double.compare(tempRank2[start],tempRank2[end]) == 0)
+			{
 				end++;
-				if (end >= n) break;
+				if(end >= n)
+					break;
 			}
-			for (int i = start; i < end; i++) {
-				tempRank[i][0] = rank + Math.random();
+			for (int i = start; i < end; i++){
+				tempRank2[i]=rank+Math.random();
 			}
 			rank++;
-			start = end;
+			start=end;
 		}
-
+		// reset tempRank with new tempRank2
+		tempRank = new double[][] {tempRank2, tempRank1};
+		
 		Arrays.sort(tempRank, new Comparator<double[]>() {
-
 			@Override
-			public int compare(final double[] row1, final double[] row2) {
+			public int compare(double[] row1, double[] row2) {
 				return Double.compare(row1[0], row2[0]);
 			}
 		});
-
+		
 		for (int i = 0; i < n; i++) {
-			tempRank[i][0] = i + 1;
+			tempRank2[i] = i + 1;
 		}
-
-		final List<Integer> validIndex = new ArrayList<Integer>();
-		for (int i = 0; i < n; i++) {
-			if (tempRank[i][0] >= thresholdRank1 &&
-				tempRank[i][1] >= thresholdRank2)
+		// reset tempRank again with new tempRank2
+		tempRank = new double[][] {tempRank2, tempRank1};
+		// reset tempRank1 and tempRank2
+		tempRank1 = tempRank[1];
+		tempRank2 = tempRank[0];
+		
+		List<Integer> validIndex = new ArrayList<Integer>();
+		for (int i = 0; i < n; i++)
+		{
+			if(tempRank2[i] >= thresRank1 && tempRank1[i] >= thresRank2) 
 			{
 				validIndex.add(i);
 			}
 		}
-
-		final int rn = validIndex.size();
-		final double[][] finalrank = new double[rn][2];
+		
+		int rn = validIndex.size();
+		double[] finalRank1 = new double[rn];  
+		double[] finalRank2 = new double[rn];
 		int index = 0;
-		for (final Integer i : validIndex) {
-			finalrank[index][0] = tempRank[i][0];
-			finalrank[index][1] = tempRank[i][1];
+		for( Integer i : validIndex ) {
+			finalRank2[index] = tempRank2[i];
+			finalRank1[index] = tempRank1[i];
 			index++;
 		}
-
-		return finalrank;
+		
+		return new double[][]{finalRank1, finalRank2};
 	}
-
-	protected double calculateMaxKendallTau(final double[][] rank,
-		final double thresholdRank1, final double thresholdRank2, final int n)
-	{
-		final int rn = rank.length;
+	
+	protected double calculateMaxKendallTau(final double[][] rank, double thresRank1, double thresRank2, int n) { ////////////////////////////////////////////////////////////////// 2D array issues cont...
+		int rn = rank.length;
 		int an;
-		final double step = 1 + 1.0 / Math.log(Math.log(n));
-		double tempOff1 = 1;
+		double step = 1+1.0/Math.log(Math.log(n));
+		double tempOff1=1;
 		double tempOff2;
 		List<Integer> activeIndex;
 		double sdTau;
 		double kendallTau;
 		double normalTau;
 		double maxNormalTau = Double.MIN_VALUE;
-
-		while (tempOff1 * step + thresholdRank1 < n) {
+		
+		while (tempOff1*step+thresRank1<n) {
 			tempOff1 *= step;
 			tempOff2 = 1;
-			while (tempOff2 * step + thresholdRank2 < n) {
+			while (tempOff2*step+thresRank2<n) {
 				tempOff2 *= step;
-
+				
 				activeIndex = new ArrayList<Integer>();
-				for (int i = 0; i < rn; i++) {
-					if (rank[i][0] >= n - tempOff1 && rank[i][1] >= n - tempOff2) {
+				for (int i = 0; i < rn; i++)
+				{
+					if(rank[i][0] >= n - tempOff1 && rank[i][1] >= n - tempOff2)
+					{
 						activeIndex.add(i);
 					}
 				}
 				an = activeIndex.size();
-				if (an > 1) {
+				if (an > 1)
+				{
 					kendallTau = calculateKendallTau(rank, activeIndex);
 					sdTau = Math.sqrt(2.0 * (2 * an + 5) / 9 / an / (an - 1));
 					normalTau = kendallTau / sdTau;
 				}
-				else {
+				else
+				{
 					normalTau = Double.MIN_VALUE;
 				}
-				if (normalTau > maxNormalTau) maxNormalTau = normalTau;
+				if (normalTau > maxNormalTau)
+					maxNormalTau = normalTau;
 			}
 		}
-
+		
 		return maxNormalTau;
 	}
-
-	protected double calculateKendallTau(final double[][] rank,
-		final List<Integer> activeIndex)
-	{
-		final int an = activeIndex.size();
-		final double[][] partRank = new double[2][an];
+	
+	protected double calculateKendallTau(final double[][] rank, List<Integer> activeIndex) { ////////////////////////////////////////////////////////////////// 2D array issues cont...
+		int an = activeIndex.size();
+		double[][] partRank = new double[2][an];
 		int indicatr = 0;
-		for (final Integer i : activeIndex) {
+		for( Integer i : activeIndex ) {
 			partRank[0][indicatr] = rank[i][0];
 			partRank[1][indicatr] = rank[i][1];
 			indicatr++;
 		}
 		final double[] partRank1 = partRank[0];
 		final double[] partRank2 = partRank[1];
-
-		final int[] index = new int[an];
+		
+		int[] index = new int[an];
 		for (int i = 0; i < an; i++) {
 			index[i] = i;
 		}
-
+		
 		IntArraySorter.sort(index, new IntComparator() {
-
 			@Override
-			public int compare(final int a, final int b) {
-				final double xa = partRank1[a];
-				final double xb = partRank1[b];
+			public int compare(int a, int b) {
+				double xa = partRank1[a];
+				double xb = partRank1[b];
 				return Double.compare(xa, xb);
 			}
 		});
-
+		
 		final MergeSort mergeSort = new MergeSort(index, new IntComparator() {
 
 			@Override
-			public int compare(final int a, final int b) {
-				final double ya = partRank2[a];
-				final double yb = partRank2[b];
+			public int compare(int a, int b) {
+				double ya = partRank2[a];
+				double yb = partRank2[b];
 				return Double.compare(ya, yb);
 			}
 		});
-
-		final long n0 = an * (long) (an - 1) / 2;
-		final long S = mergeSort.sort();
-
-		return (n0 - 2 * S) / (double) n0;
-
+		
+		long n0 = an * (long)(an - 1) / 2;
+		long S = mergeSort.sort();
+		
+		return (n0 - 2 * S) / (double)n0;
+		
 	}
-
+	
 	private final static class MergeSort {
 
 		private int[] index;
 		private final IntComparator comparator;
 
-		public MergeSort(final int[] index, final IntComparator comparator) {
+		public MergeSort(int[] index, IntComparator comparator) {
 			this.index = index;
 			this.comparator = comparator;
 		}
 
-		public int[] getSorted() {
-			return index;
-		}
+//		public int[] getSorted() {
+//			return index;
+//		}
 
 		/**
 		 * Sorts the {@link #index} array.
 		 * <p>
 		 * This implements a non-recursive merge sort.
 		 * </p>
-		 *
-		 * @param begin
-		 * @param end
 		 * @return the equivalent number of BubbleSort swaps
 		 */
 		public long sort() {
 			long swaps = 0;
-			final int n = index.length;
-			// There are merge sorts which perform in-place, but their runtime final
-			// is worse than O(n log n)
+			int n = index.length;
+			// There are merge sorts which perform in-place, but their runtime is worse than O(n log n)
 			int[] index2 = new int[n];
 			for (int step = 1; step < n; step <<= 1) {
 				int begin = 0, k = 0;
 				for (;;) {
-					final int begin2 = begin + step;
-					int end = begin2 + step;
+					int begin2 = begin + step, end = begin2 + step;
 					if (end >= n) {
 						if (begin2 >= n) {
 							break;
@@ -593,22 +571,19 @@ public class MaxKendallTau<T extends RealType<T> & NativeType<T>> implements
 					// and perform merge, too
 					int i = begin, j = begin2;
 					while (i < begin2 && j < end) {
-						final int compare = comparator.compare(index[i], index[j]);
+						int compare = comparator.compare(index[i], index[j]);
 						if (compare > 0) {
 							swaps += (begin2 - i);
 							index2[k++] = index[j++];
-						}
-						else {
+						} else {
 							index2[k++] = index[i++];
 						}
 					}
 					if (i < begin2) {
 						do {
 							index2[k++] = index[i++];
-						}
-						while (i < begin2);
-					}
-					else {
+						} while (i < begin2);
+					} else {
 						while (j < end) {
 							index2[k++] = index[j++];
 						}
@@ -618,7 +593,7 @@ public class MaxKendallTau<T extends RealType<T> & NativeType<T>> implements
 				if (k < n) {
 					System.arraycopy(index, k, index2, k, n - k);
 				}
-				final int[] swapIndex = index2;
+				int[] swapIndex = index2;
 				index2 = index;
 				index = swapIndex;
 			}
@@ -626,6 +601,13 @@ public class MaxKendallTau<T extends RealType<T> & NativeType<T>> implements
 			return swaps;
 		}
 
+	}
+	
+	@Override
+	public void processResults(ResultHandler<T> handler) {
+		super.processResults(handler);
+		handler.handleValue("Max Kendall Tau correlation value", maxtau, 4);
+		handler.handleValue("Max Kendall Tau P-value", pvalue, 4);
 	}
 
 }

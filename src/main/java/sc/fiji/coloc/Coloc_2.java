@@ -21,18 +21,6 @@
  */
 package sc.fiji.coloc;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.Prefs;
-import ij.WindowManager;
-import ij.gui.GenericDialog;
-import ij.gui.Roi;
-import ij.gui.ShapeRoi;
-import ij.plugin.PlugIn;
-import ij.plugin.frame.RoiManager;
-import ij.process.Blitter;
-import ij.process.ImageProcessor;
-
 import java.awt.Checkbox;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
@@ -57,6 +45,17 @@ import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.Prefs;
+import ij.WindowManager;
+import ij.gui.GenericDialog;
+import ij.gui.Roi;
+import ij.gui.ShapeRoi;
+import ij.plugin.PlugIn;
+import ij.plugin.frame.RoiManager;
+import ij.process.Blitter;
+import ij.process.ImageProcessor;
 import sc.fiji.coloc.algorithms.Algorithm;
 import sc.fiji.coloc.algorithms.AutoThresholdRegression;
 import sc.fiji.coloc.algorithms.AutoThresholdRegression.Implementation;
@@ -67,7 +66,7 @@ import sc.fiji.coloc.algorithms.KendallTauRankCorrelation;
 import sc.fiji.coloc.algorithms.LiHistogram2D;
 import sc.fiji.coloc.algorithms.LiICQ;
 import sc.fiji.coloc.algorithms.MandersColocalization;
-import sc.fiji.coloc.algorithms.MaxKendallTauOriginal;
+import sc.fiji.coloc.algorithms.MaxKendallTau;
 import sc.fiji.coloc.algorithms.MissingPreconditionException;
 import sc.fiji.coloc.algorithms.PearsonsCorrelation;
 import sc.fiji.coloc.algorithms.SpearmanRankCorrelation;
@@ -161,7 +160,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 	protected SpearmanRankCorrelation<T> SpearmanRankCorrelation;
 	protected MandersColocalization<T> mandersCorrelation;
 	protected KendallTauRankCorrelation<T> kendallTau;
-	protected MaxKendallTauOriginal<T> maxKendallTau;
+	protected MaxKendallTau<T> maxKendallTau;
 	protected Histogram2D<T> histogram2D;
 	protected CostesSignificanceTest<T> costesSignificance;
 	// indicates if images should be printed in result
@@ -240,7 +239,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		boolean useSpearmanRank = Prefs.get(PREF_KEY + "useSpearmanRank", true);
 		boolean useManders = Prefs.get(PREF_KEY + "useManders", true);
 		boolean useKendallTau = Prefs.get(PREF_KEY + "useKendallTau", true);
-		boolean useMaxKendallTau = Prefs.get(PREF_KEY + "useMaxendallTau", true);
+		boolean useMaxKendallTau = Prefs.get(PREF_KEY + "useMaxKendallTau", true);
 		boolean useScatterplot = Prefs.get(PREF_KEY + "useScatterplot", true);
 		boolean useCostes = Prefs.get(PREF_KEY + "useCostes", true);
 		int psf = (int) Prefs.get(PREF_KEY + "psf", 3);
@@ -429,7 +428,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		}
 		if (gdUseManders) mandersCorrelation = new MandersColocalization<>();
 		if (gdUseKendallTau) kendallTau = new KendallTauRankCorrelation<>();
-		if (gdUseMaxKendallTau) maxKendallTau = new MaxKendallTauOriginal<>();
+		if (gdUseMaxKendallTau) maxKendallTau = new MaxKendallTau<>();
 		if (gdUseScatterplot) histogram2D = new Histogram2D<>(
 			"2D intensity histogram");
 		if (gdUseCostes) {
