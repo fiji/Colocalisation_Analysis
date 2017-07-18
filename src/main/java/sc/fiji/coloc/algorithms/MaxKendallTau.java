@@ -33,8 +33,8 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 	
 	public double maxtau;
 	public double pvalue;
-	public int thresholdRank1;
-	public int thresholdRank2;
+	public static int thresholdRank1;
+	public static int thresholdRank2;
 	public double[] sampleDistribution;
 	
 	public MaxKendallTau() {
@@ -70,7 +70,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		
 	}
 	
-	protected double calculatePvalue (double value, double[] distribution) {
+	public static double calculatePvalue (double value, double[] distribution) {
 		double count = 0;
 		for (int i = 0; i <  distribution.length; i++) {
 			if (distribution[i] > value)
@@ -226,7 +226,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		offset[0] = originalX;
 	}
 	
-	protected <T extends RealType<T>> double calculateMaxTauIndex(final PairIterator<T> iterator) {
+	public static <T extends RealType<T>> double calculateMaxTauIndex(final PairIterator<T> iterator) {
 		double[][] values;
 		double[][] rank;
 		double maxtau;
@@ -260,7 +260,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		
 	}
 	
-	protected <T extends RealType<T>> double[][] dataPreprocessing(final PairIterator<T> iterator, int capacity) {
+	protected static <T extends RealType<T>> double[][] dataPreprocessing(final PairIterator<T> iterator, int capacity) {
 		double[][] values = new double[capacity][2];
 		iterator.reset();
 		int count = 0;
@@ -274,7 +274,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		return values;
 	}
 	
-	protected int calculateOtsuThreshold(double[] data) {		
+	protected static int calculateOtsuThreshold(double[] data) {		
 		double[] sortdata = data.clone();
 		Arrays.sort(sortdata);
 		
@@ -334,7 +334,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		return bestThre;
 	}
 	
-	protected double[][] rankTransformation(final double[][] values, double thresholdRank1, double thresholdRank2, int n) {	
+	protected static double[][] rankTransformation(final double[][] values, double thresholdRank1, double thresholdRank2, int n) {	
 		double[][] tempRank = new double[n][2];
 		for( int i = 0; i < n; i++) {
 			tempRank[i][0] = values[i][0];
@@ -437,7 +437,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		return finalrank;
 	}
 	
-	protected double calculateMaxKendallTau(final double[][] rank, double thresholdRank1, double thresholdRank2, int n) {
+	protected static double calculateMaxKendallTau(final double[][] rank, double thresholdRank1, double thresholdRank2, int n) {
 		int rn = rank.length;
 		int an;
 		double step = 1+1.0/Math.log(Math.log(n));
@@ -482,7 +482,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		return maxNormalTau;
 	}
 	
-	protected double calculateKendallTau(final double[][] rank, List<Integer> activeIndex) {
+	protected static double calculateKendallTau(final double[][] rank, List<Integer> activeIndex) {
 		int an = activeIndex.size();
 		double[][] partRank = new double[2][an];
 		int indicatr = 0;
