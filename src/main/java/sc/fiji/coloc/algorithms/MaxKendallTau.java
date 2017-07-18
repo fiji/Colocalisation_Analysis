@@ -46,8 +46,8 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 	public void execute(DataContainer<T> container)
 		throws MissingPreconditionException
 	{
-		final RandomAccessible<T> img1 = container.getSourceImage1();
-		final RandomAccessible<T> img2 = container.getSourceImage2();
+		final RandomAccessibleInterval<T> img1 = container.getSourceImage1();
+		final RandomAccessibleInterval<T> img2 = container.getSourceImage2();
 		RandomAccessibleInterval<BitType> mask = container.getMask();
 
 		TwinCursor<T> cursor = new TwinCursor<T>(img1.randomAccess(),
@@ -55,7 +55,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		
 		maxtau = calculateMaxTauIndex(cursor);
 		
-		List<IterableInterval<T>> blockIntervals = generateBlocks(container.getSourceImage1(), container);
+		List<IterableInterval<T>> blockIntervals = generateBlocks(img1, container);
 		Img<T> shuffledImage;
 		sampleDistribution = new double[nrRandomizations];
 		
@@ -79,12 +79,12 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 			}
 		}
 		
-		double pvalue1 = count / distribution.length;
+		double pvalue = count / distribution.length;
 		
-		return pvalue1;
+		return pvalue;
 	}
 	
-	protected <T extends RealType<T>& NativeType<T>> Img<T> shuffleBlocks(List<IterableInterval<T>> blockIntervals, RandomAccessible<T> img, DataContainer<T> container) {
+	protected <T extends RealType<T>& NativeType<T>> Img<T> shuffleBlocks(List<IterableInterval<T>> blockIntervals, RandomAccessibleInterval<T> img, DataContainer<T> container) {
 		int nrBlocksPerImage = blockIntervals.size();
 		List<Cursor<T>> inputBlocks = new ArrayList<Cursor<T>>(nrBlocksPerImage);
 		List<Cursor<T>> outputBlocks = new ArrayList<Cursor<T>>(nrBlocksPerImage);
@@ -97,6 +97,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		zero.setZero();
 
 		final long[] dims = new long[img.numDimensions()];
+		img.dimensions(dims); 
 		ImgFactory<T> factory = new ArrayImgFactory<T>();
 		Img<T> shuffledImage = factory.create(dims, img.randomAccess().get().createVariable());
 		RandomAccessible<T> infiniteShuffledImage = Views.extendValue(shuffledImage, zero );
@@ -122,9 +123,9 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 				outputCursor.fwd();
 				output.setPosition(outputCursor);
 				output.get().set( inputCursor.get() );
-				inputCursor.reset();
-				outputCursor.reset();
 			}
+			inputCursor.reset();
+			outputCursor.reset();
 		}
 		
 		return shuffledImage;
@@ -139,7 +140,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		
 		for (int i = 0; i < nrDimensions; i++) {
 			blockSize[i] = (long) Math.floor(Math.sqrt(dimensions[i]));
-			nrBlocksPerDimension[i] = dimensions[i] / blockSize[i];
+			nrBlocksPerDimension[i] = (long) (dimensions[i] / blockSize[i]);
 			// if there is the need for a out-of-bounds block, increase count
 			if ( dimensions[i] % blockSize[i] != 0 )
 				nrBlocksPerDimension[i]++;
@@ -201,21 +202,22 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 	}
 	
 	protected <T extends RealType< T >& NativeType<T>> void generateBlocksX(RandomAccessible<T> img, List<IterableInterval<T>> blockList,
-			long[] offset, double[] size, long[] Blocksize) {
+			long[] offset, double[] size, long[] Blockszie) {
 		// potentially masked image width
 		double width = size[0];
 		final long originalX = offset[0];
 		// go through the width in steps of block width
 		long x;
-		double[] intiBlocksize= new double[Blocksize.length];
+		double[] intiBlocksize= new double[Blockszie.length];
 		double[] intioffset= new double[offset.length];
-		for (int i = 1;i < offset.length; i++ )
+		//intiBlocksize[0] = 1;
+		for (int i = 0;i < offset.length; i++ )
 		{
-			intiBlocksize[i] = Blocksize[i];
+			intiBlocksize[i] = Blockszie[i];
 			intioffset[i] = offset[i];
 		}
-		for ( x = Blocksize[0]; x <= width; x += Blocksize[0] ) {
-			offset[0] = originalX + x - Blocksize[0];
+		for ( x = Blockszie[0]; x <= width; x += Blockszie[0] ) {
+			offset[0] = originalX + x - Blockszie[0];
 			RectangleRegionOfInterest roi =
 					new RectangleRegionOfInterest(intioffset.clone(), intiBlocksize.clone());
 			IterableInterval<T> roiInterval = roi.getIterableIntervalOverROI(img);
@@ -227,7 +229,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 	protected <T extends RealType<T>> double calculateMaxTauIndex(final PairIterator<T> iterator) {
 		double[][] values;
 		double[][] rank;
-		double maxKTau;
+		double maxtau;
 		
 		int capacity = 0;
 		while (iterator.hasNext()) {
@@ -238,33 +240,38 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		
 		values = dataPreprocessing(iterator, capacity);
 		
-		double[] values1 = values[0];
-		double[] values2 = values[1];
+		double[] values1 = new double[capacity];
+		double[] values2 = new double[capacity];
+		for (int i = 0; i < capacity; i++)
+		{
+			values1[i] = values[i][0];
+			values2[i] = values[i][1];
+		}
 		
 		thresholdRank1 = calculateOtsuThreshold(values1);
-		thresholdRank1 = 162930; ////////////////////////////////////////////////////////////////////////////////////////////////////// why override?
+		thresholdRank1 = 162930;
 		thresholdRank2 = calculateOtsuThreshold(values2);
-		thresholdRank2 = 196241; ////////////////////////////////////////////////////////////////////////////////////////////////////// why override?
+		thresholdRank2 = 196241;
 		rank = rankTransformation(values, thresholdRank1, thresholdRank2, capacity);
 		
-		maxKTau = calculateMaxKendallTau(rank, thresholdRank1, thresholdRank2, capacity);
+		maxtau = calculateMaxKendallTau(rank, thresholdRank1, thresholdRank2, capacity);
 		
-		return maxKTau;
+		return maxtau;
 		
 	}
 	
 	protected <T extends RealType<T>> double[][] dataPreprocessing(final PairIterator<T> iterator, int capacity) {
-		double[] values1 = new double[capacity];
-		double[] values2 = new double[capacity];
+		double[][] values = new double[capacity][2];
 		iterator.reset();
 		int count = 0;
 		while (iterator.hasNext()) {
 			iterator.fwd();
-			values1[count] = iterator.getFirst().getRealDouble();
-			values2[count] = iterator.getSecond().getRealDouble();
+			values[count][0] = iterator.getFirst().getRealDouble();
+			values[count][1] = iterator.getSecond().getRealDouble();
 			count++;
 		}
-		return new double[][] { values1, values2 };	
+		
+		return values;
 	}
 	
 	protected int calculateOtsuThreshold(double[] data) {		
@@ -327,39 +334,39 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		return bestThre;
 	}
 	
-	protected double[][] rankTransformation(final double[][] values, double thresRank1, double thresRank2, int n) {	
+	protected double[][] rankTransformation(final double[][] values, double thresholdRank1, double thresholdRank2, int n) {	
+		double[][] tempRank = new double[n][2];
+		for( int i = 0; i < n; i++) {
+			tempRank[i][0] = values[i][0];
+			tempRank[i][1] = values[i][1];
+		}
 		
-		double[][] tempRank = values;
-
 		Arrays.sort(tempRank, new Comparator<double[]>() {
 			@Override
 			public int compare(double[] row1, double[] row2) {
 				return Double.compare(row1[1], row2[1]);
 			}
 		});
-		double[] tempRank1 = tempRank[0];
-		double[] tempRank2 = tempRank[1];
+		
 		int start = 0;
 		int end = 0;
 		int rank=0;
 		while (end < n-1)
 		{
-			while (Double.compare(tempRank2[start],tempRank2[end]) == 0) 
+			while (Double.compare(tempRank[start][1],tempRank[end][1]) == 0)
 			{
 				end++;
 				if(end >= n)
 					break;
 			}
 			for (int i = start; i < end; i++){
-				tempRank2[i]=rank+Math.random(); 
+				tempRank[i][1]=rank+Math.random();
 			}
 			rank++;
 			start=end;
 		}
-		// reset tempRank with new tempRank1
-		tempRank = new double[][] {tempRank1, tempRank2};
 		
-		Arrays.sort(tempRank, new Comparator<double[]>() { 
+		Arrays.sort(tempRank, new Comparator<double[]>() {
 			@Override
 			public int compare(double[] row1, double[] row2) {
 				return Double.compare(row1[1], row2[1]);
@@ -367,10 +374,9 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		});
 		
 		for (int i = 0; i < n; i++) {
-			tempRank2[i] = i + 1; 
+			tempRank[i][1] = i + 1;
 		}
-		// reset tempRank again with new tempRank1
-		tempRank = new double[][] {tempRank1, tempRank2};
+		
 		
 		//second 
 		Arrays.sort(tempRank, new Comparator<double[]>() {
@@ -380,28 +386,23 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 			}
 		});
 		
-		// reset tempRank1 and tempRank2
-		tempRank1 = tempRank[0];
-		tempRank2 = tempRank[1];
 		start = 0;
 		end = 0;
 		rank=0;
 		while (end < n-1)
 		{
-			while (Double.compare(tempRank1[start],tempRank1[end]) == 0)
+			while (Double.compare(tempRank[start][0],tempRank[end][0]) == 0)
 			{
 				end++;
 				if(end >= n)
 					break;
 			}
 			for (int i = start; i < end; i++){
-				tempRank1[i]=rank+Math.random();
+				tempRank[i][0]=rank+Math.random();
 			}
 			rank++;
 			start=end;
 		}
-		// reset tempRank with new tempRank2
-		tempRank = new double[][] {tempRank1, tempRank2};
 		
 		Arrays.sort(tempRank, new Comparator<double[]>() {
 			@Override
@@ -411,40 +412,33 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		});
 		
 		for (int i = 0; i < n; i++) {
-			tempRank1[i] = i + 1;
+			tempRank[i][0] = i + 1;
 		}
-		// reset tempRank again with new tempRank2
-		tempRank = new double[][] {tempRank1, tempRank2};
-		// reset tempRank1 and tempRank2
-		tempRank1 = tempRank[0];
-		tempRank2 = tempRank[1];
+		
 		
 		List<Integer> validIndex = new ArrayList<Integer>();
 		for (int i = 0; i < n; i++)
 		{
-			if(tempRank1[i] >= thresRank1 && tempRank2[i] >= thresRank2) 
+			if(tempRank[i][0] >= thresholdRank1 && tempRank[i][1] >= thresholdRank2)
 			{
 				validIndex.add(i);
 			}
 		}
 		
-		int rn = validIndex.size();
-		double[] finalRank1 = new double[rn];  
-		double[] finalRank2 = new double[rn];
+		int rn=validIndex.size();
+		double[][] finalrank = new double[rn][2];
 		int index = 0;
 		for( Integer i : validIndex ) {
-			finalRank1[index] = tempRank1[i];
-			finalRank2[index] = tempRank2[i];
+			finalrank[index][0] = tempRank[i][0];
+			finalrank[index][1] = tempRank[i][1];
 			index++;
 		}
 		
-		return new double[][]{finalRank1, finalRank2};
+		return finalrank;
 	}
 	
-	protected double calculateMaxKendallTau(final double[][] rank, double thresRank1, double thresRank2, int n) { ////////////////////////////////////////////////////////////////// 2D array issues cont...
+	protected double calculateMaxKendallTau(final double[][] rank, double thresholdRank1, double thresholdRank2, int n) {
 		int rn = rank.length;
-		double [] rank1 = rank[0];
-		double [] rank2 = rank[1];
 		int an;
 		double step = 1+1.0/Math.log(Math.log(n));
 		double tempOff1=1;
@@ -455,16 +449,16 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		double normalTau;
 		double maxNormalTau = Double.MIN_VALUE;
 		
-		while (tempOff1*step+thresRank1 < n) {
-			tempOff1 = tempOff1 * step;
+		while (tempOff1*step+thresholdRank1<n) {
+			tempOff1 *= step;
 			tempOff2 = 1;
-			while (tempOff2*step+thresRank2 < n) {
-				tempOff2 = tempOff2 * step;
+			while (tempOff2*step+thresholdRank2<n) {
+				tempOff2 *= step;
 				
 				activeIndex = new ArrayList<Integer>();
 				for (int i = 0; i < rn; i++)
 				{
-					if(rank1[i] >= n - tempOff1 && rank2[i] >= n - tempOff2)
+					if(rank[i][0] >= n - tempOff1 && rank[i][1] >= n - tempOff2)
 					{
 						activeIndex.add(i);
 					}
@@ -488,7 +482,7 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 		return maxNormalTau;
 	}
 	
-	protected double calculateKendallTau(final double[][] rank, List<Integer> activeIndex) { ////////////////////////////////////////////////////////////////// 2D array issues cont...
+	protected double calculateKendallTau(final double[][] rank, List<Integer> activeIndex) {
 		int an = activeIndex.size();
 		double[][] partRank = new double[2][an];
 		int indicatr = 0;
@@ -541,15 +535,17 @@ public class MaxKendallTau <T extends RealType< T >& NativeType<T>> extends Algo
 			this.comparator = comparator;
 		}
 
-//		public int[] getSorted() {
-//			return index;
-//		}
+		public int[] getSorted() {
+			return index;
+		}
 
 		/**
 		 * Sorts the {@link #index} array.
 		 * <p>
 		 * This implements a non-recursive merge sort.
 		 * </p>
+		 * @param begin
+		 * @param end
 		 * @return the equivalent number of BubbleSort swaps
 		 */
 		public long sort() {
