@@ -271,7 +271,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		gd.addCheckbox("Spearman's_Rank_Correlation", useSpearmanRank);
 		gd.addCheckbox("Manders'_Correlation", useManders);
 		gd.addCheckbox("Kendall's_Tau_Rank_Correlation", useKendallTau);
-		gd.addCheckbox("2D_Instensity_Histogram", useScatterplot);
+		gd.addCheckbox("2D_Intensity_Histogram", useScatterplot);
 		gd.addCheckbox("Costes'_Significance_Test", useCostes);
 		final Checkbox costesCb = (Checkbox) gd.getCheckboxes().lastElement();
 		gd.addNumericField("PSF", psf, 1);
