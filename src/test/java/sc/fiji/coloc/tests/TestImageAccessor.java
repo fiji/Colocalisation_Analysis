@@ -53,6 +53,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.util.Util;
 import net.imglib2.view.Views;
 
 import sc.fiji.coloc.algorithms.MissingPreconditionException;
@@ -294,17 +295,16 @@ public class TestImageAccessor {
 			RandomAccessibleInterval<T> img, double[] sigma) {
 		Interval interval = Views.iterable(img);
 
-		ImgFactory<T> outputFactory = new ArrayImgFactory<T>();
+		ImgFactory<T> outputFactory = new ArrayImgFactory<T>(Util.getTypeFromInterval(img));
 		final long[] dim = new long[ img.numDimensions() ];
 		img.dimensions(dim);
-		RandomAccessibleInterval<T> output = outputFactory.create( dim,
-				img.randomAccess().get().createVariable() );
+		RandomAccessibleInterval<T> output = outputFactory.create( dim );
 
 		final long[] pos = new long[ img.numDimensions() ];
 		Arrays.fill(pos, 0);
 		Localizable origin = new Point(pos);
 
-		ImgFactory<FloatType> tempFactory = new ArrayImgFactory<FloatType>();
+		ImgFactory<FloatType> tempFactory = new ArrayImgFactory<FloatType>(new FloatType());
 		RandomAccessible<T> input = Views.extendMirrorSingle(img);
 		Gauss.inFloat(sigma, input, interval, output, origin, tempFactory);
 
