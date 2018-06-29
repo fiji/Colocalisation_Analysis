@@ -31,6 +31,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.gui.Line;
+import ij.gui.Overlay;
 import ij.io.SaveDialog;
 
 import java.io.FileOutputStream;
@@ -43,7 +45,7 @@ import net.imglib2.algorithm.math.ImageStatistics;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.LongType;
-
+import sc.fiji.coloc.algorithms.AutoThresholdRegression;
 import sc.fiji.coloc.algorithms.Histogram2D;
 import sc.fiji.coloc.gadgets.DataContainer;
 import sc.fiji.coloc.gadgets.DataContainer.MaskType;
@@ -102,19 +104,85 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 	public void handleHistogram(Histogram2D<T> histogram, String name) {
 		RandomAccessibleInterval<LongType> image = histogram.getPlotImage();
 		ImagePlus imp = ImageJFunctions.wrapFloat( image, name );
+		
 		// make a snapshot to be able to reset after modifications
 		imp.getProcessor().snapshot();
 		imp.getProcessor().log();
 		imp.updateAndDraw();
 		imp.getProcessor().resetMinAndMax();
 		IJ.run(imp,"Fire", null);
+		
+		Overlay overlay = new Overlay();
+		
+		/*
+		 * check if we should draw a regression line for the current
+		 * histogram.
+		 */
+		if (histogram.getDrawingSettings().contains(Histogram2D.DrawingFlags.RegressionLine)) {
+			AutoThresholdRegression<T> autoThreshold = this.container.getAutoThreshold();
+			if (histogram != null && autoThreshold != null) {
+				drawLine(histogram, overlay, image.dimension(0), image.dimension(1),
+						autoThreshold.getAutoThresholdSlope(), autoThreshold.getAutoThresholdIntercept());
+				overlay.setStrokeColor(java.awt.Color.WHITE);
+				imp.setOverlay(overlay);
+			}
+		}
+		
 		addImageToList(imp, name);
 		// reset the imp from the log scaling we applied earlier
 		imp.getProcessor().reset();
 	}
 
+	private void drawLine(Histogram2D<T> histogram, Overlay overlay, long imgWidth, long imgHeight, double slope,
+			double intercept) {
+
+		double startX, startY, endX, endY;
+		/*
+		 * since we want to draw the line over the whole image we can directly
+		 * use screen coordinates for x values.
+		 */
+		startX = 0.0;
+		endX = imgWidth;
+
+		// check if we can get some exta information for drawing
+		// get calibrated start y coordinates
+		double calibratedStartY = slope * histogram.getXMin() + intercept;
+		double calibratedEndY = slope * histogram.getXMax() + intercept;
+		// convert calibrated coordinates to screen coordinates
+		startY = calibratedStartY * histogram.getYBinWidth();
+		endY = calibratedEndY * histogram.getYBinWidth();
+
+		/*
+		 * since the screen origin is in the top left of the image, we need to
+		 * x-mirror our line
+		 */
+		startY = (imgHeight - 1) - startY;
+		endY = (imgHeight - 1) - endY;
+		// create the line ROI and add it to the overlay
+		Line lineROI = new Line(startX, startY, endX, endY);
+		/*
+		 * Set drawing width of line to one, in case it has been changed
+		 * globally.
+		 */
+		lineROI.setStrokeWidth(1.0f);
+		overlay.add(lineROI);
+		
+	}
+	
 	protected void addImageToList(ImagePlus imp, String name) {
-		java.awt.Image awtImage = imp.getImage();
+		
+		Overlay overlay = imp.getOverlay();
+		IJ.log("overlay="+overlay);
+		
+		if(overlay!=null && overlay.size()>0)
+			IJ.log(""+overlay.get(0));
+		
+		ImagePlus flatten = imp.flatten();
+		//flatten.setTitle("FlatteTest");
+		//flatten.show();
+		
+		java.awt.Image awtImage = flatten.getImage();
+		
 		try {
 			com.itextpdf.text.Image pdfImage = com.itextpdf.text.Image.getInstance(awtImage, null);
 			pdfImage.setAlt(name); // iText-1.3 setMarkupAttribute("name", name); 
