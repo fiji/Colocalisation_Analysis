@@ -22,11 +22,16 @@
 package sc.fiji.coloc.results;
 
 import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import ij.IJ;
@@ -221,8 +226,10 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 	/**
 	 * Prints an image into the opened PDF.
 	 * @param image The image to print.
+	 * @param xLabel 
+	 * @param yLabel 
 	 */
-	protected void addImage(com.itextpdf.text.Image image)
+	protected void addImage(com.itextpdf.text.Image image, String xLabel, String yLabel)
 			throws DocumentException, IOException {
 
 		if (! isFirst) {
@@ -257,10 +264,50 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 			document.add(paragraph);
 			//spcSz = 40;
 		}
+		//adding label to the image as a table
+		PdfPTable table = new PdfPTable(2);
+	    table.setWidthPercentage(85);
+		table.setWidths(new int[]{1, 2});
+		table.setSpacingBefore(4f);
+		
+		// adding first row with y-axis and the image 
+		PdfPCell cell = new PdfPCell(new Phrase("\tChannel 2\n" + labelName(yLabel)));
+		cellStyle(cell);
+		table.addCell(cell);
+	    image.setAlignment(com.itextpdf.text.Image.ALIGN_CENTER);
+	    table.addCell((image));
+	    
+	    // adding second row with an empty cell and x-axis
+	    cell = new PdfPCell();
+		cellStyle(cell);
+		table.addCell(cell);
+	    cell = new PdfPCell(new Phrase("\tChannel 1\n" + labelName(xLabel)));
+		cellStyle(cell);
+		table.addCell(cell);
+		document.add(table);
 
-		image.setAlignment(com.itextpdf.text.Image.ALIGN_CENTER);
-		document.add(image);
 		isFirst = false;
+	}
+
+	private void cellStyle(PdfPCell cell) {
+		//alignment
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		
+		//padding
+		cell.setPaddingTop(2f);
+				
+		//border
+		cell.setBorder(0);
+		cell.setBorderColor(BaseColor.WHITE);
+		
+	}
+
+	private String labelName(String s) {
+		// TODO Auto-generated method stub
+		final int maxLen = 30;
+		return s.length() > maxLen ? //
+				s.substring(0, maxLen - 3) + "..." : s;
 	}
 
 	@Override
@@ -302,7 +349,7 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 
 			// iterate over all produced images
 			for (com.itextpdf.text.Image img : listOfPDFImages) {
-				addImage(img);
+				addImage(img, container.getSourceCh1Name(), container.getSourceCh2Name());
 			}
 
 			//iterate over all produced PDFwarnings
