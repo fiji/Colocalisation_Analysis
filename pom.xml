@@ -11,7 +11,7 @@
 
 	<groupId>sc.fiji</groupId>
 	<artifactId>Colocalisation_Analysis</artifactId>
-	<version>3.0.4-SNAPSHOT</version>
+	<version>3.0.5-SNAPSHOT</version>
 
 	<name>Coloc 2</name>
 	<description>Fiji's plugin for colocalization analysis.</description>
