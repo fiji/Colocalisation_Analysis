@@ -88,7 +88,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 	protected static final int WIN_HEIGHT = 600;
 
 	// indicates if original images should be displayed or not
-	protected boolean displayOriginalImages = false;
+	public boolean displayOriginalImages = false;
 
 	// this is the image currently selected by the drop down menu
 	protected RandomAccessibleInterval<? extends RealType<?>> currentlyDisplayedImageResult;
@@ -150,7 +150,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 
 		imagePanel = new JImagePanel(ij.IJ.createImage("dummy", "8-bit", 10, 10, 1));
 		imagePanel.addMouseMotionListener(this);
-
+		
 		// Create something to display it in
 		final JEditorPane editor = new JEditorPane();
 		editor.setEditable(false); // we're browsing not editing
@@ -223,7 +223,8 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 		xAxisLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		xAxisLabel.setBorder(new EmptyBorder(0, 0, 15, 0));
 		imageAndLabelPanel.add(xAxisLabel, BorderLayout.SOUTH);
-		pane.add(imageAndLabelPanel, c);
+		JScrollPane scrollImagePane = new JScrollPane(imageAndLabelPanel);
+		pane.add(scrollImagePane, c);
 		c.gridy++;
 		c.weighty = 1;
 		pane.add(scrollPane, c);
@@ -241,14 +242,21 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 
 	@Override
 	public void process() {
+		int imageWidth = 0;
+		int imageHeight = 0;
+		
 		// if wanted, display source images
 		if (displayOriginalImages) {
+			RandomAccessibleInterval<? extends RealType<?>> img1 = dataContainer.getSourceImage1();
+			RandomAccessibleInterval<? extends RealType<?>> img2 = dataContainer.getSourceImage2();
+			
 			listOfImages.add(new NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>(
-					dataContainer.getSourceImage1(), dataContainer.getSourceImage1Name()));
+					img1, dataContainer.getSourceImage1Name()));
 			listOfImages.add(new NamedContainer<RandomAccessibleInterval<? extends RealType<?>>>(
-					dataContainer.getSourceImage2(), dataContainer.getSourceImage2Name()));
+					img2, dataContainer.getSourceImage2Name()));
+			imageWidth = (int)img1.dimension(0);
+			imageHeight = (int)img1.dimension(1);
 		}
-
 		// set up the GUI, which runs makeHtmlText() for the value results
 		// formatting.
 		setup();
@@ -257,7 +265,8 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 			adjustDisplayedImage(listOfImages.get(0).object);
 		}
 		// show the GUI
-		setSize(600,600);
+		setSize((600+imageWidth), (600+imageHeight));
+		
 		this.setVisible(true);
 	}
 
