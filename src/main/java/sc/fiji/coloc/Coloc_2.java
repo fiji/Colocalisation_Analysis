@@ -556,6 +556,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		}
 		// if we have ROIs/masks, add them to results
 		if (displayImages) {
+			swDisplay.displayOriginalImages = true;
 			RandomAccessibleInterval<T> channel1, channel2;
 			if (mask != null || roi != null) {
 				final long[] offset = container.getMaskBBOffset();
