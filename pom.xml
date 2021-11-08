@@ -107,7 +107,7 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/fiji/Colocalisation_Analysis</connection>
+		<connection>scm:git:https://github.com/fiji/Colocalisation_Analysis</connection>
 		<developerConnection>scm:git:git@github.com:fiji/Colocalisation_Analysis</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/fiji/Colocalisation_Analysis</url>
