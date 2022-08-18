@@ -1,8 +1,7 @@
 [![](https://github.com/fiji/Colocalisation_Analysis/actions/workflows/build-main.yml/badge.svg)](https://github.com/fiji/Colocalisation_Analysis/actions/workflows/build-main.yml)
+[![developer chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://imagesc.zulipchat.com/#narrow/stream/327238-Fiji)
 
 # Colocalisation Analysis
-
-[![Join the chat at https://gitter.im/fiji/Colocalisation_Analysis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fiji/Colocalisation_Analysis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Coloc 2 is Fiji's plugin for colocalization analysis. It implements
 and performs the pixel intensity correlation over space methods of Pearson,
