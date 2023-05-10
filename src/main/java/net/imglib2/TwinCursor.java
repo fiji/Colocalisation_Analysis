@@ -137,11 +137,6 @@ public class TwinCursor<T extends Type<T>> implements Cursor<T>, PairIterator<T>
 		}
 
 		@Override
-		public Sampler<T> copy() {
-			throw new UnsupportedOperationException("This method has not been implemented, yet."); 
-		}
-
-		@Override
 		public T get() {
 			throw new UnsupportedOperationException("This method has not been implemented, yet.");
 		}
@@ -167,7 +162,7 @@ public class TwinCursor<T extends Type<T>> implements Cursor<T>, PairIterator<T>
 		}
 
 		@Override
-		public Cursor<T> copyCursor() {
+		public Cursor<T> copy() {
 			throw new UnsupportedOperationException("This method has not been implemented, yet.");
 		}
-	}
+}

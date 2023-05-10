@@ -146,11 +146,6 @@ public class PredicateCursor<T extends Type<T>> implements Cursor<T> {
 	}
 
 	@Override
-	public Sampler<T> copy() {
-		return cursor.copy();
-	}
-
-	@Override
 	public T get() {
 		return cursor.get();
 	}
@@ -176,7 +171,7 @@ public class PredicateCursor<T extends Type<T>> implements Cursor<T> {
 	}
 
 	@Override
-	public Cursor<T> copyCursor() {
+	public Cursor<T> copy() {
 		return new PredicateCursor<T>( cursor.copyCursor(), predicate );
 	}
 }

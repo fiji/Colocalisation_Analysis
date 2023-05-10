@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>26.0.0</version>
+		<version>34.1.0</version>
 		<relativePath />
 	</parent>
 
@@ -128,6 +128,8 @@
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
+
+		<imglib2.version>6.1.0</imglib2.version>
 	</properties>
 
 	<repositories>
