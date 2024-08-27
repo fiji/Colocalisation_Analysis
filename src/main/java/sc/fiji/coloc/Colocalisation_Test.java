@@ -45,8 +45,8 @@ import ij.process.ShortProcessor;
 import ij.text.TextWindow;
 
 import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.text.DecimalFormat;
 
 public class Colocalisation_Test implements PlugIn
@@ -706,24 +706,11 @@ String Percentile = ""+(iterations-colocCount)+"/"+iterations;
 	if (textWindow == null) {
 		textWindow = new TextWindow("Results",
 				Headings2, str, 400, 250);
-				textWindow.addWindowListener(new WindowListener() {
+				textWindow.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosed(WindowEvent arg0) {
 						textWindow = null;
 					}
-					
-					@Override
-					public void windowActivated(WindowEvent arg0) {}
-					@Override
-					public void windowClosing(WindowEvent arg0) {}
-					@Override
-					public void windowDeactivated(WindowEvent arg0) {}
-					@Override
-					public void windowDeiconified(WindowEvent arg0) {}
-					@Override
-					public void windowIconified(WindowEvent arg0) {}
-					@Override
-					public void windowOpened(WindowEvent arg0) {}
 				});
 	} else {
 		textWindow.getTextPanel().setColumnHeadings(Headings2);
