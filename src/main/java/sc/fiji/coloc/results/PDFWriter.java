@@ -52,6 +52,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.LongType;
 import sc.fiji.coloc.algorithms.AutoThresholdRegression;
 import sc.fiji.coloc.algorithms.Histogram2D;
+import sc.fiji.coloc.gadgets.Autoscaler;
 import sc.fiji.coloc.gadgets.DataContainer;
 import sc.fiji.coloc.gadgets.DataContainer.MaskType;
 
@@ -114,9 +115,9 @@ public class PDFWriter<T extends RealType<T>> implements ResultHandler<T> {
 		imp.getProcessor().snapshot();
 		imp.getProcessor().log();
 		imp.updateAndDraw();
-		imp.getProcessor().resetMinAndMax();
+		Autoscaler.autoscale(imp.getProcessor());
 		IJ.run(imp,"Fire", null);
-		
+
 		Overlay overlay = new Overlay();
 		
 		/*

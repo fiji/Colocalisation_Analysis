@@ -39,6 +39,7 @@ import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.process.ShortProcessor;
 import ij.text.TextWindow;
+import sc.fiji.coloc.gadgets.Autoscaler;
 
 import java.awt.Rectangle;
 import java.text.DecimalFormat;
@@ -833,7 +834,7 @@ public class Colocalisation_Threshold implements PlugIn {
 		//String colocString = "channel='"+Ch1fileName + "' channel='"+Ch2fileName +"' ratio=0 threshold="+IJ.d2s(ch1threshmax,1)+" threshold="+IJ.d2s(ch2threshmax,1)+" display=255";
 
 
-		if (bShowLocalisation) {//ipColoc.resetMinAndMax();
+		if (bShowLocalisation) {//Autoscaler.autoscale(ipColoc);
 			stackColoc = createColocalizedPixelsImage(imp1, imp2, ipMask,  ch1threshmax, ch2threshmax);
 			colocPix = new ImagePlus("Colocalized Pixel Map RGB Image", stackColoc);
 			colocPix.setCalibration(spatialCalibration);
@@ -843,7 +844,7 @@ public class Colocalisation_Threshold implements PlugIn {
 		if (bScatter) {
 			if (imp2.getBitDepth() != 8)
 				b = b * 256.0 / minMax2.max;
-			plot16.resetMinAndMax();
+			Autoscaler.autoscale(plot16);
 			for (int c=0; c<256; c++) {
 				plotY = ((double)c*m)+b;
 				//plotY2 = ((double)c*m2)+b2;

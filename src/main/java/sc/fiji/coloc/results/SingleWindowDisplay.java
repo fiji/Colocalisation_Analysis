@@ -72,6 +72,7 @@ import net.imglib2.type.numeric.integer.LongType;
 
 import sc.fiji.coloc.algorithms.AutoThresholdRegression;
 import sc.fiji.coloc.algorithms.Histogram2D;
+import sc.fiji.coloc.gadgets.Autoscaler;
 import sc.fiji.coloc.gadgets.DataContainer;
 
 import fiji.util.gui.JImagePanel;
@@ -582,7 +583,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 			// select linked look up table
 			IJ.run(imp, listOfLUTs.get(img), null);
 		}
-		imp.getProcessor().resetMinAndMax();
+		Autoscaler.autoscale(imp.getProcessor());
 
 		boolean overlayModified = false;
 		Overlay overlay = new Overlay();
@@ -711,7 +712,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends JFrame
 		if (enabled) {
 			ip.snapshot();
 			ip.log();
-			ip.resetMinAndMax();
+			Autoscaler.autoscale(ip);
 		} else
 			ip.reset();
 		imagePanel.repaint();
