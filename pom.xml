@@ -128,8 +128,6 @@
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
-
-		<imglib2.version>6.1.0</imglib2.version>
 	</properties>
 
 	<repositories>
