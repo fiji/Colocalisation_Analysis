@@ -23,6 +23,7 @@ package sc.fiji.coloc.tests;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import java.awt.Window;
 import java.awt.event.WindowEvent;
@@ -38,6 +39,8 @@ import sc.fiji.coloc.Colocalisation_Test;
 public class ColocalisationGUITest extends ColocalisationTest {
 	@Test
 	public void testThatWindowRefIsCleanedUpIfClosed() {		
+		assumeFalse(java.awt.GraphicsEnvironment.isHeadless());
+
 		ImagePlus img = IJ.openImage("http://imagej.net/images/FluorescentCells.zip");
 		ImagePlus[] splitImg = ChannelSplitter.split(img);
 		Colocalisation_Test colocalisationTest = new Colocalisation_Test();
