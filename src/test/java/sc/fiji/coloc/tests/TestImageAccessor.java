@@ -45,7 +45,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
 import net.imglib2.algorithm.gauss.Gauss;
 import net.imglib2.algorithm.math.ImageStatistics;
-import net.imglib2.img.ImagePlusAdapter;
+import net.imglib2.imagej.ImageJFunctions;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
@@ -88,7 +88,7 @@ public class TestImageAccessor {
 
 		ImagePlus imp = opener.openTiff(bis, "The Test Image");
 		assumeNotNull(imp);
-		return ImagePlusAdapter.wrap(imp);
+		return ImageJFunctions.wrap(imp);
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class TestImageAccessor {
 
 		ImagePlus imp = opener.openTiff(bis, "The Test Image");
 		assumeNotNull(imp);
-		return ImagePlusAdapter.wrap(imp);
+		return ImageJFunctions.wrap(imp);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class TestImageAccessor {
 		// we changed the data, so update it
 		img.updateImage();
 		// create the new image
-		RandomAccessibleInterval<T> noiseImage = ImagePlusAdapter.wrap(img);
+		RandomAccessibleInterval<T> noiseImage = ImageJFunctions.wrap(img);
 
 		return noiseImage;
 	}
@@ -233,7 +233,7 @@ public class TestImageAccessor {
 		// we changed the data, so update it
 		img.updateImage();
 
-		return ImagePlusAdapter.wrap(img);
+		return ImageJFunctions.wrap(img);
 	}
 
 	/**
@@ -440,6 +440,6 @@ public class TestImageAccessor {
 		// we changed the data, so update it
 		img.updateImage();
 
-		return ImagePlusAdapter.wrap(img);
+		return ImageJFunctions.wrap(img);
 	}
 }

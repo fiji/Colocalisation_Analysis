@@ -27,7 +27,7 @@ import ij.text.TextWindow;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.math.ImageStatistics;
-import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
 
 import sc.fiji.coloc.algorithms.Histogram2D;

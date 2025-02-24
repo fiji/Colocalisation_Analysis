@@ -48,7 +48,7 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.TwinCursor;
-import net.imglib2.img.ImagePlusAdapter;
+import net.imglib2.imagej.ImageJFunctions;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
@@ -371,8 +371,8 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 		}
 
 		// save the ImgLib wrapped images as members
-		img1 = ImagePlusAdapter.wrap(imp1);
-		img2 = ImagePlusAdapter.wrap(imp2);
+		img1 = ImageJFunctions.wrap(imp1);
+		img2 = ImageJFunctions.wrap(imp2);
 
 		/* check if we have a valid ROI for the selected configuration
 		 * and if so, get the ROI's bounds. Alternatively, a mask can
@@ -392,7 +392,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 			// get the image to be used as mask
 			final int[] windowList = WindowManager.getIDList();
 			final ImagePlus maskImp = WindowManager.getImage(windowList[indexMask]);
-			final Img<T> maskImg = ImagePlusAdapter.<T> wrap(maskImp);
+			final Img<T> maskImg = ImageJFunctions.wrap(maskImp);
 			// get a valid mask info for the image
 			final MaskInfo mi = getBoundingBoxOfMask(maskImg);
 			masks.add(mi);
@@ -805,7 +805,7 @@ public class Coloc_2<T extends RealType<T> & NativeType<T>> implements PlugIn {
 			// create an Image<T> out of it
 			final ImagePlus maskImp = new ImagePlus("Mask", ipSlice);
 			// and remember it and the masks bounding box
-			mi.mask = ImagePlusAdapter.<T> wrap(maskImp);
+			mi.mask = ImageJFunctions.wrap(maskImp);
 		}
 	}
 

@@ -32,7 +32,7 @@ import java.util.Random;
 
 import net.imglib2.Cursor;
 import net.imglib2.algorithm.math.ImageStatistics;
-import net.imglib2.img.ImagePlusAdapter;
+import net.imglib2.imagej.ImageJFunctions;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
@@ -46,9 +46,9 @@ public class ColocImgLibGadgets<T extends RealType<T> & NativeType<T>> implement
   @Override
   public void run(String arg) {
 	ImagePlus imp1 = IJ.openImage("/Users/dan/Documents/Dresden/ipf/colocPluginDesign/red.tif");
-	img1 = ImagePlusAdapter.wrap(imp1);
+	img1 = ImageJFunctions.wrap(imp1);
 	ImagePlus imp2 = IJ.openImage("/Users/dan/Documents/Dresden/ipf/colocPluginDesign/green.tif");
-	img2 = ImagePlusAdapter.wrap(imp2);
+	img2 = ImageJFunctions.wrap(imp2);
 
 	double pearson = calculatePearson();
 
